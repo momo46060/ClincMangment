@@ -92,6 +92,7 @@ class DoctorController(
 
             visit.diagnosis = diagnosis
             visit.prescription = prescription
+            visit.status = "تم الكشف"
             if (!scheduledConsultation.isNullOrBlank()) {
                 visit.scheduledConsultation = LocalDateTime.parse(scheduledConsultation)
             }

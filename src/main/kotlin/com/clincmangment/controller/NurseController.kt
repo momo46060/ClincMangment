@@ -4,8 +4,10 @@ import com.clincmangment.repository.model.User
 import com.clincmangment.service.PatientService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
+import com.clincmangment.utils.Role
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -14,7 +16,6 @@ import java.time.LocalDate
 @Controller
 @RequestMapping("/nurse")
 class NurseController(
-    private val patientService: PatientService,
     private val visitService: VisitService,
     private val userService: UserServiceImpl
 ) {
@@ -23,31 +24,15 @@ class NurseController(
     @GetMapping("/dashboard")
     fun nurseDashboard(model: Model, session: HttpSession): String {
         val nurse = session.getAttribute("loggedUser") as? User ?: return "redirect:/login"
+        val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR, nurse.clinic,Pageable.unpaged())
+
         val todayVisits = visitService.getVisitsByClinic(nurse.clinic.id!!)
+        model.addAttribute("doctors", doctors)
         model.addAttribute("todayVisits", todayVisits)
         model.addAttribute("nurse", nurse)
         return "nurse/dashboard"
     }
 
-//    @GetMapping("/dashboard")
-//    fun nurseDashboard(model: Model, session: HttpSession): String {
-//        return try {
-//            val nurse = session.getAttribute("loggedUser") as? User
-//                ?: return "redirect:/login"
-//
-//            val todayVisits = visitService.getTodayVisits()
-//
-//            model.addAttribute("nurse", nurse)
-//            model.addAttribute("todayVisits", todayVisits)
-//            model.addAttribute("today", LocalDate.now())
-//
-//            "nurse/dashboard"
-//        } catch (ex: Exception) {
-//            logger.error("Error loading nurse dashboard: ${ex.message}")
-//            model.addAttribute("errorMessage", "حدث خطأ أثناء تحميل لوحة التحكم. برجاء المحاولة لاحقًا.")
-//            "error/custom_error"
-//        }
-//    }
 
     @PostMapping("/visit/{id}/status")
     fun updateVisitStatus(

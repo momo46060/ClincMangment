@@ -2,9 +2,12 @@ package com.clincmangment.controller
 
 import com.clincmangment.repository.model.ClincRepository
 import com.clincmangment.repository.model.Clinic
+import com.clincmangment.repository.model.User
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.utils.Role
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -12,7 +15,6 @@ class TestDataController(
     private val userService: UserServiceImpl,
     private val clinics: ClincRepository
 ) {
-
 
     // إنشاء عيادة جديدة
     @GetMapping("/create-clinic")
@@ -42,6 +44,31 @@ class TestDataController(
             clinic = clinic
         )
         return "Doctor ${doctor.fullName} created successfully for clinic ${clinic.name}"
+    }
+
+    @PostMapping("/create-doctor")
+    fun createDoctor0(@RequestBody doctor: User): String {
+        if (clinics.findAll().isEmpty()) return "No clinic available. Create a clinic first."
+        val clinic = clinics.findAll().last()
+        val doctor = userService.createUser(
+            username = doctor.fullName,
+            rawPassword = doctor.password,
+            role = Role.DOCTOR,
+            fullName = doctor.fullName,
+            phone = doctor.phone,
+            email = doctor.email,
+            clinic = clinic
+        )
+        return "Doctor ${doctor.fullName} created successfully for clinic ${clinic.name}"
+    }
+
+    @PostMapping("/create-clinic")
+    fun createClinic(@RequestBody clinic: Clinic): String {
+        return try {
+            clinics.save(clinic).toString()
+        } catch (e: Exception) {
+            "${e.message}"
+        }
     }
 }
 
