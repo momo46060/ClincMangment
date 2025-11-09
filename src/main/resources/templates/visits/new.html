@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>إضافة كشف جديد</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+
+<div class="container">
+    <h2>إضافة كشف جديد للمريض: <span th:text="${visitForm.patientCode}"></span></h2>
+
+    <form th:action="@{/visits/save}" th:object="${visitForm}" method="post" class="row g-3">
+
+        <input type="hidden" th:field="*{patientCode}"/>
+
+        <div class="col-md-6">
+            <label class="form-label">نوع الزيارة</label>
+            <select class="form-select" th:field="*{visitType}" required>
+                <option value="">اختر النوع</option>
+                <option value="CHECKUP">كشف</option>
+                <option value="CONSULTATION">استشارة</option>
+            </select>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">الدكتور</label>
+            <select class="form-select" th:field="*{doctorPhone}">
+                <option value="">--اختر الدكتور--</option>
+                <option th:each="doc : ${doctors}" th:value="${doc.phone}" th:text="${doc.fullName}"></option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">حالة الكشف</label>
+            <select class="form-select" th:field="*{status}" required>
+                <option value="في الانتظار">في الانتظار</option>
+                <option value="جاري الكشف">جاري الكشف</option>
+                <option value="تم الكشف">تم الكشف</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <label class="form-label">الشكوى</label>
+            <textarea class="form-control" th:field="*{complaint}" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-success">حفظ الكشف</button>
+        <a href="/nurse/dashboard" class="btn btn-secondary">رجوع</a>
+    </form>
+</div>
+
+</body>
+</html>
+
+
+
+
+

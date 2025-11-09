@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة تحكم الطبيب</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+
+<div class="container">
+    <h2 class="mb-4">مرحبًا دكتور <span th:text="${doctor.fullName}"></span></h2>
+    <div class="mb-3 text-end">
+        <a href="/doctor/add-nurse" class="btn btn-success">➕ إضافة ممرضة جديدة</a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <strong>الكشوفات الجارية</strong>
+        </div>
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-primary">
+                <tr>
+                    <th>المريض</th>
+                    <th>النوع</th>
+                    <th>الشكوى</th>
+                    <th>تاريخ الزيارة</th>
+                    <th>الإجراء</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="v : ${currentVisits}">
+                    <td th:text="${v.patient.user.fullName}"></td>
+                    <td th:text="${v.visitType}"></td>
+                    <td th:text="${v.complaint}"></td>
+                    <td th:text="${#temporals.format(v.visitDate, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td>
+                        <a th:href="@{'/doctor/visit/' + ${v.id}}" class="btn btn-success btn-sm">عرض الكشف</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(currentVisits)}">
+                    <td colspan="5" class="text-center text-muted">لا يوجد كشف جارٍ الآن</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

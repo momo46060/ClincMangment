@@ -1,0 +1,47 @@
+package com.clincmangment.controller
+
+import com.clincmangment.repository.model.ClincRepository
+import com.clincmangment.repository.model.Clinic
+import com.clincmangment.service.UserServiceImpl
+import com.clincmangment.utils.Role
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RestController
+
+@RestController
+class TestDataController(
+    private val userService: UserServiceImpl,
+    private val clinics: ClincRepository
+) {
+
+
+    // إنشاء عيادة جديدة
+    @GetMapping("/create-clinic")
+    fun createClinic(): String {
+        val clinic = Clinic(
+            name = "عيادة المستقبل",
+            address = "شارع الجامعة، القاهرة"
+        )
+        // تخزينها مؤقتًا في القائمة
+        clinics.save(clinic)
+        return "Clinic created successfully with ID: ${clinic.id ?: "not persisted yet"}"
+    }
+
+    // إنشاء دكتور مرتبط بالعيادة الأخيرة
+    @GetMapping("/create-doctor")
+    fun createDoctor(): String {
+        if (clinics.findAll().isEmpty()) return "No clinic available. Create a clinic first."
+
+        val clinic = clinics.findAll().last()
+        val doctor = userService.createUser(
+            username = "dr1",
+            rawPassword = "1234",
+            role = Role.DOCTOR,
+            fullName = "Dr. Ahmed",
+            phone = "01000000001",
+            email = "dr.ahmed@example.com",
+            clinic = clinic
+        )
+        return "Doctor ${doctor.fullName} created successfully for clinic ${clinic.name}"
+    }
+}
+

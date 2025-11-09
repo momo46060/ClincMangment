@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة الممرضة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4 bg-light">
+
+<div class="container">
+    <h2 class="mb-4 text-center">لوحة الممرضة</h2>
+    <h5 class="text-muted">تاريخ اليوم: <span th:text="${today}"></span></h5>
+    <!-- رسائل التنبيه -->
+    <div class="container mt-3">
+        <div th:if="${success}" class="alert alert-success text-center" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
+    </div>
+    <div class="card mt-4 shadow">
+        <div class="card-header bg-success text-white">
+            <strong>حجوزات اليوم</strong>
+        </div>
+
+        <div class="card-body">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-success">
+                <tr>
+                    <th>الكود</th>
+                    <th>اسم المريض</th>
+                    <th>نوع الزيارة</th>
+                    <th>الدكتور</th>
+                    <th>الوقت</th>
+                    <th>الحالة</th>
+                    <th>الإجراءات</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="v : ${todayVisits}">
+                    <td th:text="${v.patient.patientCode}"></td>
+                    <td th:text="${v.patient.user.fullName}"></td>
+                    <td th:text="${v.visitType}"></td>
+                    <td th:text="${v.doctor != null ? v.doctor.fullName : '---'}"></td>
+                    <td th:text="${#temporals.format(v.visitDate, 'yyyy-MM-dd HH:mm')}"></td>
+                    <td th:text="${v.status}"></td>
+                    <td>
+                        <!-- تغيير الحالة -->
+                        <form th:action="@{'/nurse/visit/' + ${v.id} + '/status'}" method="post" class="d-inline">
+                            <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                <option value="في الانتظار" th:selected="${v.status == 'في الانتظار'}">في الانتظار</option>
+                                <option value="جاري الكشف" th:selected="${v.status == 'جاري الكشف'}">جاري الكشف</option>
+                                <option value="تم الكشف" th:selected="${v.status == 'تم الكشف'}">تم الكشف</option>
+                            </select>
+                        </form>
+
+                        <!-- إلغاء الزيارة -->
+                        <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}" method="post" class="d-inline"
+                              onsubmit="return confirm('هل أنت متأكد من إلغاء هذه الزيارة؟');">
+                            <button type="submit" class="btn btn-danger btn-sm ms-1">إلغاء</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(todayVisits)}">
+                    <td colspan="7" class="text-center text-muted">لا توجد حجوزات اليوم</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="/patients/search" class="btn btn-primary">🔍 حجز كشف جديد</a>
+        <a href="/logout" class="btn btn-danger">تسجيل الخروج</a>
+    </div>
+</div>
+
+</body>
+</html>
