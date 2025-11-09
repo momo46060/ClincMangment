@@ -35,7 +35,8 @@ class VisitController(
         return try {
             val loggedUser = session.getAttribute("loggedUser") as? User
                 ?: return "redirect:/login"
-            val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR, clinic = loggedUser.clinic ,Pageable.unpaged()).content
+            val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR,
+                clinic = loggedUser.clinic ,Pageable.unpaged()).content
             model.addAttribute("doctors", doctors)
 
             val visit = visitService.getVisitById(visitId)
