@@ -11,7 +11,7 @@
     <groupId>com</groupId>
     <artifactId>ClincMangment</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>ClincMangment</name>
     <description>ClincMangment</description>
     <url/>
