@@ -41,7 +41,7 @@ class LoginController(
         return if (user != null) {
             session.setAttribute("loggedUser", user)
             when (user.role) {
-                Role.DOCTOR -> "redirect:/doctor/dashboard/${user.phone}"
+                Role.DOCTOR -> "redirect:/doctor/dashboard"
                 Role.NURSE -> "redirect:/nurse/dashboard"
                 Role.PATIENT -> "redirect:/patients/view/${user.phone}"
             }

@@ -13,6 +13,14 @@ import java.util.*
 
 @Repository
 interface VisitRepository : JpaRepository<Visit, Long> {
+    @Query("SELECT v FROM Visit v" +
+     " WHERE v.doctor.id = :doctorId AND v.visitDate BETWEEN :startOfDay AND :endOfDay AND v.clinic.id = :clinicId")
+    fun findVisitsByDoctorAndDate(
+        @Param("doctorId") doctorId: Long,
+        @Param("startOfDay") startOfDay: LocalDateTime,
+        @Param("endOfDay") endOfDay: LocalDateTime,
+        @Param("clinicId") clinicId: Long
+    ): List<Visit>
     fun findByDoctorIdAndStatus(doctorId: Long, status: String): List<Visit>
     fun findByDoctorIdAndClinicId(doctorId: Long, clinicId: Long): List<Visit>
     fun findByClinicIdAndVisitDate(clinicId: Long, date: LocalDate): List<Visit>

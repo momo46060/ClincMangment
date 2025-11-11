@@ -37,7 +37,7 @@ data class User(
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null,
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "clinic_id", nullable = false)
     var clinic: Clinic
 

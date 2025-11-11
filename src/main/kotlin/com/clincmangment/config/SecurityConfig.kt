@@ -10,18 +10,6 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 class SecurityConfig {
 
-    //    @Bean
-//    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-//        http
-//            .authorizeHttpRequests { auth ->
-//                auth.anyRequest().permitAll() // السماح بكل الطلبات مؤقتاً
-//            }
-//            .formLogin { it.disable() }
-//            .httpBasic { it.disable() }
-//            .csrf { it.disable() }
-//
-//        return http.build()
-//    }
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http

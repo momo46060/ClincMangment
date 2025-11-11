@@ -1,17 +1,21 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.NurseForm
+import com.clincmangment.repository.model.ClincRepository
+import com.clincmangment.repository.model.Clinic
 import com.clincmangment.repository.model.User
-import com.clincmangment.service.PatientService
+import com.clincmangment.service.ClinicService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
 import com.clincmangment.utils.Role
+import com.clincmangment.utils.VisitType
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 @Controller
@@ -19,22 +23,55 @@ import java.time.LocalDateTime
 class DoctorController(
     private val visitService: VisitService,
     private val userService: UserServiceImpl,
-    private val patientService: PatientService,
-    private val httpSession: HttpSession
-) {
+    private val httpSession: HttpSession,
+    private val clinicService: ClinicService,
+
+
+    ) {
 
     private val logger = LoggerFactory.getLogger(DoctorController::class.java)
 
     // لوحة التحكم - زيارات اليوم الجارية حسب العيادة
-    @GetMapping("/dashboard/{phone}")
-    fun doctorDashboard(@PathVariable phone: String, model: Model): String {
+    @GetMapping("/dashboard")
+    fun doctorDashboard(model: Model): String {
         return try {
-            val doctor = userService.findByPhone(phone).orElseThrow { IllegalArgumentException("Doctor not found") }
+            val phone = (httpSession.getAttribute("loggedUser") as User).phone
+
+            val doctor = userService.findByPhone(phone!!).orElseThrow { IllegalArgumentException("Doctor not found") }
             val clinicId = doctor.clinic.id!!
             val currentVisits = visitService.getVisitsByDoctorAndStatus(doctor.id!!, "جاري الكشف", clinicId)
+            // ✅ إجماليات الحالات لكل نوع
+            val allVisits = visitService.getVisitsByDoctor(doctor.id!!, clinicId)
+            val stats = allVisits.groupingBy { it.status ?: "غير محدد" }.eachCount()
+
+            val total = allVisits.size
+            val done = stats["تم الكشف"] ?: 0
+            val canceled = stats["ملغاة"] ?: 0
+            val pending = stats["في الانتظار"] ?: 0
+            val current = stats["جاري الكشف"] ?: 0
+            val startOfDay = LocalDate.now().atStartOfDay()
+            val endOfDay = startOfDay.plusDays(1).minusSeconds(1)
+            val todayVisits = visitService.findVisitsByDoctorAndDate(
+                doctor.id!!,
+                startOfDay, endOfDay, clinicId
+            )
+            val totalRevenue = todayVisits.filter { it.status != "ملغاة" }.sumOf {
+                when (it.visitType) {
+                    VisitType.CHECKUP -> doctor.clinic.consultationPrice ?: 0.0
+                    VisitType.CONSULTATION -> doctor.clinic.followUpPrice ?: 0.0
+                    else -> 0.0
+                }
+            }
+
+            model.addAttribute("totalRevenue", totalRevenue)
 
             model.addAttribute("doctor", doctor)
             model.addAttribute("currentVisits", currentVisits)
+            model.addAttribute("totalCount", total)
+            model.addAttribute("doneCount", done)
+            model.addAttribute("canceledCount", canceled)
+            model.addAttribute("pendingCount", pending)
+            model.addAttribute("currentCount", current)
             return "doctor/dashboard"
         } catch (ex: Exception) {
             logger.error("Error loading doctor dashboard: ${ex.message}")
@@ -112,6 +149,7 @@ class DoctorController(
         model.addAttribute("nurseForm", NurseForm())
         return "doctor/add_nurse"
     }
+
     @PostMapping("/add-nurse")
     fun addNurse(
         @ModelAttribute nurseForm: NurseForm,
@@ -134,7 +172,28 @@ class DoctorController(
         return "redirect:/doctor/add-nurse"
     }
 
+    // DoctorController.kt
+    @GetMapping("/settings")
+    fun showClinicSettings(model: Model, session: HttpSession): String {
+        val loggedUser = session.getAttribute("loggedUser") as User
+        val clinic = clinicService.findClinicById(loggedUser.clinic.id!!)
+        model.addAttribute("clinic", clinic)
+        return "doctor/clinic_settings"
+    }
 
+    @PostMapping("/settings")
+    fun updateClinicSettings(
+        @RequestParam consultationPrice: Double,
+        @RequestParam followUpPrice: Double,
+        redirectAttributes: RedirectAttributes,
+        session: HttpSession
+    ): String {
+        val doctor = session.getAttribute("loggedUser") as? User
+            ?: throw IllegalArgumentException("User not logged in")
 
-
+        clinicService.updateClinicPrices(doctor.id, consultationPrice, followUpPrice)
+        session.setAttribute("loggedUser", doctor)
+        redirectAttributes.addFlashAttribute("success", "تم تحديث الأسعار بنجاح")
+        return "redirect:/doctor/dashboard"
+    }
 }

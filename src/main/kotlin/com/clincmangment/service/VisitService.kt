@@ -6,6 +6,7 @@ import com.clincmangment.repository.model.User
 import com.clincmangment.repository.model.Visit
 import com.clincmangment.utils.VisitType
 import jakarta.transaction.Transactional
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -18,6 +19,12 @@ class VisitService(
     private val patientService: PatientService,
     private val userService: UserServiceImpl
 ) {
+   fun findVisitsByDoctorAndDate(
+     doctorId: Long,
+    startOfDay: LocalDateTime,
+    endOfDay: LocalDateTime,
+    clinicId: Long
+    ): List<Visit> = visitRepository.findVisitsByDoctorAndDate(doctorId, startOfDay, endOfDay,clinicId)
     fun save(visit: Visit): Visit = visitRepository.save(visit)
 
     // جلب جميع الزيارات الخاصة بالعيادة

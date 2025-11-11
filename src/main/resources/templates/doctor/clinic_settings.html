@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>إعدادات العيادة</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-5">
+<div class="container">
+    <h3 class="mb-4 text-center">⚙️ إعدادات أسعار الكشف والاستشارة</h3>
+
+    <form th:action="@{/doctor/settings}" method="post" class="card p-4 shadow-sm bg-white">
+        <div class="mb-3">
+            <label class="form-label">سعر الكشف</label>
+            <input type="number" step="0.5" min="0" name="consultationPrice" class="form-control"
+                   th:value="${clinic.consultationPrice}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">سعر الاستشارة</label>
+            <input type="number" step="0.5" min="0" name="followUpPrice" class="form-control"
+                   th:value="${clinic.followUpPrice}">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">💾 حفظ التغييرات</button>
+    </form>
+
+    <div th:if="${success}" class="alert alert-success text-center mt-3" th:text="${success}"></div>
+</div>
+</body>
+</html>

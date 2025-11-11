@@ -6,6 +6,7 @@ import com.clincmangment.repository.model.User
 import com.clincmangment.utils.Role
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -13,7 +14,7 @@ import java.util.*
 class UserServiceImpl(
     private val userRepository: UserRepository,
 ) {
-
+    fun findByIdWithClinic(id: Long): Optional<User> = userRepository.findById(id)
     // تسجيل الدخول
     fun login(phone: String, password: String): User? {
         val user = userRepository.findByPhone(phone).orElse(null)

@@ -9,8 +9,56 @@
 
 <div class="container">
     <h2 class="mb-4">مرحبًا دكتور <span th:text="${doctor.fullName}"></span></h2>
-    <div class="mb-3 text-end">
+    <div class="mb-3 text-end d-flex justify-content-start gap-2">
+        <a href="/doctor/settings" class="btn btn-primary">⚙️ إعدادات الأسعار</a>
         <a href="/doctor/add-nurse" class="btn btn-success">➕ إضافة ممرضة جديدة</a>
+    </div>
+
+    <div class="alert alert-info text-center mb-3 d-flex justify-content-center align-items-center gap-2">
+        💰 إجمالي إيرادات اليوم:
+        <strong id="revenue" th:text="'**********'"></strong>
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleRevenue" title="إظهار/إخفاء">
+            👁️
+        </button>
+    </div>
+
+    <div class="row mb-4 text-center">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-success">
+                <div class="card-body">
+                    <h5 class="text-success mb-1">✅ تم الكشف</h5>
+                    <h3 th:text="${doneCount}"></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-warning">
+                <div class="card-body">
+                    <h5 class="text-warning mb-1">🕓 جاري الكشف</h5>
+                    <h3 th:text="${currentCount}"></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-secondary">
+                <div class="card-body">
+                    <h5 class="text-secondary mb-1">⌛ قيد الانتظار</h5>
+                    <h3 th:text="${pendingCount}"></h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-danger">
+                <div class="card-body">
+                    <h5 class="text-danger mb-1">❌ ملغاة</h5>
+                    <h3 th:text="${canceledCount}"></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert alert-primary text-center fw-bold">
+        إجمالي الحجوزات: <span th:text="${totalCount}"></span>
     </div>
 
     <div class="card shadow">
@@ -48,4 +96,24 @@
 </div>
 
 </body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const toggleBtn = document.getElementById('toggleRevenue');
+    const revenueElem = document.getElementById('revenue');
+    let visible = false;
+
+    // خزن المبلغ الفعلي من السيرفر
+    const actualRevenue = /*[[${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 2, 'POINT')}]]*/ '0 ج.م';
+
+    toggleBtn.addEventListener('click', () => {
+        if (!visible) {
+            revenueElem.textContent = actualRevenue;
+            visible = true;
+        } else {
+            revenueElem.textContent = '**********';
+            visible = false;
+        }
+    });
+    /*]]>*/
+</script>
 </html>
