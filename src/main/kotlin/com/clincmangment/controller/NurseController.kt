@@ -26,7 +26,7 @@ class NurseController(
         val nurse = session.getAttribute("loggedUser") as? User ?: return "redirect:/login"
         val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR, nurse.clinic,Pageable.unpaged())
 
-        val todayVisits = visitService.getVisitsByClinic(nurse.clinic.id!!)
+        val todayVisits = visitService.getTodayVisitsByClinic(nurse.clinic.id!!)
         model.addAttribute("doctors", doctors)
         model.addAttribute("todayVisits", todayVisits)
         model.addAttribute("nurse", nurse)

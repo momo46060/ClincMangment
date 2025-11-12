@@ -135,7 +135,7 @@ class DoctorController(
             }
 
             visitService.save(visit)
-            "redirect:/doctor/visit/${visitId}"
+            "redirect:/doctor/dashboard"
         } catch (ex: Exception) {
             logger.error("Error updating visit: ${ex.message}")
             model.addAttribute("errorMessage", "حدث خطأ أثناء تحديث بيانات الزيارة.")
