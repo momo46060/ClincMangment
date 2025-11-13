@@ -36,7 +36,6 @@ class DoctorController(
     fun doctorDashboard(model: Model): String {
         return try {
             val phone = (httpSession.getAttribute("loggedUser") as User).phone
-
             val doctor = userService.findByPhone(phone!!).orElseThrow { IllegalArgumentException("Doctor not found") }
             val clinicId = doctor.clinic.id!!
             val currentVisits = visitService.getVisitsByDoctorAndStatus(doctor.id!!, "جاري الكشف", clinicId)
@@ -55,7 +54,12 @@ class DoctorController(
                 doctor.id!!,
                 startOfDay, endOfDay, clinicId
             )
+            println("Today's Visits for Doctor ID ${doctor.id} in Clinic ID $clinicId:")
+            println(allVisits)
+
             val totalRevenue = todayVisits.filter { it.status != "ملغاة" }.sumOf {
+                println("*********************************************************************")
+
                 when (it.visitType) {
                     VisitType.CHECKUP -> doctor.clinic.consultationPrice ?: 0.0
                     VisitType.CONSULTATION -> doctor.clinic.followUpPrice ?: 0.0

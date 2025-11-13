@@ -38,6 +38,10 @@ interface VisitRepository : JpaRepository<Visit, Long> {
     fun findByClinicIdAndVisitDateBetween(clinicId: Long, start: LocalDateTime, end: LocalDateTime): List<Visit>
     fun findByDoctorIdAndStatusAndClinicId(doctorId: Long, status: String, clinicId: Long): List<Visit>
     fun findAllByPatient_IdAndClinic_IdOrderByVisitDateDesc(patientId: Long, clinicId: Long): List<Visit>
-    fun findAllByDoctor_IdAndClinic_IdOrderByVisitDateDesc(doctorId: Long, clinicId: Long): List<Visit>
-
+    fun findAllByDoctor_IdAndClinic_IdAndVisitDateBetweenOrderByVisitDateDesc(
+        doctorId: Long,
+        clinicId: Long,
+        startOfDay: LocalDateTime,
+        endOfDay: LocalDateTime
+    ): List<Visit>
 }

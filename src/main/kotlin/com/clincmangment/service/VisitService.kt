@@ -89,8 +89,18 @@ class VisitService(
     fun getVisitsByPatient(patientId: Long, clinicId: Long): List<Visit> =
         visitRepository.findAllByPatient_IdAndClinic_IdOrderByVisitDateDesc(patientId, clinicId)
 
-    fun getVisitsByDoctor(doctorId: Long, clinicId: Long): List<Visit> =
-        visitRepository.findAllByDoctor_IdAndClinic_IdOrderByVisitDateDesc(doctorId, clinicId)
+    fun getVisitsByDoctor(doctorId: Long, clinicId: Long): List<Visit> {
+        val startOfDay = LocalDate.now().atStartOfDay()
+        val endOfDay = startOfDay.plusDays(1).minusNanos(1)
+         val list=visitRepository.findAllByDoctor_IdAndClinic_IdAndVisitDateBetweenOrderByVisitDateDesc(
+            doctorId,
+            clinicId,
+            startOfDay,
+            endOfDay
+        )
+        println(list)
 
+        return list
+    }
     fun getVisitById(id: Long): Optional<Visit> = visitRepository.findById(id)
 }
