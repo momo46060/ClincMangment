@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>ClinicEase - نظام إدارة العيادات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 RTL + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .hero {
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-weight: 800;
+            font-size: 2.4rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: .9;
+        }
+
+        .btn-light-custom {
+            background: #fff;
+            color: #2e7d32;
+            font-weight: 700;
+            border-radius: 10px;
+            padding: 0.9rem 1.6rem;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-light-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        }
+
+        .section {
+            background: #fff;
+            color: #333;
+            border-radius: 18px;
+            padding: 2.5rem 1.8rem;
+            margin-top: -2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 2.3rem;
+            color: #43a047;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-card {
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+            transition: 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .pricing-header {
+            background: #43a047;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 16px 16px 0 0;
+            font-weight: 700;
+        }
+
+        footer {
+            text-align: center;
+            color: #fff;
+            padding: 1.5rem 0;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- ================= HERO SECTION ================= -->
+<section class="hero">
+    <h1><i class="bi bi-hospital"></i> ClinicEase</h1>
+    <p>نظام إدارة العيادات المتكامل — إدارة المواعيد، المرضى، الملفات الطبية والفواتير بسهولة.</p>
+</section>
+
+<!-- ================= FEATURES SECTION ================= -->
+<div class="container">
+    <div class="section">
+        <h3 class="text-center mb-4" style="color:#2e7d32; font-weight:700;">مميزات ClinicEase</h3>
+
+        <div class="row text-center">
+
+            <div class="col-md-4 mb-4">
+                <i class="bi bi-calendar-check feature-icon"></i>
+                <h5>إدارة المواعيد</h5>
+                <p>تنظيم كامل للمواعيد مع التنبيهات وسهولة الحجز.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <i class="bi bi-person-lines-fill feature-icon"></i>
+                <h5>ملفات المرضى</h5>
+                <p>تسجيل البيانات والتشخيص والأدوية بسهولة.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <i class="bi bi-receipt-cutoff feature-icon"></i>
+                <h5>الفواتير والتقارير</h5>
+                <p>إدارة مالية دقيقة مع تقارير جاهزة للطباعة.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <i class="bi bi-people feature-icon"></i>
+                <h5>صلاحيات المستخدمين</h5>
+                <p>دكتور – استقبال – مدير… مع تحكم كامل في الصلاحيات.</p>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <i class="bi bi-cloud-upload feature-icon"></i>
+                <h5>سحابي بالكامل</h5>
+                <p>يعمل من أي جهاز بدون تثبيت وبأمان عالي.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- ================= PRICING SECTION ================= -->
+<div class="container mb-5">
+
+    <h3 class="text-center mb-4" style="color:#fff; font-weight:700;">الباقات المتاحة</h3>
+
+    <div class="row g-4 justify-content-center">
+
+        <!-- Basic -->
+        <div class="col-md-4">
+            <div class="pricing-card">
+                <div class="pricing-header">الباقة الأساسية</div>
+                <div class="card-body text-center">
+                    <h3>350 ج / شهر</h3>
+                    <p>مواعيد – مرضى – فواتير – استقبال + دكتور</p>
+                    <p>للاشتراك: <strong>واتساب 01012464739</strong></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pro -->
+        <div class="col-md-4">
+            <div class="pricing-card">
+                <div class="pricing-header">الباقة المتقدمة</div>
+                <div class="card-body text-center">
+                    <h3>600 ج / شهر</h3>
+                    <p>مواعيد – مرضى – فواتير – تقارير – دكاترة متعددين</p>
+                    <p>للاشتراك: <strong>واتساب 01012464739</strong></p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+    Ⓒ 2025 ClinicEase — جميع الحقوق محفوظة
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -46,6 +46,6 @@ class UserServiceImpl(
     fun findByFullName(fullName: String): Optional<User> = userRepository.findByFullName(fullName)
 
     // جلب المستخدمين بحسب الدور والعيادة
-    fun getUsersByRoleAndClinic(role: Role, clinic: Clinic, pageable: Pageable): Page<User> =
-        userRepository.findAllByRoleAndClinic(role, clinic, pageable)
+    fun getUsersByRoleAndClinic(role: Role, clinic: Clinic): List<User> =
+        userRepository.findAllByRoleAndClinic(role, clinic)
 }

@@ -12,3 +12,7 @@ enum class VisitStatus(val label: String) {
     COMPLETED("تم الكشف"),
     CANCELED("تم الإلغاء")
 }
+enum class SubscriptionType {
+    BASIC,      // الباقة الأساسية
+    ADVANCED    // الباقة المتقدمة
+}

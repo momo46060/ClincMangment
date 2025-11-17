@@ -13,27 +13,21 @@ import java.util.*
 
 @Repository
 interface VisitRepository : JpaRepository<Visit, Long> {
-    @Query("SELECT v FROM Visit v" +
-     " WHERE v.doctor.id = :doctorId AND v.visitDate" +
-            " BETWEEN :startOfDay AND :endOfDay AND v.clinic.id = :clinicId")
+    fun countByClinicIdAndVisitDateBetween(clinicId: Long, start: LocalDateTime, end: LocalDateTime): Long
+
+
+    @Query(
+        "SELECT v FROM Visit v" +
+                " WHERE v.doctor.id = :doctorId AND v.visitDate" +
+                " BETWEEN :startOfDay AND :endOfDay AND v.clinic.id = :clinicId"
+    )
     fun findVisitsByDoctorAndDate(
         @Param("doctorId") doctorId: Long,
         @Param("startOfDay") startOfDay: LocalDateTime,
         @Param("endOfDay") endOfDay: LocalDateTime,
         @Param("clinicId") clinicId: Long
     ): List<Visit>
-    fun findByDoctorIdAndStatus(doctorId: Long, status: String): List<Visit>
-    fun findByDoctorIdAndClinicId(doctorId: Long, clinicId: Long): List<Visit>
-    fun findByClinicIdAndVisitDate(clinicId: Long, date: LocalDate): List<Visit>
-    @Query("SELECT v FROM Visit v WHERE v.visitDate >= :start AND v.visitDate < :end")
-    fun findByVisitDate(@Param("start") start: LocalDateTime, @Param("end") end: LocalDateTime): List<Visit>
-    @Query("SELECT v FROM Visit v WHERE DATE(v.visitDate) = DATE(:date)")
-    fun findByVisitDate(@Param("date") date: LocalDateTime): List<Visit>
-    fun findAllByPatient_IdOrderByVisitDateDesc(patientId: Long): List<Visit>
-    fun findByPatient_IdAndId(patientId: Long, visitId: Long): Optional<Visit>
-    fun findAllByDoctor_IdOrderByVisitDateDesc(doctorId: Long): List<Visit>
-    fun findAllByScheduledConsultationAfter(orderDate: java.time.LocalDateTime): List<Visit>
-    fun findAllByPatient_Id(patientId: Long, pageable: Pageable): Page<Visit>
+
     fun findByClinicId(clinicId: Long): List<Visit>
     fun findByClinicIdAndVisitDateBetween(clinicId: Long, start: LocalDateTime, end: LocalDateTime): List<Visit>
     fun findByDoctorIdAndStatusAndClinicId(doctorId: Long, status: String, clinicId: Long): List<Visit>
@@ -44,4 +38,25 @@ interface VisitRepository : JpaRepository<Visit, Long> {
         startOfDay: LocalDateTime,
         endOfDay: LocalDateTime
     ): List<Visit>
+
+
+
+    fun findByClinicIdAndVisitDateBetweenOrderByVisitDateAsc(clinicId: Long, start: LocalDateTime, end: LocalDateTime): List<Visit>
+
+    @Query("SELECT v FROM Visit v WHERE v.clinic.id = :clinicId AND v.visitDate > :now ORDER BY v.visitDate ASC")
+    fun findNextAppointments(@Param("clinicId") clinicId: Long, @Param("now") now: LocalDateTime): List<Visit>
+
+    // visits of a range (for weekly revenue etc.)
+
+    // simple sum revenue using clinic's prices per visitType
+    @Query("SELECT v FROM Visit v WHERE v.clinic.id = :clinicId AND v.visitDate BETWEEN :start AND :end")
+    fun findVisitsForRevenue(@Param("clinicId") clinicId: Long, @Param("start") start: LocalDateTime, @Param("end") end: LocalDateTime): List<Visit>
+
+    // count by status for today
+    fun countByClinicIdAndStatusAndVisitDateBetween(clinicId: Long, status: String, start: LocalDateTime, end: LocalDateTime): Long
+
+    // visits per doctor today
+    @Query("SELECT v.doctor.id, v.doctor.fullName, COUNT(v) FROM Visit v WHERE v.clinic.id = :clinicId AND v.visitDate BETWEEN :start AND :end GROUP BY v.doctor.id, v.doctor.fullName")
+    fun countVisitsPerDoctor(@Param("clinicId") clinicId: Long, @Param("start") start: LocalDateTime, @Param("end") end: LocalDateTime): List<Array<Any>>
+
 }

@@ -1,27 +1,34 @@
 package com.clincmangment.controller
 
-import com.clincmangment.repository.model.ClincRepository
+import com.clincmangment.repository.ClincRepository
 import com.clincmangment.repository.model.Clinic
 import com.clincmangment.repository.model.User
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.utils.Role
+import com.clincmangment.utils.SubscriptionType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDate
 
 @RestController
 class TestDataController(
     private val userService: UserServiceImpl,
     private val clinics: ClincRepository
 ) {
-
     // إنشاء عيادة جديدة
     @GetMapping("/create-clinic")
     fun createClinic(): String {
         val clinic = Clinic(
             name = "عيادة المستقبل",
-            address = "شارع الجامعة، القاهرة"
+            address = "شارع الجامعة، القاهرة",
+            subscriptionEndDate = LocalDate.now(),
+            subscriptionType = SubscriptionType.ADVANCED,
+            checkUpPrice = 400.0,
+            followUpPrice = 100.0,
+
+
         )
         // تخزينها مؤقتًا في القائمة
         clinics.save(clinic)
@@ -38,8 +45,8 @@ class TestDataController(
             username = "dr1",
             rawPassword = "1234",
             role = Role.DOCTOR,
-            fullName = "Dr. Ahmed",
-            phone = "01000000001",
+            fullName = "Dr. Mohamed",
+            phone = "01000000003",
             email = "dr.ahmed@example.com",
             clinic = clinic
         )

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>تقارير الطبيب - ClinicEase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            background: #f4f6f9;
+            font-family: 'Tajawal', sans-serif;
+        }
+        h2 {
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        .card {
+            border: none;
+            border-radius: 14px;
+            transition: all 0.25s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+            border-radius: 14px;
+        }
+        .stat-card h3 { font-weight: bold; }
+        .bg-patients { background: linear-gradient(135deg, #43a047, #66bb6a); }
+        .bg-appointments { background: linear-gradient(135deg, #f9a825, #fbc02d); }
+        .bg-finance { background: linear-gradient(135deg, #039be5, #29b6f6); }
+        .bg-performance { background: linear-gradient(135deg, #ff5722, #ff8a65); }
+        .card-header {
+            border-top-left-radius: 14px;
+            border-top-right-radius: 14px;
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+        }
+        .card-header strong { font-size: 1.1rem; color: #fff; }
+        canvas { background: #fff; border-radius: 14px; padding: 10px; }
+    </style>
+</head>
+<body class="p-4">
+<div class="container">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>تقارير الطبيب <span th:text="${doctor.fullName}"></span> 👨‍⚕️</h2>
+        <a href="/logout" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> تسجيل الخروج</a>
+    </div>
+
+    <!-- إحصائيات سريعة -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-patients shadow-sm">
+                <h5>المرضى المسجلين</h5>
+                <h3 th:text="${totalPatients}">0</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-appointments shadow-sm">
+                <h5>المواعيد لهذا الشهر</h5>
+                <h3 th:text="${totalAppointments}">0</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-finance shadow-sm">
+                <h5>إجمالي الإيرادات</h5>
+                <h3 th:text="${totalRevenue} + ' ج.م'">0 ج.م</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-performance shadow-sm">
+                <h5>متوسط مدة الكشف</h5>
+                <h3 th:text="${averageConsultationTime} + ' دقيقة'">0 دقيقة</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- الرسوم البيانية -->
+    <div class="row g-4">
+        <!-- توزيع المرضى حسب العمر -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header"><strong>توزيع المرضى حسب العمر</strong></div>
+                <div class="card-body">
+                    <canvas id="patientsAgeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- المواعيد المكتملة مقابل الملغاة -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header"><strong>المواعيد المكتملة مقابل الملغاة</strong></div>
+                <div class="card-body">
+                    <canvas id="appointmentsStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- الإيرادات حسب الطبيب -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header"><strong>الإيرادات حسب الطبيب</strong></div>
+                <div class="card-body">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- أداء الموظفين -->
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header"><strong>أداء الموظفين</strong></div>
+                <div class="card-body">
+                    <canvas id="staffPerformanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // بيانات وهمية يمكن ربطها بالـ Controller
+    const patientsAgeData = /*[[${patientsAgeData}]]*/ [5,10,15,20,25,30];
+    const appointmentsStatusData = /*[[${appointmentsStatusData}]]*/ [50,10];
+    const revenueData = /*[[${revenueData}]]*/ [5000,7000,3000];
+    const staffPerformanceData = /*[[${staffPerformanceData}]]*/ [80,70,90];
+
+    // Chart.js
+    new Chart(document.getElementById('patientsAgeChart'), {
+        type: 'bar',
+        data: {
+            labels: ['0-10','11-20','21-30','31-40','41-50','51+'],
+            datasets: [{ label: 'عدد المرضى', data: patientsAgeData, backgroundColor: '#43a047' }]
+        },
+        options: { responsive:true, plugins:{legend:{display:false}} }
+    });
+
+    new Chart(document.getElementById('appointmentsStatusChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['مكتملة','ملغاة'],
+            datasets: [{ label: 'المواعيد', data: appointmentsStatusData, backgroundColor: ['#43a047','#e53935'] }]
+        },
+        options: { responsive:true }
+    });
+
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: {
+            labels: ['دكتور 1','دكتور 2','دكتور 3'],
+            datasets: [{ label: 'الإيرادات', data: revenueData, backgroundColor: '#039be5' }]
+        },
+        options: { responsive:true }
+    });
+
+    new Chart(document.getElementById('staffPerformanceChart'), {
+        type: 'bar',
+        data: {
+            labels: ['استقبال 1','استقبال 2','ممرضة 1'],
+            datasets: [{ label: 'الأداء %', data: staffPerformanceData, backgroundColor: '#ff5722' }]
+        },
+        options: { responsive:true, scales:{y:{beginAtZero:true,max:100}} }
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

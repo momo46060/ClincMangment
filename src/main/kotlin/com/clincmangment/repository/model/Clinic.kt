@@ -1,20 +1,29 @@
 package com.clincmangment.repository.model
 
+import com.clincmangment.utils.SubscriptionType
 import jakarta.persistence.*
+import java.time.LocalDate
 
 @Entity
 @Table(name = "clinics")
 data class Clinic(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = 0,
+    val id: Long? = null,
 
     @Column(nullable = false)
-    var name: String="",
+    var name: String = "",
 
     @Column(nullable = true)
     var address: String? = null,
 
-    var consultationPrice: Double? = 0.0, // سعر الكشف
+    var checkUpPrice: Double = 0.0,
 
-    var followUpPrice: Double? = 0.0
+    var followUpPrice: Double = 0.0,
+
+    var subscriptionEndDate: LocalDate ,
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    var subscriptionType: SubscriptionType = SubscriptionType.BASIC
+
 )

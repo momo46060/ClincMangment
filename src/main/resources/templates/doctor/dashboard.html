@@ -90,6 +90,28 @@
 </head>
 
 <body class="p-4">
+<!-- Modal -->
+<div th:if="${subscriptionExpired}" class="modal fade show" style="display: block;" tabindex="-1" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger"><i class="bi bi-exclamation-triangle"></i> انتهاء الاشتراك</h5>
+            </div>
+            <div class="modal-body">
+                ⚠️ اشتراك العيادة انتهى. يرجى تجديد الاشتراك للوصول للنظام.
+            </div>
+            <div class="modal-footer justify-content-center">
+<!--                <a href="/doctor/renew-subscription" class="btn btn-success">تجديد الاشتراك</a>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Backdrop -->
+<div th:if="${subscriptionExpired}" class="modal-backdrop fade show"></div>
+
+
+
 <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>مرحبًا دكتور <span th:text="${doctor.fullName}"></span> 👋</h2>
@@ -99,6 +121,7 @@
     <div class="d-flex justify-content-start gap-2 mb-4">
         <a href="/doctor/settings" class="btn btn-primary"><i class="bi bi-gear"></i> إعدادات الأسعار</a>
         <a href="/doctor/add-nurse" class="btn btn-success"><i class="bi bi-person-plus"></i> إضافة ممرضة</a>
+        <a href="/clinc/dashboard" class="btn btn-success"><i class="bi bi-person-plus"></i> Dashboard </a>
     </div>
 
     <div class="alert alert-info text-center d-flex justify-content-center align-items-center gap-2">

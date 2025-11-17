@@ -1,7 +1,7 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.NurseForm
-import com.clincmangment.repository.model.ClincRepository
+import com.clincmangment.repository.ClincRepository
 import com.clincmangment.repository.model.Clinic
 import com.clincmangment.repository.model.User
 import com.clincmangment.service.ClinicService
@@ -34,8 +34,12 @@ class DoctorController(
     // لوحة التحكم - زيارات اليوم الجارية حسب العيادة
     @GetMapping("/dashboard")
     fun doctorDashboard(model: Model): String {
+        val user =  httpSession.getAttribute("loggedUser") as? User ?: return "redirect:/login"
+
+        val subscriptionActive = clinicService.isSubscriptionActive(user.clinic)
+        model.addAttribute("subscriptionExpired", !subscriptionActive)
         return try {
-            val phone = (httpSession.getAttribute("loggedUser") as User).phone
+            val phone = user.phone
             val doctor = userService.findByPhone(phone!!).orElseThrow { IllegalArgumentException("Doctor not found") }
             val clinicId = doctor.clinic.id!!
             val currentVisits = visitService.getVisitsByDoctorAndStatus(doctor.id!!, "جاري الكشف", clinicId)
@@ -54,16 +58,11 @@ class DoctorController(
                 doctor.id!!,
                 startOfDay, endOfDay, clinicId
             )
-            println("Today's Visits for Doctor ID ${doctor.id} in Clinic ID $clinicId:")
-            println(allVisits)
 
             val totalRevenue = todayVisits.filter { it.status != "ملغاة" }.sumOf {
-                println("*********************************************************************")
-
                 when (it.visitType) {
-                    VisitType.CHECKUP -> doctor.clinic.consultationPrice ?: 0.0
-                    VisitType.CONSULTATION -> doctor.clinic.followUpPrice ?: 0.0
-                    else -> 0.0
+                    VisitType.CHECKUP -> doctor.clinic.checkUpPrice
+                    VisitType.CONSULTATION -> doctor.clinic.followUpPrice
                 }
             }
 
@@ -83,6 +82,8 @@ class DoctorController(
             "error/custom_error"
         }
     }
+
+//    }
 
     // عرض الكشف الجاري مع التاريخ السابق للزيارات لنفس العيادة فقط
     @GetMapping("/visit/{visitId}")

@@ -19,5 +19,5 @@ interface UserRepository : JpaRepository<User, Long> {
     fun findByFullName(fullName: String): Optional<User>
     fun existsByPhone(phone: String): Boolean
     fun findAllByRole(role: Role, pageable: Pageable): Page<User>
-    fun findAllByRoleAndClinic(role: Role, clinic: Clinic, pageable: Pageable): Page<User>
+    fun findAllByRoleAndClinic(role: Role, clinic: Clinic): List<User>
 }

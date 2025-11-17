@@ -36,7 +36,8 @@ class VisitController(
             val loggedUser = session.getAttribute("loggedUser") as? User
                 ?: return "redirect:/login"
             val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR,
-                clinic = loggedUser.clinic ,Pageable.unpaged()).content
+                clinic = loggedUser.clinic )
+
             model.addAttribute("doctors", doctors)
 
             val visit = visitService.getVisitById(visitId)
@@ -75,9 +76,12 @@ class VisitController(
                 ?: throw IllegalArgumentException("Patient not found in your clinic")
 
             val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR,
-                loggedUser.clinic, Pageable.unpaged()).content
+                loggedUser.clinic)
             val visitForm = VisitForm(patientCode = patient.patientCode)
-
+            println("************************************************")
+            println("$doctors")
+            println("${doctors.size}")
+            println("************************************************")
             model.addAttribute("visitForm", visitForm)
             model.addAttribute("doctors", doctors)
             "visits/new"

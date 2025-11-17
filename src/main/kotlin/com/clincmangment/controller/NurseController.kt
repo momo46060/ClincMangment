@@ -1,6 +1,7 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.model.User
+import com.clincmangment.service.ClinicService
 import com.clincmangment.service.PatientService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
@@ -17,14 +18,19 @@ import java.time.LocalDate
 @RequestMapping("/nurse")
 class NurseController(
     private val visitService: VisitService,
-    private val userService: UserServiceImpl
+    private val userService: UserServiceImpl,
+    private val clinicService: ClinicService,
 ) {
 
     private val logger = LoggerFactory.getLogger(NurseController::class.java)
     @GetMapping("/dashboard")
     fun nurseDashboard(model: Model, session: HttpSession): String {
         val nurse = session.getAttribute("loggedUser") as? User ?: return "redirect:/login"
-        val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR, nurse.clinic,Pageable.unpaged())
+
+        val subscriptionActive = clinicService.isSubscriptionActive(nurse.clinic)
+
+        model.addAttribute("subscriptionExpired", !subscriptionActive)
+        val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR, nurse.clinic)
 
         val todayVisits = visitService.getTodayVisitsByClinic(nurse.clinic.id!!)
         model.addAttribute("doctors", doctors)
