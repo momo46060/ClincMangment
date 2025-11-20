@@ -45,8 +45,8 @@ class TestDataController(
             username = "dr1",
             rawPassword = "1234",
             role = Role.DOCTOR,
-            fullName = "Dr. Mohamed",
-            phone = "01000000003",
+            fullName = "Dr.Ahmed",
+            phone = "01000000001",
             email = "dr.ahmed@example.com",
             clinic = clinic
         )

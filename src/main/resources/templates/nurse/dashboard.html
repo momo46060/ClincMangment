@@ -20,40 +20,45 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: transform 0.2s ease;
         }
-
-        .card:hover {
-            transform: translateY(-3px);
-        }
-
+        .card:hover { transform: translateY(-3px); }
         .card-header {
             border-radius: 16px 16px 0 0;
             font-weight: bold;
             font-size: 1.1rem;
         }
-
-        .table th, .table td {
-            vertical-align: middle;
-        }
-
+        .table th, .table td { vertical-align: middle; word-break: break-word; }
         .btn-status {
             border-radius: 10px;
             font-size: 0.9rem;
             padding: 0.25rem 0.5rem;
         }
+        .action-btns form { display: inline-block; }
 
-        .alert {
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .action-btns form {
-            display: inline-block;
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .d-flex.justify-content-start.mb-3 {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            #doctorFilter {
+                width: 100% !important;
+                margin-top: 0.5rem;
+            }
+            .text-center.mb-4 .btn {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+            .table-responsive {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 
-<body class="p-4">
-<div th:if="${subscriptionExpired}" class="modal fade show" style="display: block;" tabindex="-1" aria-modal="true" role="dialog">
+<body class="p-3 p-md-4">
+
+<!-- Subscription Modal -->
+<div th:if="${subscriptionExpired}" class="modal fade show" style="display:block;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
             <div class="modal-header">
@@ -62,22 +67,17 @@
             <div class="modal-body">
                 ⚠️ اشتراك العيادة انتهى. يرجى تجديد الاشتراك للوصول للنظام.
             </div>
-            <div class="modal-footer justify-content-center">
-                <!--                <a href="/doctor/renew-subscription" class="btn btn-success">تجديد الاشتراك</a>-->
-            </div>
         </div>
     </div>
 </div>
-
-<!-- Backdrop -->
 <div th:if="${subscriptionExpired}" class="modal-backdrop fade show"></div>
 
-
 <div class="container">
+
     <h2 class="mb-2 text-center">لوحة الممرضة</h2>
     <h6 class="text-muted text-center mb-4">📅 تاريخ اليوم: <span th:text="${today}"></span></h6>
 
-    <!-- رسائل التنبيه -->
+    <!-- Messages -->
     <div class="mb-3">
         <div th:if="${success}" class="alert alert-success text-center" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
@@ -89,18 +89,22 @@
         </div>
 
         <div class="card-body">
-            <!-- فلتر الدكتور -->
-            <form th:action="@{/nurse/dashboard}" method="get" class="d-flex justify-content-start mb-3">
-                <label for="doctor" class="me-2 align-self-center">فلتر حسب الدكتور:</label>
-                <select name="doctorId" id="doctor" class="form-select w-auto me-2">
-                    <option value="">الكل</option>
-                    <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.fullName}" th:selected="${d.id == selectedDoctorId}"></option>
-                </select>
-                <button type="submit" class="btn btn-success btn-sm">تطبيق</button>
-            </form>
 
+            <!-- Doctor Filter -->
+            <div class="d-flex justify-content-start mb-3 flex-wrap">
+                <label for="doctorFilter" class="me-2 align-self-center">فلتر حسب الدكتور:</label>
+                <select id="doctorFilter" class="form-select w-auto w-sm-100">
+                    <option value="">الكل</option>
+                    <option th:each="d : ${doctors}"
+                            th:value="${d.id}"
+                            th:text="${d.fullName}">
+                    </option>
+                </select>
+            </div>
+
+            <!-- Table -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle">
+                <table class="table table-striped table-hover align-middle" id="visitsTable">
                     <thead class="table-success">
                     <tr>
                         <th>الكود</th>
@@ -112,48 +116,89 @@
                         <th>الإجراءات</th>
                     </tr>
                     </thead>
+
                     <tbody>
-                    <tr th:each="v : ${todayVisits}">
+
+                    <!-- Visits Rows -->
+                    <tr th:each="v : ${todayVisits}"
+                        th:attr="data-doctor-id=${v.doctor != null ? v.doctor.id : ''}">
                         <td th:text="${v.patient.patientCode}"></td>
                         <td th:text="${v.patient.user.fullName}"></td>
                         <td th:text="${v.visitType}"></td>
                         <td th:text="${v.doctor != null ? v.doctor.fullName : '---'}"></td>
                         <td th:text="${#temporals.format(v.visitDate, 'yyyy-MM-dd HH:mm')}"></td>
                         <td th:text="${v.status}"></td>
+
                         <td class="action-btns">
-                            <!-- تغيير الحالة -->
                             <div th:if="${v.status != 'تم الكشف'}" class="d-inline">
                                 <form th:action="@{'/nurse/visit/' + ${v.id} + '/status'}" method="post">
-                                    <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
-                                        <option value="في الانتظار" th:selected="${v.status == 'في الانتظار'}">في الانتظار</option>
-                                        <option value="جاري الكشف" th:selected="${v.status == 'جاري الكشف'}">جاري الكشف</option>
+                                    <select name="status" class="form-select form-select-sm d-inline w-auto"
+                                            onchange="this.form.submit()">
+                                        <option value="في الانتظار"
+                                                th:selected="${v.status == 'في الانتظار'}">في الانتظار</option>
+                                        <option value="جاري الكشف"
+                                                th:selected="${v.status == 'جاري الكشف'}">جاري الكشف</option>
                                     </select>
                                 </form>
                             </div>
 
-                            <!-- إلغاء الزيارة -->
                             <div th:if="${v.status != 'تم الكشف'}" class="d-inline ms-1">
-                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}" method="post" onsubmit="return confirm('هل أنت متأكد من إلغاء هذه الزيارة؟');">
+                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}" method="post"
+                                      onsubmit="return confirm('هل أنت متأكد من إلغاء هذه الزيارة؟');">
                                     <button type="submit" class="btn btn-danger btn-sm btn-status">إلغاء</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
 
-                    <tr th:if="${#lists.isEmpty(todayVisits)}">
-                        <td colspan="7" class="text-center text-muted">لا توجد حجوزات اليوم</td>
+                    <!-- No visits row -->
+                    <tr id="noVisitsRow" style="display:none;">
+                        <td colspan="7" class="text-center text-muted">لا توجد حجوزات للفلتر الحالي</td>
                     </tr>
+
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
 
-    <div class="text-center mb-4">
-        <a href="/patients/search" class="btn btn-primary me-2">🔍 حجز كشف جديد</a>
-        <a href="/logout" class="btn btn-danger">تسجيل الخروج</a>
+    <div class="text-center mb-4 d-flex flex-column flex-sm-row justify-content-center gap-2">
+        <a href="/patients/search" class="btn btn-primary w-100 w-sm-auto">🔍 حجز كشف جديد</a>
+        <a href="/logout" class="btn btn-danger w-100 w-sm-auto">تسجيل الخروج</a>
     </div>
+
 </div>
+
+<!-- JS Filtering -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const doctorFilter = document.getElementById('doctorFilter');
+        const visitRows = document.querySelectorAll('#visitsTable tbody tr[data-doctor-id]');
+        const noVisitsRow = document.getElementById('noVisitsRow');
+
+        function filterVisits() {
+            const selectedDoctorId = doctorFilter.value;
+            let visibleCount = 0;
+
+            visitRows.forEach(row => {
+                const rowDoctorId = row.getAttribute('data-doctor-id');
+                if (selectedDoctorId === '' || rowDoctorId === selectedDoctorId) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            noVisitsRow.style.display = (visibleCount === 0) ? '' : 'none';
+        }
+
+        doctorFilter.addEventListener('change', filterVisits);
+        filterVisits();
+    });
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

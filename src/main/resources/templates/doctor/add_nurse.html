@@ -44,6 +44,7 @@
         .form-control {
             border-radius: 10px;
             padding: 0.75rem;
+            font-size: 1rem;
         }
 
         .btn-success {
@@ -70,15 +71,42 @@
             opacity: 0.85;
             font-size: 0.9rem;
         }
+
+        /* تحسينات للهواتف */
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+            }
+            .card {
+                margin-top: 20px;
+            }
+            .card-header h3 {
+                font-size: 1.25rem;
+            }
+            .form-control {
+                padding: 0.65rem;
+                font-size: 0.95rem;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .footer-text {
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 
 <body class="d-flex align-items-center justify-content-center">
 
 <div class="container py-4">
+
     <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-5">
-            <div class="card">
+        <!-- تحكم أفضل في جميع الشاشات -->
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+
+            <div class="card mt-3">
                 <div class="card-header">
                     <h3><i class="bi bi-person-plus-fill"></i> إضافة ممرضة جديدة</h3>
                 </div>
@@ -105,9 +133,18 @@
                             <input type="text" th:field="*{password}" class="form-control" placeholder="1234 (افتراضية)">
                         </div>
 
-                        <div class="text-center mt-4">
-                            <button type="submit" class="btn btn-success px-4"><i class="bi bi-check-circle"></i> حفظ</button>
-                            <a href="/doctor/dashboard" class="btn btn-secondary px-4 ms-2"><i class="bi bi-arrow-return-right"></i> رجوع</a>
+                        <div class="text-center mt-4 row g-2">
+                            <div class="col-12 col-md-6">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="bi bi-check-circle"></i> حفظ
+                                </button>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <a href="/doctor/dashboard" class="btn btn-secondary w-100">
+                                    <i class="bi bi-arrow-return-right"></i> رجوع
+                                </a>
+                            </div>
                         </div>
 
                     </form>
@@ -117,6 +154,7 @@
             <div class="footer-text mt-3">
                 Ⓒ 2025 نظام إدارة العيادات — جميع الحقوق محفوظة
             </div>
+
         </div>
     </div>
 </div>

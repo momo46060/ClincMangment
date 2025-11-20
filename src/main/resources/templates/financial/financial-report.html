@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8"/>
+    <title>التقارير المالية</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+
+    <!-- Chart JS + Date Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <style>
+        body {
+            background: #f5f7f9;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        /* Header */
+        .financial-header {
+            padding: 1rem;
+            background: linear-gradient(135deg, #2e7d32, #43a047);
+            border-radius: 15px;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .financial-header h3 {
+            font-size: 1.5rem;
+        }
+
+        /* Cards */
+        .stat-card {
+            border-radius: 15px;
+            padding: 1.3rem;
+            background: #fff;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: .3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card h6 {
+            color: #2e7d32;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .stat-card h4 {
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        /* Section Card */
+        .section-card {
+            border-radius: 15px;
+            padding: 1.2rem;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        /* Chart responsive */
+        .chart-container {
+            height: 300px;
+            width: 100%;
+        }
+
+        /* List items */
+        ul li {
+            background: #f1f6f3;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 767px) {
+
+            .financial-header {
+                flex-direction: column !important;
+                text-align: center;
+            }
+
+            .financial-header h3 {
+                margin-bottom: 10px;
+            }
+
+            .stat-card h4 {
+                font-size: 1.4rem;
+            }
+
+            .section-card {
+                padding: 1rem;
+            }
+
+            .chart-container {
+                height: 230px;
+            }
+
+            .list-group-item {
+                font-size: .9rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="p-3">
+
+<div class="container">
+
+    <!-- Responsive Header -->
+    <div class="financial-header d-flex justify-content-between align-items-center flex-wrap">
+        <h3 th:text="${clinic.name} + ' - التقارير المالية'">التقارير المالية</h3>
+        <a th:href="@{|/clinics/expenses/add|}" class="btn btn-light fw-bold mt-2 mt-md-0">
+            إضافة مصروف +
+        </a>
+    </div>
+
+    <!-- Date Filters -->
+    <div class="mb-3">
+        <form method="get" th:action="@{/clinics/financial}" class="row g-2 align-items-end">
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label">من</label>
+                <input type="text" name="from" class="form-control date-picker" th:value="${fromDate}" readonly/>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <label class="form-label">إلى</label>
+                <input type="text" name="to" class="form-control date-picker" th:value="${toDate}" readonly/>
+            </div>
+            <div class="col-md-2 col-sm-6">
+                <button class="btn btn-success w-100">عرض</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="row g-3">
+        <div class="col-md-4 col-sm-12">
+            <div class="stat-card">
+                <h6>إجمالي الإيراد (الفترة)</h6>
+                <h4 th:text="${summary.revenuePeriod}">0</h4>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <div class="stat-card">
+                <h6>إجمالي المصروفات</h6>
+                <h4 th:text="${summary.expensePeriod}">0</h4>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <div class="stat-card">
+                <h6>صافي الربح</h6>
+                <h4 th:text="${summary.profit}">0</h4>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts + Breakdown -->
+    <div class="row mt-4">
+
+        <!-- Charts -->
+        <div class="col-lg-8 col-12">
+            <div class="section-card chart-container mb-3">
+                <h6>الإيرادات والمصروفات (آخر 30 يوم)</h6>
+                <canvas id="revExp30"></canvas>
+            </div>
+
+            <div class="section-card chart-container">
+                <h6>إيرادات/مصروفات آخر 12 شهر</h6>
+                <canvas id="revExp12"></canvas>
+            </div>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="col-lg-4 col-12">
+
+            <div class="section-card mb-3">
+                <h6>تفصيل المصروفات (آخر 90 يوم)</h6>
+                <ul>
+                    <li th:each="entry : ${summary.expenseBreakdown.entrySet()}"
+                        th:text="${entry.key + ' — ' + entry.value}">
+                    </li>
+                </ul>
+            </div>
+
+            <div class="section-card">
+                <h6>روابط سريعة</h6>
+                <a th:href="@{|/clinics/expenses/add|}" class="btn btn-outline-success w-100 mb-2">أضف مصروف</a>
+                <a th:href="@{|/clinics/expenses|}" class="btn btn-outline-secondary w-100">عرض المصروفات</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Charts Script -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    const rv30 = [[${summary.revenueVsExpenseLast30Days}]];
+    const labels30 = rv30.map(i => i.dateLabel);
+    const rev30 = rv30.map(i => i.revenue);
+    const exp30 = rv30.map(i => i.expense);
+
+    new Chart(document.getElementById('revExp30'), {
+        type: 'bar',
+        data: {
+            labels: labels30,
+            datasets: [
+                { label: 'إيرادات', data: rev30, backgroundColor: '#43a047' },
+                { label: 'مصروفات', data: exp30, backgroundColor: '#e53935' }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    const rev12 = [[${summary.revenueLast12Months}]];
+    const exp12 = [[${summary.expensesLast12Months}]];
+
+    const monthLabels = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو',
+        'أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+
+    new Chart(document.getElementById('revExp12'), {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [
+                { label: 'إيرادات', data: rev12, borderColor: '#43a047', fill: true },
+                { label: 'مصروفات', data: exp12, borderColor: '#e53935', fill: true }
+            ]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    flatpickr(".date-picker", {
+        dateFormat: "Y-m-d",
+        locale: "ar"
+    });
+
+    /*]]>*/
+</script>
+
+</body>
+</html>

@@ -8,6 +8,7 @@ import com.clincmangment.service.ClinicService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
 import com.clincmangment.utils.Role
+import com.clincmangment.utils.SubscriptionType
 import com.clincmangment.utils.VisitType
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
@@ -35,6 +36,8 @@ class DoctorController(
     @GetMapping("/dashboard")
     fun doctorDashboard(model: Model): String {
         val user =  httpSession.getAttribute("loggedUser") as? User ?: return "redirect:/login"
+        val isSubscriptionAdvanced = user.clinic.subscriptionType == SubscriptionType.ADVANCED
+        model.addAttribute("isSubscriptionAdvanced", isSubscriptionAdvanced)
 
         val subscriptionActive = clinicService.isSubscriptionActive(user.clinic)
         model.addAttribute("subscriptionExpired", !subscriptionActive)
@@ -181,6 +184,7 @@ class DoctorController(
     @GetMapping("/settings")
     fun showClinicSettings(model: Model, session: HttpSession): String {
         val loggedUser = session.getAttribute("loggedUser") as User
+
         val clinic = clinicService.findClinicById(loggedUser.clinic.id!!)
         model.addAttribute("clinic", clinic)
         return "doctor/clinic_settings"

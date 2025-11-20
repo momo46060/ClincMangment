@@ -44,10 +44,24 @@ class DashboardService(
         // Revenue today: sum by visitType and clinic prices
         val visitsForRevenue = visitRepository.findVisitsForRevenue(clinicId, startOfDay, endOfDay)
         val clinic = clinicRepository.findById(clinicId).orElseThrow()
+        println("**************************")
+        println("${visitsForRevenue}")
+        println("**************************")
         val revenueToday = visitsForRevenue.sumOf { v ->
             when (v.visitType) {
-                VisitType.CONSULTATION -> clinic.checkUpPrice
-                else -> clinic.followUpPrice
+                VisitType.CHECKUP -> {
+                    println("**************************")
+                    println("${clinic.checkUpPrice}")
+                    println("**************************")
+                    clinic.checkUpPrice
+
+                }
+                else -> {
+                    println("**************************")
+                    println("${clinic.followUpPrice}")
+                    println("**************************")
+                    clinic.followUpPrice
+                }
             }
         }
 

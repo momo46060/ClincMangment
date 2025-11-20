@@ -59,4 +59,10 @@ interface VisitRepository : JpaRepository<Visit, Long> {
     @Query("SELECT v.doctor.id, v.doctor.fullName, COUNT(v) FROM Visit v WHERE v.clinic.id = :clinicId AND v.visitDate BETWEEN :start AND :end GROUP BY v.doctor.id, v.doctor.fullName")
     fun countVisitsPerDoctor(@Param("clinicId") clinicId: Long, @Param("start") start: LocalDateTime, @Param("end") end: LocalDateTime): List<Array<Any>>
 
+
+    // لحساب قائمة الزيارات لفترة (نستخدمها لحساب الإيرادات في Service)
+    fun findVisitsByClinicIdAndVisitDateBetween(clinicId: Long, start: LocalDateTime, end: LocalDateTime): List<Visit>
+
+
+
 }

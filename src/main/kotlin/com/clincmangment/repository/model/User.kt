@@ -8,8 +8,15 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(
-    name = "users", indexes = [
-        Index(name = "idx_users_phone", columnList = "phone")
+    name = "users" ,uniqueConstraints = [
+        UniqueConstraint(
+            name = "uk_user_phone_clinic",
+            columnNames = ["phone", "clinic_id"]
+        )
+    ],
+    indexes = [
+        Index(name = "idx_user_phone", columnList = "phone"),
+        Index(name = "idx_user_clinic", columnList = "clinic_id")
     ]
 )
 data class User(

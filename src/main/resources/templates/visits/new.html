@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     <title>إضافة كشف جديد - نظام العيادة</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap RTL + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
     <style>
         body {
             background: #f1f5f9;
             font-family: 'Tajawal', sans-serif;
             padding: 2rem 0;
+        }
+
+        h2 {
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            font-size: 1.5rem;
         }
 
         .card {
@@ -27,15 +36,6 @@
             padding: 1rem 1rem;
         }
 
-        .btn-success {
-            border-radius: 10px;
-            font-weight: 600;
-        }
-
-        .btn-secondary {
-            border-radius: 10px;
-        }
-
         label {
             font-weight: 500;
         }
@@ -44,12 +44,20 @@
             border-radius: 10px;
         }
 
-        h2 {
-            margin-bottom: 1.5rem;
-            font-weight: bold;
+        .btn-success, .btn-secondary {
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            h2 { font-size: 1.25rem; }
+            .card-header { font-size: 1rem; padding: 0.75rem 1rem; }
+            .form-select, .form-control, textarea { font-size: 0.95rem; }
+            .btn-success, .btn-secondary { font-size: 0.95rem; padding: 0.5rem 1rem; }
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -62,7 +70,7 @@
 
                 <input type="hidden" th:field="*{patientCode}"/>
 
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <label class="form-label"><i class="bi bi-journal-medical"></i> نوع الزيارة</label>
                     <select class="form-select" th:field="*{visitType}" required>
                         <option value="">اختر النوع</option>
@@ -71,7 +79,7 @@
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <label class="form-label"><i class="bi bi-person-badge"></i> الدكتور</label>
                     <select class="form-select" th:field="*{doctorPhone}" required>
                         <option value="">--اختر الدكتور--</option>
@@ -79,12 +87,10 @@
                     </select>
                 </div>
 
-                <div class="col-md-6">
+                <div class="col-12 col-md-6">
                     <label class="form-label"><i class="bi bi-clipboard-data"></i> حالة الكشف</label>
                     <select class="form-select" th:field="*{status}" required>
                         <option value="في الانتظار">في الانتظار</option>
-<!--                        <option value="جاري الكشف">جاري الكشف</option>-->
-<!--                        <option value="تم الكشف">تم الكشف</option>-->
                     </select>
                 </div>
 
@@ -93,10 +99,11 @@
                     <textarea class="form-control" th:field="*{complaint}" rows="3" placeholder="ادخل تفاصيل الشكوى"></textarea>
                 </div>
 
-                <div class="col-12 d-flex justify-content-center gap-2 mt-3">
+                <div class="col-12 d-flex flex-column flex-sm-row justify-content-center gap-2 mt-3">
                     <button type="submit" class="btn btn-success px-4">💾 حفظ الكشف</button>
                     <a href="/nurse/dashboard" class="btn btn-secondary px-4">رجوع</a>
                 </div>
+
             </form>
         </div>
     </div>
