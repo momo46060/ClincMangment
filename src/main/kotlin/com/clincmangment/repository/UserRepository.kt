@@ -14,10 +14,16 @@ import java.util.Optional
 @Repository
 interface UserRepository : JpaRepository<User, Long> {
     @Query("SELECT u FROM User u JOIN FETCH u.clinic WHERE u.id = :id")
-    fun findByIdWithClinic(@Param("id") id: Long): Optional<User>
-    fun findByPhone(phone: String): Optional<User>
-    fun findByFullName(fullName: String): Optional<User>
+    fun findByIdWithClinic(@Param("id") id: Long): User
+    fun findByPhone(phone: String): User?
+    fun findByFullName(fullName: String): User
     fun existsByPhone(phone: String): Boolean
     fun findAllByRole(role: Role, pageable: Pageable): Page<User>
     fun findAllByRoleAndClinic(role: Role, clinic: Clinic): List<User>
+    fun findByEmail(email: String): User?
+    fun findAllByClinicIdAndIdNot(clinicId: Long, userId: Long): List<User>
+
+
+
+
 }

@@ -17,7 +17,7 @@ class UserServiceImpl(
     fun findByIdWithClinic(id: Long): Optional<User> = userRepository.findById(id)
     // تسجيل الدخول
     fun login(phone: String, password: String): User? {
-        val user = userRepository.findByPhone(phone).orElse(null)
+        val user = userRepository.findByPhone(phone)
         return if (user != null && user.password == password) user else null
     }
 
@@ -41,9 +41,9 @@ class UserServiceImpl(
         return userRepository.save(user)
     }
 
-    fun findByPhone(phone: String): Optional<User> = userRepository.findByPhone(phone)
+    fun findByPhone(phone: String): User? = userRepository.findByPhone(phone)
 
-    fun findByFullName(fullName: String): Optional<User> = userRepository.findByFullName(fullName)
+    fun findByFullName(fullName: String): User? = userRepository.findByFullName(fullName)
 
     // جلب المستخدمين بحسب الدور والعيادة
     fun getUsersByRoleAndClinic(role: Role, clinic: Clinic): List<User> =

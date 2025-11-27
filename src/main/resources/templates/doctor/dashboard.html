@@ -71,6 +71,54 @@
         }
 
         /* ============================
+           CHAT BADGE STYLING
+           ============================ */
+        .chat-btn-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .chat-notification-badge {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: linear-gradient(135deg, #e53935, #ef5350);
+            color: white;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0 6px;
+            box-shadow: 0 2px 8px rgba(229, 57, 53, 0.4);
+            animation: pulse 2s infinite;
+            z-index: 10;
+            border: 2px solid white;
+        }
+
+        .chat-notification-badge.show {
+            display: flex;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .btn-success:hover .chat-notification-badge {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        /* ============================
            RESPONSIVE IMPROVEMENTS
            ============================ */
         @media (max-width: 768px) {
@@ -129,6 +177,16 @@
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <h2 class="mb-2">مرحبًا دكتور <span th:text="${doctor.fullName}"></span> 👋</h2>
         <a href="/logout" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> تسجيل الخروج</a>
+    </div>
+
+    <!-- Chat Button with Badge -->
+    <div class="text-start mb-3">
+        <div class="chat-btn-container">
+            <a href="/chat" class="btn btn-success rounded-pill px-4">
+                <i class="bi bi-chat-dots"></i> فتح الشات
+            </a>
+            <span class="chat-notification-badge" id="chatBadge">0</span>
+        </div>
     </div>
 
     <!-- Action Buttons -->
@@ -232,21 +290,92 @@
 
 </div>
 
+<!-- WebSocket Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
 <script th:inline="javascript">
-    const toggleBtn = document.getElementById('toggleRevenue');
-    const revenueElem = document.getElementById('revenue');
-    let visible = false;
+    const currentUserId = /*[[${doctor.id}]]*/ 0;
+    const chatBadge = document.getElementById('chatBadge');
+    let stompClient = null;
+    let unreadCount = 0;
 
-    const actualRevenue = /*[[${#numbers.formatDecimal(totalRevenue,0,'COMMA',2,'POINT')}]]*/ '0 ج.م';
+    function updateBadge(count) {
+        unreadCount = count;
+        if (count > 0) {
+            chatBadge.textContent = count > 99 ? '99+' : count;
+            chatBadge.classList.add('show');
+        } else {
+            chatBadge.classList.remove('show');
+        }
+    }
 
-    toggleBtn.addEventListener('click', () => {
-        visible = !visible;
-        revenueElem.textContent = visible ? actualRevenue : '**********';
-        toggleBtn.innerHTML = visible
-            ? '<i class="bi bi-eye-slash"></i>'
-            : '<i class="bi bi-eye"></i>';
+    function saveUnreadCount(count) {
+        localStorage.setItem('chatUnreadCount_' + currentUserId, count);
+    }
+
+    function loadUnreadCount() {
+        const stored = localStorage.getItem('chatUnreadCount_' + currentUserId);
+        const count = stored ? parseInt(stored) : 0;
+        updateBadge(count);
+    }
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, function() {
+            console.log('✅ متصل بالشات');
+
+            // الاشتراك في الرسائل الجديدة
+            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
+                try {
+                    const msg = JSON.parse(message.body);
+                    if (msg.senderId !== currentUserId) {
+                        unreadCount++;
+                        updateBadge(unreadCount);
+                        saveUnreadCount(unreadCount);
+                        playNotificationSound();
+                    }
+                } catch (e) {
+                    console.error('خطأ في معالجة الرسالة:', e);
+                }
+            });
+
+            loadUnreadCount();
+        }, function(error) {
+            console.error('خطأ في الاتصال:', error);
+            setTimeout(connectWebSocket, 5000);
+        });
+    }
+
+    function playNotificationSound() {
+        const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBzKF0fPTgjMGHm7A7+OZUQ0PVqzn77BdGAg+ltryxnYpBSuBzvLZiTYIGWa77+ifTRAMT6Ti8LZjHAY3kdnyzXksBSV3yPDdkEAKFF+16+usVRQLRp/h8r1sIAcyhdHz04IzBh9uwPDjmVAND1as5++wXRgIPpbb8sV2KQUrgdDy2Yk2CBlmvO/pn00QDE6k4/C2YxwGOJHa8s15LAUmeMnw3ZBADRRGU=');
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log('تعذر تشغيل الصوت'));
+    }
+
+    // تحديث البادج إذا تغير من صفحة أخرى بدون ريفرش
+    window.addEventListener('storage', function(event) {
+        if (event.key === 'chatUnreadCount_' + currentUserId) {
+            updateBadge(parseInt(event.newValue));
+        }
     });
+
+    // بدء الاتصال عند تحميل الصفحة
+    window.addEventListener('load', connectWebSocket);
+
+    // جلب العدد الأولي من السيرفر (مرّة واحدة)
+    fetch('/chat/unread-count')
+        .then(res => res.json())
+        .then(count => {
+            updateBadge(count);
+            saveUnreadCount(count);
+        })
+        .catch(e => console.error('خطأ في جلب عدد الرسائل:', e));
 </script>
+
 
 </body>
 </html>

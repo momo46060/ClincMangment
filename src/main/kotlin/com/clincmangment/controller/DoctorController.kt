@@ -43,8 +43,9 @@ class DoctorController(
         model.addAttribute("subscriptionExpired", !subscriptionActive)
         return try {
             val phone = user.phone
-            val doctor = userService.findByPhone(phone!!).orElseThrow { IllegalArgumentException("Doctor not found") }
-            val clinicId = doctor.clinic.id!!
+            val doctor = userService.findByPhone(phone!!)
+//                .orElseThrow { IllegalArgumentException("Doctor not found") }
+            val clinicId = doctor!!.clinic.id!!
             val currentVisits = visitService.getVisitsByDoctorAndStatus(doctor.id!!, "جاري الكشف", clinicId)
             // ✅ إجماليات الحالات لكل نوع
             val allVisits = visitService.getVisitsByDoctor(doctor.id!!, clinicId)

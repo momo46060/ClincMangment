@@ -1,39 +1,66 @@
 package com.clincmangment.config
 
+import com.clincmangment.service.CustomUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.SecurityFilterChain
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig {
+class SecurityConfig(
+    private val customUserDetailsService: CustomUserDetailsService,
+    private val customAuthenticationSuccessHandler: CustomAuthenticationSuccessHandler
+) {
+
+    @Bean
+    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun authenticationProvider(): DaoAuthenticationProvider {
+        val provider = DaoAuthenticationProvider()
+        provider.setUserDetailsService(customUserDetailsService)
+        provider.setPasswordEncoder(passwordEncoder())
+        return provider
+    }
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .authorizeHttpRequests { auth ->
                 auth
-                    // 1. Allow all requests to the H2 console path
-                    .requestMatchers("/h2-console/**").permitAll()
-                    // Allow all other requests (as per your original code)
-                    .anyRequest().permitAll()
+                    .requestMatchers("/login", "/h2-console/**", "/css/**", "/js/**", "/images/**").permitAll()
+                    .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                    .requestMatchers("/nurse/**").hasRole("NURSE")
+                    .requestMatchers("/patients/**").hasAnyRole("DOCTOR", "NURSE", "PATIENT")
+                    .anyRequest().authenticated()
             }
-            .formLogin { it.disable() }
-            .httpBasic { it.disable() }
-
-            // 2. Disable CSRF globally (as per your original code)
-            //    If you prefer to enable CSRF for other endpoints,
-            //    you should change 'it.disable()' to 'csrf -> csrf.ignoringRequestMatchers("/h2-console/**")'
+            .formLogin { form ->
+                form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .usernameParameter("phone")
+                    .passwordParameter("password")
+                    .successHandler(customAuthenticationSuccessHandler)  // ✅ استخدام الـ handler المخصص
+                    .failureUrl("/login?error=true")
+                    .permitAll()
+            }
+            .logout { logout ->
+                logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login?logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .permitAll()
+            }
             .csrf { it.disable() }
+            .headers { it.frameOptions { frame -> frame.disable() } }
 
-            // 3. Important: Disable X-Frame-Options for the H2 console to allow it to render in an iframe
-            .headers { headers ->
-                headers.frameOptions { frameOptions ->
-                    frameOptions.disable()
-                }
-            }
+        http.authenticationProvider(authenticationProvider())
 
         return http.build()
     }

@@ -3,6 +3,7 @@ package com.clincmangment.controller
 import com.clincmangment.repository.ClincRepository
 import com.clincmangment.repository.model.Clinic
 import com.clincmangment.repository.model.User
+import com.clincmangment.service.ChatMessageService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.utils.Role
 import com.clincmangment.utils.SubscriptionType
@@ -15,8 +16,13 @@ import java.time.LocalDate
 @RestController
 class TestDataController(
     private val userService: UserServiceImpl,
-    private val clinics: ClincRepository
+    private val clinics: ClincRepository,
+    private val chatMessageService: ChatMessageService
 ) {
+    @GetMapping("/chat/unread-counts")
+    fun getUnreadCounts(): MutableMap<Long?, Int?> {
+        return chatMessageService.getAllUnreadCounts()
+    }
     // إنشاء عيادة جديدة
     @GetMapping("/create-clinic")
     fun createClinic(): String {

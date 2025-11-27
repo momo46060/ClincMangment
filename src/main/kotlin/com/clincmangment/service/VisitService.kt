@@ -52,7 +52,7 @@ class VisitService(
         val patient = patientService.findByPatientCode(patientCode)
             .orElseThrow { IllegalArgumentException("Patient not found") }
 
-        val doctor = doctorUsername?.let { userService.findByPhone(it).orElse(null) }
+        val doctor =userService.findByPhone(doctorUsername!!)
 
         val visit = Visit(
             patient = patient,
