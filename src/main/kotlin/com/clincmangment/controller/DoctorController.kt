@@ -165,20 +165,25 @@ class DoctorController(
         redirectAttributes: RedirectAttributes,
         session: HttpSession
     ): String {
-        val doctor = session.getAttribute("loggedUser") as? User
-            ?: throw IllegalArgumentException("User not logged in")
+        try{
+            val doctor = session.getAttribute("loggedUser") as? User
+                ?: throw IllegalArgumentException("User not logged in")
 
-        val nurse = userService.createUser(
-            username = nurseForm.fullName,
-            rawPassword = nurseForm.password ?: "1234",
-            role = Role.NURSE,
-            fullName = nurseForm.fullName,
-            phone = nurseForm.phone,
-            clinic = doctor.clinic
-        )
+            val nurse = userService.createUser(
+                username = nurseForm.fullName,
+                rawPassword = nurseForm.password ?: "1234",
+                role = Role.NURSE,
+                fullName = nurseForm.fullName,
+                phone = nurseForm.phone,
+                clinic = doctor.clinic
+            )
 
-        redirectAttributes.addFlashAttribute("success", "تمت إضافة الممرضة بنجاح")
-        return "redirect:/doctor/add-nurse"
+            redirectAttributes.addFlashAttribute("success", "تمت إضافة الممرضة بنجاح")
+            return "redirect:/doctor/add-nurse"
+        }catch (e:Exception){
+            redirectAttributes.addFlashAttribute("error", "رقم الهاتف موجود مسيقا")
+            return "redirect:/doctor/add-nurse"
+        }
     }
 
     // DoctorController.kt
