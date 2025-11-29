@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+
+<!-- ===== SIDEBAR FRAGMENT ===== -->
+<div   th:fragment="doctorSidebar()" style="width:260px; min-height:100vh;
+background:#1b5e20; color:#fff; position:fixed; right:0; top:0; padding:20px;">
+
+    <!-- Doctor Info -->
+
+    <hr class="border-light">
+
+    <!-- Sidebar Menu -->
+    <ul class="list-unstyled">
+
+        <li class="mb-3">
+            <a href="/doctor/dashboard" class="btn w-100 btn-light text-start">
+                <i class="bi bi-house"></i> الصفحة الرئيسية
+            </a>
+        </li>
+
+        <li class="mb-3">
+            <a href="/doctor/settings" class="btn w-100 btn-light text-start">
+                <i class="bi bi-gear"></i> إعدادات الأسعار
+            </a>
+        </li>
+
+        <li class="mb-3">
+            <a href="/doctor/add-nurse" class="btn w-100 btn-light text-start">
+                <i class="bi bi-person-plus"></i> إضافة ممرضة
+            </a>
+        </li>
+
+        <!-- Advanced Subscription Menu -->
+        <div >
+            <li class="mb-3">
+                <a href="/clinc/dashboard" class="btn w-100 btn-light text-start">
+                    <i class="bi bi-menu-button"></i> Dashboard
+                </a>
+            </li>
+
+            <li class="mb-3">
+                <a href="/clinics/financial" class="btn w-100 btn-light text-start">
+                    <i class="bi bi-bar-chart-line"></i> التقارير المالية
+                </a>
+            </li>
+
+            <li class="mb-3">
+                <a href="/clinics/expenses/add" class="btn w-100 btn-light text-start">
+                    <i class="bi bi-plus-circle"></i> أضف مصروف
+                </a>
+            </li>
+
+            <li class="mb-3">
+                <a href="/clinics/expenses" class="btn w-100 btn-light text-start">
+                    <i class="bi bi-cash-stack"></i> المصروفات
+                </a>
+            </li>
+        </div>
+
+        <li class="mb-3">
+            <a href="/chat" class="btn w-100 btn-light text-start position-relative">
+                <i class="bi bi-chat-dots"></i> الشات
+                <span id="chatBadge"
+                      class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                    0
+                </span>
+            </a>
+        </li>
+
+
+
+        <li class="mt-4">
+            <a href="/logout" class="btn w-100 btn-danger text-start">
+                <i class="bi bi-box-arrow-right"></i> تسجيل الخروج
+            </a>
+        </li>
+    </ul>
+
+</div>
+
+<!-- Empty placeholder so pages shift left -->
+<div style="margin-right:260px;"></div>
+
+</body>
+<script th:inline="javascript">
+    const currentUserId = /*[[${doctor.id}]]*/ 0;
+    const chatBadge = document.getElementById('chatBadge');
+    let stompClient = null;
+    let unreadCount = 0;
+
+    function updateBadge(count) {
+        unreadCount = count;
+        chatBadge.textContent = count > 99 ? '99+' : count;
+        chatBadge.style.display = count > 0 ? "inline-block" : "none";
+    }
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, function() {
+            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
+                const msg = JSON.parse(message.body);
+                if (msg.senderId !== currentUserId) {
+                    unreadCount++;
+                    updateBadge(unreadCount);
+                }
+            });
+        });
+    }
+
+    window.addEventListener('load', connectWebSocket);
+</script>
+
+</html>

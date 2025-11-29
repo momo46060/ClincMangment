@@ -9,149 +9,104 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
-        body {
-            background: #e8f5e9;
-            font-family: 'Tajawal', sans-serif;
+        body { background: #e8f5e9; font-family: 'Tajawal', sans-serif; }
+        .card { border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        /* Row colors */
+        tr.status-waiting, tr.status-waiting td {
+            background-color: #fff8d1 !important; --bs-table-bg:#fff8d1!important;
+        }
+        tr.status-progress, tr.status-progress td {
+            background-color: #d9ebff !important; --bs-table-bg:#d9ebff!important;
+        }
+        tr.status-done, tr.status-done td {
+            background-color: #d4f8d4 !important; --bs-table-bg:#d4f8d4!important;
+        }
+        tr.status-cancelled, tr.status-cancelled td {
+            background-color: #eeeeee !important; --bs-table-bg:#eeeeee!important;
         }
 
-        .card {
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+        /* Hover Fix */
+        .table-hover tbody tr:hover > * { filter: brightness(0.94); }
 
-        /* >>>>>>> حل مشكلة الألوان (CSS Fix) <<<<<<<<< */
-        /* نستهدف الصف والخلايا ومتغيرات البوتستراب لضمان ظهور اللون */
+        /* Legend */
+        .legend-item { display: inline-flex; align-items: center; margin-inline-end: 15px; font-size: .85rem; }
+        .legend-color-box { width:15px; height:15px; background:#ccc; border:1px solid #bbb; margin-inline-start:5px; }
 
-        /* 1. حالة الانتظار (أصفر) */
-        tr.status-waiting,
-        tr.status-waiting > td {
-            background-color: #fff8d1 !important;
-            --bs-table-bg: #fff8d1 !important;       /* للبوتستراب 5 */
-            --bs-table-accent-bg: #fff8d1 !important; /* للصفوف المقلمة */
-        }
-
-        /* 2. حالة جاري الكشف (أزرق) */
-        tr.status-progress,
-        tr.status-progress > td {
-            background-color: #d9ebff !important;
-            --bs-table-bg: #d9ebff !important;
-            --bs-table-accent-bg: #d9ebff !important;
-        }
-
-        /* 3. حالة تم الكشف (أخضر) */
-        tr.status-done,
-        tr.status-done > td {
-            background-color: #d4f8d4 !important;
-            --bs-table-bg: #d4f8d4 !important;
-            --bs-table-accent-bg: #d4f8d4 !important;
-        }
-
-        /* 4. حالة ملغاة (رمادي) */
-        tr.status-cancelled,
-        tr.status-cancelled > td {
-            background-color: #eeeeee !important;
-            --bs-table-bg: #eeeeee !important;
-            --bs-table-accent-bg: #eeeeee !important;
-        }
-
-        /* تعديل Hover (عند مرور الماوس) ليصبح اللون أغمق قليلاً بدلاً من اختفائه */
-        .table-hover > tbody > tr.status-waiting:hover > * { --bs-table-accent-bg: #ffeeb0 !important; }
-        .table-hover > tbody > tr.status-progress:hover > * { --bs-table-accent-bg: #b6d9ff !important; }
-        .table-hover > tbody > tr.status-done:hover > * { --bs-table-accent-bg: #b0f0b0 !important; }
-        .table-hover > tbody > tr.status-cancelled:hover > * { --bs-table-accent-bg: #e0e0e0 !important; }
-
-
-        /* تنسيق Legend */
-        .legend-item {
-            display: inline-flex;
-            align-items: center;
-            margin-inline-end: 15px;
-            font-size: 0.85rem;
-        }
-        .legend-color-box {
-            width: 15px; height: 15px; margin-inline-start: 5px;
-            border-radius: 3px; border: 1px solid #ccc;
-        }
-
-        /* Animation */
-        @keyframes fade-slide {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        tr.animated-row {
-            animation: fade-slide 0.35s ease forwards;
-        }
-
-        /* إزالة أي إخفاء افتراضي */
-        tr { opacity: 1; }
+        tr.animated-row { animation: fade-slide .35s ease; }
+        @keyframes fade-slide { 0%{opacity:0; transform:translateY(6px);} 100%{opacity:1; transform:translateY(0);} }
 
         .filter-row .form-select, .filter-row input { min-width: 150px; }
-        @media (max-width: 576px) {
-            .filter-row { flex-direction: column !important; }
-        }
     </style>
 </head>
 
 <body class="p-3 p-md-4">
 
 <div class="container">
+
     <h2 class="mb-2 text-center">لوحة الممرضة</h2>
-    <h6 class="text-muted text-center mb-4">📅 تاريخ اليوم: <span th:text="${today}"></span></h6>
+    <h6 class="text-muted text-center mb-4">
+    </h6>
     <div class="text-start mb-3">
-        <a href="/chat" class="btn btn-success rounded-pill px-4">
-            <i class="bi bi-chat-dots"></i> فتح الشات
-        </a>
+        <div class="chat-btn-container">
+            <a href="/chat" class="btn btn-success rounded-pill px-4">
+                <i class="bi bi-chat-dots"></i> فتح الشات
+            </a>
+            <span class="chat-notification-badge" id="chatBadge">0</span>
+        </div>
     </div>
-
-    <div id="alertStrip" class="alert alert-info d-none alert-dismissible fade show" role="alert">
-        <i class="bi bi-bell-fill me-2"></i>
-        <span id="alertMessage">لا توجد تنبيهات.</span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
+    <!-- إحصائيات -->
     <div class="card mb-4">
         <div class="card-body p-3">
             <h6 class="mb-3 text-muted">إحصائيات اليوم:</h6>
             <div class="row text-center">
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background-color: #fff8d1;">
-                        <span class="d-block fw-bold" id="counter-waiting">0</span>
+                    <div class="p-2 border rounded" style="background:#fff8d1;">
+                        <span id="counter-waiting" class="d-block fw-bold">0</span>
                         <small class="text-muted">في الانتظار</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background-color: #d9ebff;">
-                        <span class="d-block fw-bold" id="counter-progress">0</span>
+                    <div class="p-2 border rounded" style="background:#d9ebff;">
+                        <span id="counter-progress" class="d-block fw-bold">0</span>
                         <small class="text-muted">جاري الكشف</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background-color: #d4f8d4;">
-                        <span class="d-block fw-bold" id="counter-done">0</span>
+                    <div class="p-2 border rounded" style="background:#d4f8d4;">
+                        <span id="counter-done" class="d-block fw-bold">0</span>
                         <small class="text-muted">تم الكشف</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background-color: #eeeeee;">
-                        <span class="d-block fw-bold" id="counter-cancelled">0</span>
-                        <small class="text-muted">   ملغاة </small>
+                    <div class="p-2 border rounded" style="background:#eeeeee;">
+                        <span id="counter-cancelled" class="d-block fw-bold">0</span>
+                        <small class="text-muted">ملغاة</small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- الحجوزات -->
     <div class="card mb-4">
         <div class="card-header bg-success text-white">
             <i class="bi bi-calendar-check me-2"></i> حجوزات اليوم
         </div>
 
         <div class="card-body">
+
+            <!-- ======= البحث + الفلاتر ========= -->
             <div class="d-flex flex-wrap gap-3 mb-3 filter-row">
+
+                <input id="searchBox" type="text" class="form-control"
+                       placeholder="🔎 بحث بالاسم أو الكود" style="min-width:220px;">
+
                 <select id="doctorFilter" class="form-select">
                     <option value="">فلتر حسب الدكتور (الكل)</option>
                     <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.fullName}"></option>
                 </select>
+
                 <select id="statusFilter" class="form-select">
                     <option value="">فلتر حسب الحالة (الكل)</option>
                     <option value="في الانتظار">في الانتظار</option>
@@ -161,6 +116,7 @@
                 </select>
             </div>
 
+            <!-- Legend -->
             <div class="mb-3">
                 <small class="text-muted d-block mb-1">دليل الألوان:</small>
                 <div class="d-flex flex-wrap">
@@ -172,70 +128,82 @@
             </div>
 
             <div class="table-responsive">
-                <table class="table table-hover align-middle" id="visitsTable">
+                <table id="visitsTable" class="table table-hover align-middle">
                     <thead class="table-success">
                     <tr>
                         <th>الكود</th>
                         <th>اسم المريض</th>
                         <th>نوع الزيارة</th>
                         <th>الدكتور</th>
-                        <th id="timeHeader" style="cursor: pointer;">الوقت <i id="sortIcon" class="bi bi-sort-down-alt"></i></th>
+                        <th id="timeHeader" style="cursor:pointer;">
+                            الوقت <i id="sortIcon" class="bi bi-sort-down-alt"></i>
+                        </th>
                         <th>الحالة</th>
                         <th>الإجراءات</th>
                     </tr>
                     </thead>
-                    <tbody>
 
+                    <tbody>
                     <tr th:each="v : ${todayVisits}"
                         th:attr="data-doctor-id=${v.doctor != null ? v.doctor.id : ''},
                                  data-status=${v.status},
                                  data-time=${#temporals.format(v.visitDate, 'yyyy-MM-dd HH:mm')},
                                  data-search=${v.patient.user.fullName + ' ' + v.patient.patientCode}"
-                        th:classappend="${v.status == 'في الانتظار' ? 'status-waiting animated-row' :
-                                         v.status == 'جاري الكشف' ? 'status-progress animated-row' :
-                                         v.status == 'تم الكشف' ? 'status-done animated-row' :
-                                         'status-cancelled animated-row'}">
+                        th:classappend="${
+                             v.status == 'في الانتظار' ? 'status-waiting animated-row' :
+                             v.status == 'جاري الكشف' ? 'status-progress animated-row' :
+                             v.status == 'تم الكشف' ? 'status-done animated-row' :
+                             'status-cancelled animated-row'}">
 
                         <td th:text="${v.patient.patientCode}"></td>
                         <td th:text="${v.patient.user.fullName}"></td>
                         <td th:text="${v.visitType}"></td>
                         <td th:text="${v.doctor != null ? v.doctor.fullName : '---'}"></td>
-                        <td class="visit-time" th:text="${#temporals.format(v.visitDate, 'HH:mm')}"></td>
+                        <td th:text="${#temporals.format(v.visitDate,'HH:mm')}"></td>
                         <td th:text="${v.status}"></td>
+
                         <td>
                             <div th:if="${v.status != 'تم الكشف' and v.status != 'ملغاة'}">
-                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/status'}" method="post" class="d-inline">
-                                    <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
-                                        <option value="في الانتظار" th:selected="${v.status == 'في الانتظار'}">في الانتظار</option>
-                                        <option value="جاري الكشف" th:selected="${v.status == 'جاري الكشف'}">جاري الكشف</option>
-                                        <option value="تم الكشف" th:selected="${v.status == 'تم الكشف'}">تم الكشف</option>
+                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/status'}"
+                                      method="post" class="d-inline">
+                                    <select name="status" class="form-select form-select-sm d-inline w-auto"
+                                            onchange="this.form.submit()">
+                                        <option value="في الانتظار" th:selected="${v.status=='في الانتظار'}">في الانتظار</option>
+                                        <option value="جاري الكشف" th:selected="${v.status=='جاري الكشف'}">جاري الكشف</option>
+                                        <option value="تم الكشف" th:selected="${v.status=='تم الكشف'}">تم الكشف</option>
                                     </select>
                                 </form>
-                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}" method="post" class="d-inline ms-1" onsubmit="return confirm('إلغاء؟');">
+
+                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}"
+                                      method="post" class="d-inline ms-1"
+                                      onsubmit="return confirm('إلغاء؟');">
                                     <button class="btn btn-danger btn-sm">إلغاء</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
-                    <tr id="noVisitsRow" style="display:none;"><td colspan="7" class="text-center text-muted">لا توجد نتائج</td></tr>
+
+                    <tr id="noVisitsRow" style="display:none;">
+                        <td colspan="7" class="text-center text-muted">لا توجد نتائج</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
 
-    <div class="text-center mb-4 d-flex justify-content-center gap-2">
-        <a href="/patients/search" class="btn btn-primary">🔍 حجز جديد</a>
-        <a href="/logout" class="btn btn-danger">خروج</a>
-    </div>
 </div>
 
+<!-- ======================= JavaScript ======================== -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
         const doctorFilter = document.getElementById("doctorFilter");
         const statusFilter = document.getElementById("statusFilter");
         const searchBox = document.getElementById("searchBox");
         const visitsTableBody = document.querySelector("#visitsTable tbody");
+
         let visitRows = Array.from(document.querySelectorAll("#visitsTable tbody tr[data-doctor-id]"));
         const noVisitsRow = document.getElementById("noVisitsRow");
 
@@ -245,20 +213,24 @@
         const counterDone = document.getElementById("counter-done");
         const counterCancelled = document.getElementById("counter-cancelled");
 
-        // Sort
+        // Sorting
         const timeHeader = document.getElementById("timeHeader");
         const sortIcon = document.getElementById("sortIcon");
-        let sortDirection = 'asc';
+        let sortDirection = "asc";
 
         function updateCounters(rows) {
-            let waiting = 0, progress = 0, done = 0, cancelled = 0;
+            let waiting=0, progress=0, done=0, cancelled=0;
+
             rows.forEach(row => {
+                if (row.style.display === "none") return; // مهم جداً
+
                 const status = row.getAttribute("data-status");
                 if (status === "في الانتظار") waiting++;
                 else if (status === "جاري الكشف") progress++;
                 else if (status === "تم الكشف") done++;
                 else if (status === "ملغاة") cancelled++;
             });
+
             counterWaiting.textContent = waiting;
             counterProgress.textContent = progress;
             counterDone.textContent = done;
@@ -267,44 +239,47 @@
 
         function sortTable() {
             visitRows.sort((a, b) => {
-                const timeA = new Date(a.getAttribute('data-time'));
-                const timeB = new Date(b.getAttribute('data-time'));
-                return sortDirection === 'asc' ? timeA - timeB : timeB - timeA;
+                const A = new Date(a.getAttribute("data-time"));
+                const B = new Date(b.getAttribute("data-time"));
+                return sortDirection === "asc" ? A - B : B - A;
             });
-            visitsTableBody.innerHTML = '';
-            visitRows.forEach(row => visitsTableBody.appendChild(row));
+
+            visitsTableBody.innerHTML = "";
+            visitRows.forEach(r => visitsTableBody.appendChild(r));
             applyFilters();
         }
 
-        timeHeader.addEventListener('click', () => {
-            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
-            sortIcon.className = sortDirection === 'asc' ? 'bi bi-sort-down-alt' : 'bi bi-sort-up';
+        timeHeader.addEventListener("click", () => {
+            sortDirection = sortDirection === "asc" ? "desc" : "asc";
+            sortIcon.className = sortDirection === "asc" ? "bi bi-sort-down-alt" : "bi bi-sort-up";
             sortTable();
         });
 
         function applyFilters() {
-            const doctorId = doctorFilter.value;
+            const doctor = doctorFilter.value;
             const status = statusFilter.value;
             const search = searchBox.value.trim().toLowerCase();
-            let visibleCount = 0;
+            let visible = 0;
 
             visitRows.forEach(row => {
                 const rowDoctor = row.getAttribute("data-doctor-id");
                 const rowStatus = row.getAttribute("data-status");
                 const rowSearch = row.getAttribute("data-search").toLowerCase();
 
-                const matchesDoctor = doctorId === "" || rowDoctor === doctorId;
-                const matchesStatus = status === "" || rowStatus === status;
-                const matchesSearch = rowSearch.includes(search);
+                const okDoctor = doctor === "" || rowDoctor === doctor;
+                const okStatus = status === "" || rowStatus === status;
+                const okSearch = rowSearch.includes(search);
 
-                if (matchesDoctor && matchesStatus && matchesSearch) {
+                if (okDoctor && okStatus && okSearch) {
                     row.style.display = "";
-                    visibleCount++;
+                    visible++;
                 } else {
                     row.style.display = "none";
                 }
             });
-            noVisitsRow.style.display = (visibleCount === 0) ? "" : "none";
+
+            noVisitsRow.style.display = visible === 0 ? "" : "none";
+
             updateCounters(visitRows);
         }
 
@@ -315,6 +290,6 @@
         sortTable();
     });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

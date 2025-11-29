@@ -1,0 +1,102 @@
+<!-- fragments/header.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ar" dir="rtl">
+
+<head></head>
+
+<body>
+
+<!-- ===== HEADER FRAGMENT ===== -->
+<div th:fragment="doctorHeader()">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <a href="/logout" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-box-arrow-right"></i> تسجيل الخروج
+        </a>
+    </div>
+
+    <!-- Chat Button with Badge -->
+    <div class="text-start mb-3">
+        <div class="chat-btn-container">
+            <a href="/chat" class="btn btn-success rounded-pill px-4">
+                <i class="bi bi-chat-dots"></i> فتح الشات
+            </a>
+
+            <span class="chat-notification-badge" id="chatBadge">0</span>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-start gap-2 mb-4 btn-group-responsive">
+
+
+        <div >
+            <a href="/clinc/dashboard" class="btn btn-success"><i class="bi bi-menu-button"></i> Dashboard</a>
+
+            <a th:href="@{|/clinics/financial|}" class="btn btn-warning">
+                <i class="bi bi-bar-chart-line"></i> التقارير المالية
+            </a>
+
+            <a th:href="@{|/clinics/expenses/add|}" class="btn btn-primary">أضف مصروف</a>
+            <a th:href="@{|/clinics/expenses|}" class="btn btn-primary">عرض المصروفات</a>
+            <a th:href="@{|/doctor/dashboard|}" class="btn btn-primary">الصفحه الرئيسيه</a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+<script th:inline="javascript">
+    const currentUserId = /*[[${doctor.id}]]*/ 0;
+    const chatBadge = document.getElementById('chatBadge');
+    let stompClient = null;
+    let unreadCount = 0;
+
+    function updateBadge(count) {
+        unreadCount = count;
+        if (count > 0) {
+            chatBadge.textContent = count > 99 ? '99+' : count;
+            chatBadge.classList.add('show');
+        } else {
+            chatBadge.classList.remove('show');
+        }
+    }
+
+    function saveUnreadCount(count) {
+        localStorage.setItem('chatUnreadCount_' + currentUserId, count);
+    }
+
+    function loadUnreadCount() {
+        const stored = localStorage.getItem('chatUnreadCount_' + currentUserId);
+        const count = stored ? parseInt(stored) : 0;
+        updateBadge(count);
+    }
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.debug = null;
+
+        stompClient.connect({}, function() {
+            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
+                const msg = JSON.parse(message.body);
+                if (msg.senderId !== currentUserId) {
+                    unreadCount++;
+                    updateBadge(unreadCount);
+                    saveUnreadCount(unreadCount);
+                }
+            });
+
+            loadUnreadCount();
+        }, function(error) {
+            console.error('خطأ في الاتصال:', error);
+            setTimeout(connectWebSocket, 5000);
+        });
+    }
+
+    window.addEventListener('load', connectWebSocket);
+</script>
+
+</html>

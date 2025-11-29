@@ -10,6 +10,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <style>
+        .page-wrapper {
+            margin-right: 260px;
+            padding: 20px;
+        }
         body {
             background: #f4f6f9;
             font-family: 'Tajawal', sans-serif;
@@ -170,36 +174,14 @@
         </div>
     </div>
 </div>
+<!-- Sidebar -->
+<div th:replace="fragments/sidebar :: doctorSidebar()"></div>
 
-<div class="container">
+<div class="page-wrapper">
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <h2 class="mb-2">مرحبًا دكتور <span th:text="${doctor.fullName}"></span> 👋</h2>
-        <a href="/logout" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> تسجيل الخروج</a>
-    </div>
-
-    <!-- Chat Button with Badge -->
-    <div class="text-start mb-3">
-        <div class="chat-btn-container">
-            <a href="/chat" class="btn btn-success rounded-pill px-4">
-                <i class="bi bi-chat-dots"></i> فتح الشات
-            </a>
-            <span class="chat-notification-badge" id="chatBadge">0</span>
-        </div>
-    </div>
-
-    <!-- Action Buttons -->
-    <div class="d-flex justify-content-start gap-2 mb-4 btn-group-responsive">
-        <a href="/doctor/settings" class="btn btn-primary"><i class="bi bi-gear"></i> إعدادات الأسعار</a>
-        <a href="/doctor/add-nurse" class="btn btn-success"><i class="bi bi-person-plus"></i> إضافة ممرضة</a>
-
-        <div th:if="${isSubscriptionAdvanced}">
-            <a href="/clinc/dashboard" class="btn btn-success"><i class="bi bi-menu-button"></i> Dashboard</a>
-            <a th:href="@{|/clinics/financial|}" class="btn btn-warning">
-                <i class="bi bi-bar-chart-line"></i> التقارير المالية
-            </a>
-        </div>
     </div>
 
     <!-- Revenue -->

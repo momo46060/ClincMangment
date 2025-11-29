@@ -15,6 +15,10 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <style>
+        .page-wrapper {
+            margin-right: 260px;
+            padding: 20px;
+        }
         body {
             background: #f5f7f9;
             font-family: 'Tajawal', sans-serif;
@@ -27,12 +31,14 @@
             border-radius: 15px;
             color: #fff;
             margin-bottom: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .financial-header h3 {
             font-size: 1.5rem;
         }
+
+
 
         /* Cards */
         .stat-card {
@@ -40,7 +46,7 @@
             padding: 1.3rem;
             background: #fff;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             transition: .3s;
         }
 
@@ -64,7 +70,7 @@
             border-radius: 15px;
             padding: 1.2rem;
             background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             margin-bottom: 1rem;
         }
 
@@ -113,15 +119,16 @@
     </style>
 </head>
 
-<body class="p-3">
+<body>
+<!--<div th:replace="fragments/sidebar :: doctorSidebar()"></div>-->
 
 <div class="container">
 
     <!-- Responsive Header -->
     <div class="financial-header d-flex justify-content-between align-items-center flex-wrap">
         <h3 th:text="${clinic.name} + ' - التقارير المالية'">التقارير المالية</h3>
-        <a th:href="@{|/clinics/expenses/add|}" class="btn btn-light fw-bold mt-2 mt-md-0">
-            إضافة مصروف +
+        <a th:href="@{|/doctor/dashboard|}" class="btn btn-light fw-bold mt-2 mt-md-0">
+            الصفحه الرئيسيه
         </a>
     </div>
 
@@ -217,29 +224,29 @@
         data: {
             labels: labels30,
             datasets: [
-                { label: 'إيرادات', data: rev30, backgroundColor: '#43a047' },
-                { label: 'مصروفات', data: exp30, backgroundColor: '#e53935' }
+                {label: 'إيرادات', data: rev30, backgroundColor: '#43a047'},
+                {label: 'مصروفات', data: exp30, backgroundColor: '#e53935'}
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: {responsive: true, maintainAspectRatio: false}
     });
 
     const rev12 = [[${summary.revenueLast12Months}]];
     const exp12 = [[${summary.expensesLast12Months}]];
 
-    const monthLabels = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو',
-        'أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    const monthLabels = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو',
+        'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
 
     new Chart(document.getElementById('revExp12'), {
         type: 'line',
         data: {
             labels: monthLabels,
             datasets: [
-                { label: 'إيرادات', data: rev12, borderColor: '#43a047', fill: true },
-                { label: 'مصروفات', data: exp12, borderColor: '#e53935', fill: true }
+                {label: 'إيرادات', data: rev12, borderColor: '#43a047', fill: true},
+                {label: 'مصروفات', data: exp12, borderColor: '#e53935', fill: true}
             ]
         },
-        options: { responsive: true, maintainAspectRatio: false }
+        options: {responsive: true, maintainAspectRatio: false}
     });
 
     flatpickr(".date-picker", {
