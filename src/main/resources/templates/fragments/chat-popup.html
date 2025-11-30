@@ -1,202 +1,37 @@
 <div th:fragment="chatPopupFragment">
-    <!DOCTYPE html>
-    <html lang="ar" dir="rtl" xmlns:th="http://www.thymeleaf.org">
-    <head>
-        <meta charset="UTF-8">
-        <title>Mini Chat</title>
+<div id="chatPopup"
+     style="position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.4); display:none; z-index:9999;">
 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <div id="chatPopupContainer"
+         style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);
+                width:90%; height:90%; background:white; border-radius:20px;
+                overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
 
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                background: #f5f5f5;
-                font-family: 'Tajawal', sans-serif;
-                height: 100vh;
-                overflow: hidden;
-            }
-
-            /* Container */
-            .chat-container {
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-
-            /* Header */
-            .chat-header {
-                background: #1b5e20;
-                color: white;
-                padding: 10px 15px;
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 0.9rem;
-            }
-
-            /* Messages area */
-            .messages-area {
-                flex: 1;
-                overflow-y: auto;
-                padding: 10px;
-                background: #ece5dd;
-            }
-
-            .msg {
-                max-width: 75%;
-                padding: 8px 12px;
-                border-radius: 12px;
-                margin-bottom: 8px;
-                font-size: 0.85rem;
-                line-height: 1.4;
-            }
-
-            .sent {
-                background: #dcf8c6;
-                margin-left: auto;
-            }
-
-            .received {
-                background: white;
-                margin-right: auto;
-            }
-
-            /* Input row */
-            .input-area {
-                padding: 8px;
-                background: white;
-                border-top: 1px solid #ddd;
-                display: flex;
-                gap: 6px;
-            }
-
-            .input-area input {
-                flex: 1;
-                border-radius: 20px;
-                border: 1px solid #ccc;
-                padding: 8px 15px;
-                font-size: 0.9rem;
-            }
-
-            .send-btn {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                border: none;
-                background: #1b5e20;
-                color: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-        </style>
-
-    </head>
-    <body>
-
-    <div class="chat-container">
-
-        <!-- Header -->
-        <div class="chat-header">
-            <i class="bi bi-person-circle fs-4"></i>
-            <div>
-                <div id="chatUserName" style="font-weight:600;">المستخدم</div>
-                <small class="text-light">متصل الآن</small>
-            </div>
-        </div>
-
-        <!-- Messages -->
-        <div id="messagesArea" class="messages-area"></div>
-
-        <!-- Input -->
-        <div class="input-area">
-            <input id="messageInput" type="text" placeholder="اكتب رسالة..." onkeypress="if(event.key==='Enter') sendMessage()">
-            <button class="send-btn" onclick="sendMessage()">
-                <i class="bi bi-send-fill"></i>
-            </button>
-        </div>
+        <!-- هنا يتم تحميل صفحة الشات كاملة -->
+        <iframe id="chatPopupIframe"
+                src=""
+                style="width:100%; height:100%; border:none;"></iframe>
 
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    function openChatPopup() {
+        document.getElementById("chatPopup").style.display = "block";
+        document.getElementById("chatPopupIframe").src = "/chat"; // ← صفحة الشات الأصلية
+    }
 
-    <script th:inline="javascript">
+    function closeChatPopup() {
+        document.getElementById("chatPopup").style.display = "none";
+        document.getElementById("chatPopupIframe").src = "";
+    }
 
-        const currentUserId = /*[[${currentUserId}]]*/ 0;
-        const currentUserName = /*[[${currentUserName}]]*/ '';
-        const chatWithId = /*[[${chatWithId}]]*/ 0;
-        const chatWithName = /*[[${chatWithName}]]*/ '';
-
-        document.getElementById("chatUserName").textContent = chatWithName;
-
-        let stompClient = null;
-
-        // connect websocket
-        function connect() {
-            const socket = new SockJS('/ws');
-            stompClient = Stomp.over(socket);
-            stompClient.debug = null;
-
-            stompClient.connect({}, function(frame) {
-                stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
-                    const msg = JSON.parse(message.body);
-                    if (msg.senderId === chatWithId) {
-                        displayMessage(msg);
-                    }
-                });
-            });
-        }
-
-        connect();
-
-        function loadConversation() {
-            fetch('/api/chat/conversation/' + chatWithId)
-                .then(res => res.json())
-                .then(messages => {
-                    messages.forEach(m => displayMessage(m));
-                });
-        }
-
-        loadConversation();
-
-        function displayMessage(msg) {
-            const area = document.getElementById('messagesArea');
-
-            const div = document.createElement('div');
-            div.className = 'msg ' + (msg.senderId === currentUserId ? 'sent' : 'received');
-            div.textContent = msg.content;
-
-            area.appendChild(div);
-            area.scrollTop = area.scrollHeight;
-        }
-
-        function sendMessage() {
-            const input = document.getElementById("messageInput");
-            const text = input.value.trim();
-            if (!text) return;
-
-            const message = {
-                senderId: currentUserId,
-                senderName: currentUserName,
-                recipientId: chatWithId,
-                recipientName: chatWithName,
-                content: text
-            };
-
-            stompClient.send('/app/chat.send', {}, JSON.stringify(message));
-
-            input.value = "";
-        }
-
-    </script>
-
-    </body>
-    </html>
-
-
+    // اغلاق عند الضغط خارج الـ popup
+    document.addEventListener('click', function (e) {
+        const popup = document.getElementById("chatPopupContainer");
+        if (e.target === document.getElementById("chatPopup")) closeChatPopup();
+    });
+</script>
     <!-- نفس الكود السابق بتاع chat-popup -->
 </div>
