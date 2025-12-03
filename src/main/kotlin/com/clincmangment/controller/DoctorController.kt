@@ -62,7 +62,7 @@ class DoctorController(
             )
 
             val totalRevenue = todayVisits.filter { it.status != "ملغاة" }.sumOf {
-                when (it.visitType) {
+                when (it.visitType!!) {
                     VisitType.CHECKUP -> doctor.clinic.checkUpPrice
                     VisitType.CONSULTATION -> doctor.clinic.followUpPrice
                 }
@@ -95,13 +95,13 @@ class DoctorController(
             val clinicId = (httpSession.getAttribute("loggedUser") as User).clinic.id!!
 
             // تحقق إن الزيارة تتبع نفس العيادة
-            if (visit.clinic.id != clinicId) {
+            if (visit.clinic!!.id != clinicId) {
                 model.addAttribute("errorMessage", "ليس لديك صلاحية لرؤية هذه الزيارة")
                 return "error/custom_error"
             }
 
             val patient = visit.patient
-            val previousVisits = visitService.getVisitsByPatient(patient.id!!, clinicId)
+            val previousVisits = visitService.getVisitsByPatient(patient!!.id!!, clinicId)
 
             model.addAttribute("visit", visit)
             model.addAttribute("patient", patient)
@@ -130,7 +130,7 @@ class DoctorController(
             val doctor = httpSession.getAttribute("loggedUser") as? User
                 ?: throw IllegalArgumentException("User not logged in")
 
-            if (visit.clinic.id != doctor.clinic.id) {
+            if (visit.clinic!!.id != doctor.clinic.id) {
                 throw IllegalArgumentException("Visit does not belong to your clinic")
             }
 

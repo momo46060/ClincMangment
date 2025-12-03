@@ -22,9 +22,10 @@ data class Prescription(
     @JoinColumn(name = "visit_id", nullable = false)
     val visit: Visit,
 
-    @Column(nullable = false, length = 2000)
-    val content: String,   // نص الوصفة أو تمثيل JSON للأدوية والجرعات
+    @Column(nullable = false, length = 5000)
+    val content: String, // JSON يمثل الأدوية والجرعات
 
     @CreationTimestamp
     var createdAt: LocalDateTime? = null
 )
+

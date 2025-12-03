@@ -71,9 +71,9 @@ class DashboardService(
         val nextAppointments = nextAppointmentsRaw.map { v ->
             AppointmentShortDTO(
                 visitId = v.id ?: 0,
-                patientName = v.patient.user.fullName,
+                patientName = v.patient!!.user.fullName,
                 doctorName = v.doctor?.fullName,
-                visitType = v.visitType.name,
+                visitType = v.visitType!!.name,
                 visitTime = v.visitDate.format(fmt)
             )
         }
@@ -104,7 +104,7 @@ class DashboardService(
 
         // Visit type breakdown (today)
         val visitsTodayList = visitRepository.findByClinicIdAndVisitDateBetween(clinicId, startOfDay, endOfDay)
-        val typeBreakdown = visitsTodayList.groupingBy { it.visitType.name }.eachCount().mapValues { it.value.toLong() }
+        val typeBreakdown = visitsTodayList.groupingBy { it.visitType!!.name }.eachCount().mapValues { it.value.toLong() }
 
         // Average waiting time (we'll approximate using createdAt to visitDate if createdAt exists)
         val waitingMinutes = visitsTodayList.mapNotNull { v ->
@@ -118,7 +118,7 @@ class DashboardService(
         val since = today.minusDays(90).atStartOfDay()
         val until = today.atStartOfDay().plusDays(1)
         val visits90 = visitRepository.findByClinicIdAndVisitDateBetween(clinicId, since, until)
-        val topPatients = visits90.groupingBy { it.patient.user.fullName }.eachCount()
+        val topPatients = visits90.groupingBy { it.patient!!.user.fullName }.eachCount()
             .entries.sortedByDescending { it.value }.take(5).map { PatientVisitsDTO(it.key, it.value.toLong()) }
 
         // Top medicines last 30 days (parse prescription.content heuristically)

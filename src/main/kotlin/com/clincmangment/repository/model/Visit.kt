@@ -18,11 +18,11 @@ data class Visit(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     @Column(name = "nurse_name")
-    var nurseName: String,
+    var nurseName: String? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id", nullable = false)
-    val patient: Patient,
+    val patient: Patient? = null,
 
     // الممرضة التي سجلت الزيارة (يمكن أن تكون null لو النظام سجلها بآلية أخرى)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +36,7 @@ data class Visit(
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val visitType: VisitType,
+    val visitType: VisitType? = null,
 
     @Column(nullable = false)
     val visitDate: LocalDateTime = LocalDateTime.now(), // تاريخ الكشف الفعلي
@@ -64,6 +64,6 @@ data class Visit(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clinic_id", nullable = false)
-    var clinic: Clinic
+    var clinic: Clinic? = null
 // الحالة الافتراضية
 )

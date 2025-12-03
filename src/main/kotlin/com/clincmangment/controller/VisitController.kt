@@ -64,7 +64,7 @@ class VisitController(
 
             val form = VisitEditForm(
                 visitId = visit.id!!,
-                patientCode = visit.patient.patientCode,
+                patientCode = visit.patient!!.patientCode,
                 diagnosis = visit.diagnosis,
                 prescription = visit.prescription,
                 scheduledConsultation = visit.scheduledConsultation
