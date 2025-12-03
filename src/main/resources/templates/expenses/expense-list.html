@@ -4,47 +4,102 @@
     <meta charset="UTF-8">
     <title>قائمة المصروفات</title>
 
-    <!-- Bootstrap RTL -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
 
-    <!-- Flatpickr -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Expenses List)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF; /* أزرق موثوق للتركيز */
+            --primary-dark: #0056b3;  /* للتفاعل والعمق */
+            --primary-light: #E6F3FF; /* لون فاتح للخلفيات المساعدة */
+            --primary-light-hover: #e9f4ff; /* لون أفتح للتمرير */
+            --text-color-dark: #212529;
+        }
+
         .page-wrapper {
             margin-right: 260px;
             padding: 20px;
         }
         body {
-            background: #f5f7f9;
+            /* خلفية بيضاء مزرقة نظيفة */
+            background: #f8faff;
             font-family: Tajawal, sans-serif;
+            color: var(--text-color-dark);
         }
 
         .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 18px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            border: none;
         }
 
         .table thead {
-            background: #43a047;
+            /* رأس الجدول بالأزرق الداكن */
+            background: var(--primary-dark);
             color: #fff;
+            font-weight: 700;
         }
 
         .table tbody tr:hover {
-            background: #e8f5e9;
+            /* خلفية زرقاء فاتحة عند التمرير */
+            background: var(--primary-light-hover);
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border-color: #ced4da;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-color-dark);
+        }
+
+        /* الأزرار (أضف/عرض) باللون الأزرق الموحد */
+        .btn-success {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        h3 {
+            font-weight: 800;
+            color: var(--primary-dark);
         }
 
         /* ---------- Responsive Tweaks ---------- */
 
         @media (max-width: 768px) {
             h3 {
-                font-size: 1.1rem !important;
+                font-size: 1.4rem !important;
+                text-align: center;
             }
 
             .btn-success {
                 width: 100%;
                 margin-top: 10px;
+            }
+
+            .page-wrapper {
+                margin-right: 0;
+                padding: 10px;
             }
         }
 
@@ -63,17 +118,15 @@
 
 <div class="page-wrapper">
 
-    <!-- Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-2">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
         <h3 class="m-0" th:text="${clinic.name} + ' - قائمة المصروفات'">قائمة المصروفات</h3>
 
-        <a th:href="@{|/clinics/${clinic.id}/expenses/add|}" class="btn btn-success">
+        <a th:href="@{|/clinics/expenses/add|}" class="btn btn-success">
             أضف مصروف +
         </a>
     </div>
 
-    <!-- Filters -->
-    <form method="get" class="row g-3 mb-4">
+    <form method="get" class="row g-3 mb-4 card p-4">
 
         <div class="col-md-3 col-12">
             <label class="form-label">من</label>
@@ -93,7 +146,6 @@
 
     </form>
 
-    <!-- Table -->
     <div class="card p-3">
         <div class="table-responsive">
             <table class="table table-hover align-middle">
@@ -129,7 +181,7 @@
 
 </div>
 
-<!-- Date Picker -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     flatpickr(".date-picker", {
         dateFormat: "Y-m-d",

@@ -1,8 +1,6 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.NurseForm
-import com.clincmangment.repository.ClincRepository
-import com.clincmangment.repository.model.Clinic
 import com.clincmangment.repository.model.User
 import com.clincmangment.service.ClinicService
 import com.clincmangment.service.UserServiceImpl

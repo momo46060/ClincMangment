@@ -6,85 +6,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Reports Dashboard)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF;
+            --primary-dark: #0056b3;
+        }
+
         body {
-            background: #f4f6f9;
+            background: #f8faff; /* خلفية بيضاء مزرقة نظيفة */
             font-family: 'Tajawal', sans-serif;
         }
         h2 {
-            font-weight: bold;
-            color: #2e7d32;
+            font-weight: 800;
+            /* لون أزرق داكن موحد */
+            color: var(--primary-dark);
         }
         .card {
             border: none;
-            border-radius: 14px;
-            transition: all 0.25s ease;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
         }
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
         }
         .stat-card {
             text-align: center;
-            padding: 20px;
+            padding: 25px 20px;
             color: #fff;
-            border-radius: 14px;
+            border-radius: 18px;
         }
-        .stat-card h3 { font-weight: bold; }
-        .bg-patients { background: linear-gradient(135deg, #43a047, #66bb6a); }
+        .stat-card h5 { font-weight: 500; opacity: 0.9; }
+        .stat-card h3 { font-weight: 900; font-size: 2.2rem; }
+
+        /* الإحصائية الأساسية باللون الأزرق الموحد */
+        .bg-patients {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+        }
+
+        /* تم الحفاظ على الألوان الثانوية للتمييز */
         .bg-appointments { background: linear-gradient(135deg, #f9a825, #fbc02d); }
         .bg-finance { background: linear-gradient(135deg, #039be5, #29b6f6); }
         .bg-performance { background: linear-gradient(135deg, #ff5722, #ff8a65); }
+
         .card-header {
-            border-top-left-radius: 14px;
-            border-top-right-radius: 14px;
-            background: linear-gradient(135deg, #2e7d32, #43a047);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            /* تدرج أزرق موحد لرأس البطاقات */
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            padding: 1rem;
+            border-bottom: none;
         }
-        .card-header strong { font-size: 1.1rem; color: #fff; }
-        canvas { background: #fff; border-radius: 14px; padding: 10px; }
+        .card-header strong { font-size: 1.2rem; color: #fff; font-weight: 700; }
+        .card-body { padding: 1.5rem; }
+        canvas { background: #fff; border-radius: 16px; padding: 10px; }
+
+        .btn-outline-danger {
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+        }
     </style>
 </head>
 <body class="p-4">
 <div class="container">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <h2>تقارير الطبيب <span th:text="${doctor.fullName}"></span> 👨‍⚕️</h2>
-        <a href="/logout" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> تسجيل الخروج</a>
+        <a href="/logout" class="btn btn-outline-danger"><i class="bi bi-box-arrow-right"></i> تسجيل الخروج</a>
     </div>
 
-    <!-- إحصائيات سريعة -->
-    <div class="row g-3 mb-4">
+    <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <div class="stat-card bg-patients shadow-sm">
+            <div class="stat-card bg-patients shadow-lg">
                 <h5>المرضى المسجلين</h5>
                 <h3 th:text="${totalPatients}">0</h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card bg-appointments shadow-sm">
+            <div class="stat-card bg-appointments shadow-lg">
                 <h5>المواعيد لهذا الشهر</h5>
                 <h3 th:text="${totalAppointments}">0</h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card bg-finance shadow-sm">
+            <div class="stat-card bg-finance shadow-lg">
                 <h5>إجمالي الإيرادات</h5>
                 <h3 th:text="${totalRevenue} + ' ج.م'">0 ج.م</h3>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="stat-card bg-performance shadow-sm">
+            <div class="stat-card bg-performance shadow-lg">
                 <h5>متوسط مدة الكشف</h5>
                 <h3 th:text="${averageConsultationTime} + ' دقيقة'">0 دقيقة</h3>
             </div>
         </div>
     </div>
 
-    <!-- الرسوم البيانية -->
     <div class="row g-4">
-        <!-- توزيع المرضى حسب العمر -->
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header"><strong>توزيع المرضى حسب العمر</strong></div>
@@ -94,7 +122,6 @@
             </div>
         </div>
 
-        <!-- المواعيد المكتملة مقابل الملغاة -->
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header"><strong>المواعيد المكتملة مقابل الملغاة</strong></div>
@@ -104,7 +131,6 @@
             </div>
         </div>
 
-        <!-- الإيرادات حسب الطبيب -->
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header"><strong>الإيرادات حسب الطبيب</strong></div>
@@ -114,7 +140,6 @@
             </div>
         </div>
 
-        <!-- أداء الموظفين -->
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header"><strong>أداء الموظفين</strong></div>
@@ -135,11 +160,23 @@
     const staffPerformanceData = /*[[${staffPerformanceData}]]*/ [80,70,90];
 
     // Chart.js
+
+    // الألوان الموحدة
+    const primaryBlue = 'var(--primary-color)'; // #007BFF
+    const dangerRed = '#e53935'; // أحمر ثابت للإلغاء
+    const financeBlue = '#039be5';
+    const performanceOrange = '#ff5722';
+
     new Chart(document.getElementById('patientsAgeChart'), {
         type: 'bar',
         data: {
             labels: ['0-10','11-20','21-30','31-40','41-50','51+'],
-            datasets: [{ label: 'عدد المرضى', data: patientsAgeData, backgroundColor: '#43a047' }]
+            datasets: [{
+                label: 'عدد المرضى',
+                data: patientsAgeData,
+                // تغيير اللون إلى الأزرق الموحد
+                backgroundColor: primaryBlue
+            }]
         },
         options: { responsive:true, plugins:{legend:{display:false}} }
     });
@@ -148,7 +185,12 @@
         type: 'doughnut',
         data: {
             labels: ['مكتملة','ملغاة'],
-            datasets: [{ label: 'المواعيد', data: appointmentsStatusData, backgroundColor: ['#43a047','#e53935'] }]
+            datasets: [{
+                label: 'المواعيد',
+                data: appointmentsStatusData,
+                // تغيير لون "مكتملة" إلى الأزرق الموحد
+                backgroundColor: [primaryBlue, dangerRed]
+            }]
         },
         options: { responsive:true }
     });
@@ -157,7 +199,11 @@
         type: 'bar',
         data: {
             labels: ['دكتور 1','دكتور 2','دكتور 3'],
-            datasets: [{ label: 'الإيرادات', data: revenueData, backgroundColor: '#039be5' }]
+            datasets: [{
+                label: 'الإيرادات',
+                data: revenueData,
+                backgroundColor: financeBlue
+            }]
         },
         options: { responsive:true }
     });
@@ -166,7 +212,11 @@
         type: 'bar',
         data: {
             labels: ['استقبال 1','استقبال 2','ممرضة 1'],
-            datasets: [{ label: 'الأداء %', data: staffPerformanceData, backgroundColor: '#ff5722' }]
+            datasets: [{
+                label: 'الأداء %',
+                data: staffPerformanceData,
+                backgroundColor: performanceOrange
+            }]
         },
         options: { responsive:true, scales:{y:{beginAtZero:true,max:100}} }
     });

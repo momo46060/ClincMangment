@@ -5,56 +5,119 @@
     <title>تفاصيل المريض</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap RTL + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Patient Details)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF;
+            --primary-dark: #0056b3;
+        }
+
         body {
-            background: #f4f6f9;
+            /* خلفية بيضاء مزرقة نظيفة */
+            background: #f8faff;
             font-family: 'Tajawal', sans-serif;
         }
 
         .patient-card {
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            /* ظل أعمق وأفخم */
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border: none;
         }
 
         .card-header {
-            background: #0d6efd;
+            /* تدرج أزرق فاخر */
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
             color: #fff;
-            font-weight: bold;
+            font-weight: 800;
             text-align: center;
+            font-size: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 20px 20px 0 0 !important;
+        }
+
+        .card-header i {
+            margin-left: 8px;
+        }
+
+        .card-body {
+            padding: 2rem;
         }
 
         .card-body p {
-            font-size: 1.05rem;
-            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 0.5rem;
+        }
+
+        .card-body p:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .card-body strong {
+            /* تمييز عناوين الحقول باللون الأزرق الداكن */
+            color: var(--primary-dark);
+            font-weight: 700;
+            display: inline-block;
+            min-width: 120px;
+            margin-left: 15px;
         }
 
         .card-footer {
-            background: #f8f9fa;
+            background: #fff;
             display: flex;
-            justify-content: flex-end;
-            gap: 0.5rem;
-            padding: 1rem;
+            justify-content: flex-start; /* تغيير الترتيب ليتناسب مع الـ RTL */
+            gap: 1rem;
+            padding: 1.5rem 2rem;
+            border-top: 1px solid #eee;
         }
 
-        .btn-success {
-            border-radius: 10px;
+        .btn-primary, .btn-secondary {
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 0.7rem 1.4rem;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
         }
 
+        /* زر الإجراء الأساسي (إضافة زيارة) */
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+        }
+
+        /* زر الرجوع */
         .btn-secondary {
-            border-radius: 10px;
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268 !important;
+            border-color: #5a6268 !important;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container mt-5">
-    <div class="card patient-card">
+<div class="container mt-5 col-12 col-md-8 col-lg-6">
+    <div class="card patient-card shadow-lg">
         <div class="card-header">
             <h3 class="mb-0"><i class="bi bi-person-circle"></i> تفاصيل المريض</h3>
         </div>
@@ -67,7 +130,7 @@
         </div>
         <div class="card-footer">
             <a th:href="@{/visits/new/{patientCode}(patientCode=${patient.patientCode})}"
-               class="btn btn-success"><i class="bi bi-plus-circle"></i> إضافة زيارة جديدة</a>
+               class="btn btn-primary"><i class="bi bi-plus-circle"></i> إضافة زيارة جديدة</a>
             <a th:href="@{/nurse/dashboard}" class="btn btn-secondary"><i class="bi bi-arrow-left-circle"></i> رجوع</a>
         </div>
     </div>

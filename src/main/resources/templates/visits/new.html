@@ -5,72 +5,125 @@
     <title>إضافة كشف جديد - نظام العيادة</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap RTL + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue New Visit Form)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF;
+            --primary-dark: #0056b3;
+        }
+
         body {
-            background: #f1f5f9;
+            /* خلفية بيضاء مزرقة نظيفة */
+            background: #f8faff;
             font-family: 'Tajawal', sans-serif;
-            padding: 2rem 0;
+            padding: 3rem 0;
         }
 
         h2 {
-            margin-bottom: 1.5rem;
-            font-weight: bold;
-            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            /* تمييز العنوان باللون الأزرق الداكن */
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
         }
 
         .card {
-            border-radius: 16px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            /* ظل أعمق وأفخم */
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            border: none;
         }
 
         .card-header {
-            background: #43a047;
+            /* تدرج أزرق فاخر */
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
             color: #fff;
-            font-weight: bold;
-            font-size: 1.2rem;
+            font-weight: 800;
+            font-size: 1.4rem;
             text-align: center;
-            padding: 1rem 1rem;
+            padding: 1.2rem 1rem;
+            border-radius: 20px 20px 0 0 !important;
         }
 
         label {
-            font-weight: 500;
+            font-weight: 600;
+            color: #343a40;
         }
 
+        label i {
+            /* أيقونات الحقول باللون الأزرق الداكن */
+            color: var(--primary-dark);
+            margin-left: 8px;
+            font-size: 1.1rem;
+        }
+
+
         .form-select, .form-control, textarea {
-            border-radius: 10px;
+            border-radius: 12px;
+            padding: 0.85rem 1rem;
+            font-size: 1rem;
         }
 
         .btn-success, .btn-secondary {
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
         }
 
-        @media (max-width: 576px) {
-            h2 { font-size: 1.25rem; }
-            .card-header { font-size: 1rem; padding: 0.75rem 1rem; }
-            .form-select, .form-control, textarea { font-size: 0.95rem; }
-            .btn-success, .btn-secondary { font-size: 0.95rem; padding: 0.5rem 1rem; }
+        /* زر الحفظ (الأزرق الموحد) */
+        .btn-success {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-success:hover {
+            background: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        /* زر الرجوع (الرمادي العصري) */
+        .btn-secondary {
+            background-color: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+        .btn-secondary:hover {
+            background-color: #5a6268 !important;
+            border-color: #5a6268 !important;
+        }
+
+        @media (max-width: 768px) {
+            h2 { font-size: 1.6rem; }
+            .card-header { font-size: 1.2rem; padding: 1rem 1rem; }
+            .card-body { padding: 1.5rem; }
+            .btn-success, .btn-secondary { width: 100%; margin: 5px 0 !important; }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="container col-12 col-md-10 col-lg-8">
     <h2 class="text-center">إضافة كشف جديد للمريض: <span th:text="${visitForm.patientCode}"></span></h2>
 
-    <div class="card shadow mt-4">
+    <div class="card shadow">
         <div class="card-header">بيانات الكشف</div>
-        <div class="card-body">
+        <div class="card-body p-4">
             <form th:action="@{/visits/save}" th:object="${visitForm}" method="post" class="row g-3">
 
                 <input type="hidden" th:field="*{patientCode}"/>
 
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 mb-3">
                     <label class="form-label"><i class="bi bi-journal-medical"></i> نوع الزيارة</label>
                     <select class="form-select" th:field="*{visitType}" required>
                         <option value="">اختر النوع</option>
@@ -79,7 +132,7 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 mb-3">
                     <label class="form-label"><i class="bi bi-person-badge"></i> الدكتور</label>
                     <select class="form-select" th:field="*{doctorPhone}" required>
                         <option value="">--اختر الدكتور--</option>
@@ -87,19 +140,20 @@
                     </select>
                 </div>
 
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-6 mb-3">
                     <label class="form-label"><i class="bi bi-clipboard-data"></i> حالة الكشف</label>
                     <select class="form-select" th:field="*{status}" required>
                         <option value="في الانتظار">في الانتظار</option>
                     </select>
                 </div>
 
-                <div class="col-12">
+
+                <div class="col-12 mb-4">
                     <label class="form-label"><i class="bi bi-chat-left-text"></i> الشكوى</label>
-                    <textarea class="form-control" th:field="*{complaint}" rows="3" placeholder="ادخل تفاصيل الشكوى"></textarea>
+                    <textarea class="form-control" th:field="*{complaint}" rows="3" placeholder="ادخل تفاصيل الشكوى التي يذكرها المريض عند الحجز"></textarea>
                 </div>
 
-                <div class="col-12 d-flex flex-column flex-sm-row justify-content-center gap-2 mt-3">
+                <div class="col-12 d-flex flex-column flex-sm-row justify-content-center gap-3 mt-4">
                     <button type="submit" class="btn btn-success px-4">💾 حفظ الكشف</button>
                     <a href="/nurse/dashboard" class="btn btn-secondary px-4">رجوع</a>
                 </div>

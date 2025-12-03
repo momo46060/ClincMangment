@@ -32,7 +32,7 @@ class NurseController(
         model.addAttribute("subscriptionExpired", !subscriptionActive)
         val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR, nurse.clinic)
 
-        val todayVisits = visitService.getTodayVisitsByClinic(nurse.clinic.id!!)
+        val todayVisits = visitService.getTodayVisitsByClinic(nurse.clinic.id!!).sortedBy { it.id }
         model.addAttribute("doctors", doctors)
         model.addAttribute("todayVisits", todayVisits)
         model.addAttribute("nurse", nurse)

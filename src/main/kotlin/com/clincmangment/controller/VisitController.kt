@@ -9,7 +9,6 @@ import com.clincmangment.service.VisitService
 import com.clincmangment.utils.Role
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -25,6 +24,26 @@ class VisitController(
 
     private val logger = LoggerFactory.getLogger(VisitController::class.java)
 
+    @GetMapping("/list")
+    fun listVisits(
+        model: Model,
+        session: HttpSession,
+    ): String {
+        try {
+            val loggedUser = session.getAttribute("loggedUser") as? User
+                ?: return "redirect:/login"
+            val visits = visitService.getVisitsByDoctor(
+                doctorId = loggedUser.id!!,
+                clinicId = loggedUser.clinic.id).sortedBy { it.id }
+            model.addAttribute("doctor",loggedUser)
+            model.addAttribute("visits", visits)
+
+            return "visits/list"
+        } catch (e: Exception) {
+            return "redirect:/login"
+        }
+    }
+
     @GetMapping("/edit/{visitId}")
     fun editVisitForm(
         @PathVariable visitId: Long,
@@ -35,11 +54,11 @@ class VisitController(
         return try {
             val loggedUser = session.getAttribute("loggedUser") as? User
                 ?: return "redirect:/login"
-            val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR,
-                clinic = loggedUser.clinic )
-
+            val doctors = userService.getUsersByRoleAndClinic(
+                Role.DOCTOR,
+                clinic = loggedUser.clinic
+            )
             model.addAttribute("doctors", doctors)
-
             val visit = visitService.getVisitById(visitId)
                 .orElseThrow { IllegalArgumentException("Visit not found") }
 
@@ -50,14 +69,14 @@ class VisitController(
                 prescription = visit.prescription,
                 scheduledConsultation = visit.scheduledConsultation
             )
-
+            model.addAttribute("doctorUsername", loggedUser.fullName)
             model.addAttribute("visitForm", form)
-            "visits/edit.html"
+            "visits/edit"
 
         } catch (ex: Exception) {
             logger.error("Error loading edit visit form: ${ex.message}", ex)
             redirectAttributes.addFlashAttribute("error", "حدث خطأ أثناء تحميل صفحة تعديل الزيارة.")
-            "redirect:/nurse/dashboard"
+            ""
         }
     }
 
@@ -75,8 +94,10 @@ class VisitController(
             val patient = patientService.findByPatientCodeAndClinic(patientCode, loggedUser.clinic)
                 ?: throw IllegalArgumentException("Patient not found in your clinic")
 
-            val doctors = userService.getUsersByRoleAndClinic(Role.DOCTOR,
-                loggedUser.clinic)
+            val doctors = userService.getUsersByRoleAndClinic(
+                Role.DOCTOR,
+                loggedUser.clinic
+            )
             val visitForm = VisitForm(patientCode = patient.patientCode)
             println("************************************************")
             println("$doctors")

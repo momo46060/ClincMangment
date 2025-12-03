@@ -37,6 +37,7 @@ class SecurityConfig(
                     .requestMatchers("/doctor/**").hasRole("DOCTOR")
                     .requestMatchers("/nurse/**").hasRole("NURSE")
                     .requestMatchers("/patients/**").hasAnyRole("DOCTOR", "NURSE", "PATIENT")
+                    .requestMatchers("/visits/**").hasAnyRole("DOCTOR", "NURSE", "PATIENT")
                     .anyRequest().authenticated()
             }
             .formLogin { form ->

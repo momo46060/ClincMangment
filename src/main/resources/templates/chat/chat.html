@@ -10,17 +10,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue & Sleek Design)
+         * ======================================
+         */
         :root {
-            --primary-color: #4CAF50;
-            --primary-dark: #2E7D32;
-            --primary-light: #E8F5E9;
+            /* الألوان الرئيسية - الأزرق الطبي */
+            --primary-color: #007BFF; /* أزرق موثوق للتركيز */
+            --primary-dark: #0056b3;  /* للتفاعل (Hover/Active) */
+            --primary-light: #E6F3FF; /* لخلفية القائمة (Active/Hover) */
+            --chat-sent-bg: #CCEEFF;  /* خلفية رسائل المستخدم المرسلة (أزرق سماوي فاتح) */
+
+            /* ألوان الخلفيات والنصوص */
             --chat-bg: #f0f2f5;
             --glass-bg: rgba(255, 255, 255, 0.95);
-            --border-color: rgba(0,0,0,0.05);
+            --border-color: rgba(0, 0, 0, 0.08); /* بوردر أقوى قليلاً للوضوح */
+            --text-color-dark: #212529;
+            --text-color-secondary: #6c757d;
         }
 
         body {
-            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            /* خلفية خارجية عصرية هادئة (تدرج أزرق/أبيض) */
+            background: linear-gradient(135deg, #A8C0FF 0%, #39436E 100%);
             font-family: 'Tajawal', sans-serif;
             height: 100vh;
             display: flex;
@@ -35,8 +47,10 @@
             height: 92vh;
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            /* حواف مدورة أكبر لمظهر فاخر */
+            border-radius: 30px;
+            /* ظلال ناعمة وعائمة لإعطاء عمق */
+            box-shadow: 0 30px 80px rgba(0,0,0,0.25);
             display: flex;
             overflow: hidden;
             position: relative;
@@ -54,15 +68,17 @@
         .sidebar-header {
             padding: 20px;
             background: #fff;
+            /* فصل العنوان عن القائمة بظل خفيف */
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
         }
 
         .search-box {
-            background: #f0f2f5;
+            background: var(--chat-bg);
             border-radius: 12px;
             padding: 10px 15px;
             display: flex;
             align-items: center;
-            color: #54656f;
+            color: var(--text-color-secondary);
         }
 
         .search-box input {
@@ -84,9 +100,9 @@
             display: flex;
             align-items: center;
             padding: 12px 15px;
-            border-radius: 12px;
+            border-radius: 15px; /* حواف مدورة أكثر */
             cursor: pointer;
-            transition: all 0.2s;
+            transition: background-color 0.3s ease; /* انتقال سلس عند التفاعل */
             margin-bottom: 5px;
             position: relative;
         }
@@ -97,6 +113,8 @@
 
         .user-item.active {
             background-color: var(--primary-light);
+            /* تمييز العنصر النشط بظل خفيف إضافي */
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
         }
 
         .avatar-container {
@@ -107,7 +125,8 @@
         .avatar {
             width: 48px;
             height: 48px;
-            background: linear-gradient(45deg, #4CAF50, #81c784);
+            /* تدرج لوني أزرق طبي للأفاتار */
+            background: linear-gradient(45deg, var(--primary-color), #4DA6FF);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -129,10 +148,11 @@
             border-radius: 50%;
         }
 
-        .user-item:nth-child(even) .status-dot { background: #4CAF50; }
+        /* نقطة الحالة الآنية (أزرق) */
+        .user-item:nth-child(even) .status-dot { background: var(--primary-color); }
 
-        .user-info h6 { margin: 0; font-weight: 600; color: #111; }
-        .user-info small { color: #667781; font-size: 0.85rem; }
+        .user-info h6 { margin: 0; font-weight: 600; color: var(--text-color-dark); }
+        .user-info small { color: var(--text-color-secondary); font-size: 0.85rem; }
 
         .unread-badge {
             position: absolute;
@@ -150,7 +170,7 @@
             font-size: 0.7rem;
             font-weight: bold;
             padding: 0 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3); /* ظل أقوى لتميز البادج */
             animation: pulse 2s infinite;
         }
 
@@ -167,24 +187,27 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background-color: #efeae2;
+            background-color: var(--chat-bg); /* خلفية منطقة الدردشة */
             position: relative;
         }
 
+        /* تأثير خلفية الدردشة الآن أصبح داكناً وهادئاً */
         .chat-background {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0.06;
+            opacity: 0.1;
             background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 120px 120px; /* تكبير الباترن قليلاً */
+            filter: invert(100%) grayscale(100%); /* لجعل الباترن رمادي فاتح */
             z-index: 0;
             pointer-events: none;
         }
 
         .chat-header {
             padding: 15px 25px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -199,7 +222,8 @@
             color: #666;
             transition: all 0.3s;
         }
-        .connection-badge.connected { background: #e8f5e9; color: #2e7d32; }
+        /* لون الاتصال الآن أزرق طبي */
+        .connection-badge.connected { background: var(--primary-light); color: var(--primary-dark); font-weight: 500;}
 
         .messages-container {
             flex: 1;
@@ -211,7 +235,7 @@
         }
 
         .message-wrapper {
-            margin-bottom: 8px;
+            margin-bottom: 10px; /* تباعد أكبر بين الرسائل */
             display: flex;
             flex-direction: column;
             max-width: 65%;
@@ -221,11 +245,12 @@
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .message-bubble {
-            padding: 10px 15px;
-            border-radius: 12px;
+            padding: 12px 18px; /* حجم أكبر للفقاعة */
+            border-radius: 18px; /* حواف أكثر دائرية */
             position: relative;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-            font-size: 0.95rem;
+            /* ظل أكثر وضوحاً لكن ناعم */
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            font-size: 0.98rem;
             line-height: 1.5;
         }
 
@@ -235,9 +260,9 @@
         }
 
         .message-wrapper.sent .message-bubble {
-            background: #d9fdd3;
-            color: #111;
-            border-radius: 12px 0 12px 12px;
+            background: var(--chat-sent-bg); /* اللون الأزرق الفاتح الجديد */
+            color: var(--text-color-dark);
+            border-radius: 18px 6px 18px 18px; /* زاوية مدببة أنيقة */
         }
 
         .message-wrapper.received {
@@ -247,34 +272,48 @@
 
         .message-wrapper.received .message-bubble {
             background: #ffffff;
-            color: #111;
-            border-radius: 0 12px 12px 12px;
+            color: var(--text-color-dark);
+            border-radius: 6px 18px 18px 18px; /* زاوية مدببة أنيقة */
         }
 
         .message-time {
-            font-size: 0.7rem;
+            font-size: 0.75rem; /* حجم أكبر قليلاً للوقت */
             margin-top: 4px;
-            opacity: 0.6;
+            opacity: 0.7;
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 5px;
         }
 
         .message-wrapper.sent .message-time { justify-content: flex-end; }
 
+        /* تغيير لون علامة المقروء (Seen) إلى لون أساسي */
+        .message-wrapper.sent .message-time .bi-check2-all {
+            color: var(--primary-dark) !important;
+            font-size: 0.9rem;
+        }
+
+        /* تلوين اسم المرسل في المحادثة بلون التمييز */
+        .message-wrapper.received .fw-bold {
+            color: var(--primary-dark) !important;
+            font-weight: 700 !important;
+        }
+
+
         .input-area-wrapper {
-            padding: 20px;
+            padding: 15px 20px; /* تباعد أقل قليلاً */
             z-index: 10;
             background: transparent;
         }
 
         .input-capsule {
             background: #ffffff;
-            border-radius: 30px;
-            padding: 8px 15px;
+            border-radius: 40px; /* حواف أكثر دائرية */
+            padding: 5px 15px;
             display: flex;
             align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            /* ظل واضح وناعم */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             border: 1px solid rgba(0,0,0,0.05);
         }
 
@@ -289,21 +328,22 @@
         .send-btn {
             background: var(--primary-color);
             color: white;
-            width: 45px;
-            height: 45px;
+            width: 48px; /* حجم أكبر قليلاً */
+            height: 48px;
             border-radius: 50%;
             border: none;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            margin-right: 10px;
+            transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
+            margin-right: 5px;
         }
 
         .send-btn:hover:not(:disabled) {
-            transform: scale(1.1);
+            transform: scale(1.05);
             background: var(--primary-dark);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4); /* ظل للأزرار عند التفاعل */
         }
 
         .send-btn:disabled {
@@ -311,10 +351,19 @@
             cursor: default;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #ced0d1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #b4b7b9; }
+        /* تلوين أيقونات المرفقات والإيموجي */
+        .btn-link .bi {
+            color: var(--text-color-secondary);
+            transition: color 0.3s;
+        }
+        .btn-link:hover .bi {
+            color: var(--primary-dark);
+        }
+
+        /* تحسين السكرول بار */
+        ::-webkit-scrollbar { width: 8px; } /* عرض أكبر قليلاً */
+        ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
 
         .empty-state {
             display: flex;
@@ -325,7 +374,12 @@
             color: #888;
             text-align: center;
         }
-        .empty-state i { font-size: 5rem; color: #e0e0e0; margin-bottom: 20px; }
+        .empty-state i {
+            font-size: 5rem;
+            color: var(--primary-light); /* لون فاتح جداً من الأزرق الطبي */
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
 
     </style>
 </head>

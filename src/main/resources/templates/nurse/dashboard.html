@@ -7,46 +7,156 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-        body { background: #e8f5e9; font-family: 'Tajawal', sans-serif; }
-        .card { border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-
-        /* Row colors */
-        tr.status-waiting, tr.status-waiting td {
-            background-color: #fff8d1 !important; --bs-table-bg:#fff8d1!important;
-        }
-        tr.status-progress, tr.status-progress td {
-            background-color: #d9ebff !important; --bs-table-bg:#d9ebff!important;
-        }
-        tr.status-done, tr.status-done td {
-            background-color: #d4f8d4 !important; --bs-table-bg:#d4f8d4!important;
-        }
-        tr.status-cancelled, tr.status-cancelled td {
-            background-color: #eeeeee !important; --bs-table-bg:#eeeeee!important;
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Nurse Dashboard)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF;
+            --primary-dark: #0056b3;
+            --waiting-color: #fff3e0;       /* انتظار - برتقالي فاتح */
+            --progress-color: #E6F3FF;      /* جاري الكشف - أزرق نظامي فاتح */
+            --done-color: #d4f8d4;          /* تم الكشف - أخضر فاتح (لإشارة النجاح) */
+            --cancelled-color: #f1f1f1;     /* ملغاة - رمادي فاتح */
         }
 
-        /* Hover Fix */
-        .table-hover tbody tr:hover > * { filter: brightness(0.94); }
+        body {
+            /* خلفية بيضاء مزرقة نظيفة */
+            background: #f8faff;
+            font-family: 'Tajawal', sans-serif;
+            color: #212529;
+        }
 
-        /* Legend */
-        .legend-item { display: inline-flex; align-items: center; margin-inline-end: 15px; font-size: .85rem; }
-        .legend-color-box { width:15px; height:15px; background:#ccc; border:1px solid #bbb; margin-inline-start:5px; }
+        h2 {
+            font-weight: 900;
+            /* لون أزرق داكن موحد */
+            color: var(--primary-dark);
+        }
 
-        tr.animated-row { animation: fade-slide .35s ease; }
-        @keyframes fade-slide { 0%{opacity:0; transform:translateY(6px);} 100%{opacity:1; transform:translateY(0);} }
+        /* البطاقات */
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: none;
+        }
 
-        .filter-row .form-select, .filter-row input { min-width: 150px; }
+        /* رأس البطاقة - أزرق موحد */
+        .card-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 20px 20px 0 0 !important;
+            background-color: var(--primary-color) !important;
+            color: white;
+            border-bottom: none;
+        }
+
+        /* رأس الجدول - أزرق داكن */
+        .table-success, .table-success th {
+            background-color: var(--primary-dark) !important;
+            color: white;
+        }
+
+        /* >>>>>>> الوان الصفوف الموحدة (CSS Fix) <<<<<<<<< */
+
+        /* 1. حالة الانتظار (برتقالي فاتح) */
+        tr.status-waiting, tr.status-waiting > td {
+            background-color: var(--waiting-color) !important;
+            --bs-table-bg: var(--waiting-color) !important;
+        }
+
+        /* 2. حالة جاري الكشف (أزرق فاتح) */
+        tr.status-progress, tr.status-progress > td {
+            background-color: var(--progress-color) !important;
+            --bs-table-bg: var(--progress-color) !important;
+        }
+
+        /* 3. حالة تم الكشف (أخضر فاتح) */
+        tr.status-done, tr.status-done > td {
+            background-color: var(--done-color) !important;
+            --bs-table-bg: var(--done-color) !important;
+        }
+
+        /* 4. حالة ملغاة (رمادي) */
+        tr.status-cancelled, tr.status-cancelled > td {
+            background-color: var(--cancelled-color) !important;
+            --bs-table-bg: var(--cancelled-color) !important;
+        }
+
+        /* تعديل Hover */
+        .table-hover > tbody > tr:hover > * { filter: brightness(0.95); }
+
+
+        /* تنسيق العدادات */
+        .card-body .p-2 {
+            border-radius: 12px !important;
+            font-weight: 700;
+            border: 1px solid #ddd;
+        }
+        .card-body .p-2 span {
+            color: var(--primary-dark);
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+
+        /* الأزرار الرئيسية */
+        .btn-success { /* زر الشات - أزرق موحد */
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            font-weight: 700;
+            padding: 0.5rem 1.5rem;
+        }
+        .btn-success:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+        }
+
+        .btn-primary { /* حجز جديد - أزرق موحد */
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 0.6rem 1.5rem;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+        }
+
+        .btn-danger { /* خروج/إلغاء - أحمر */
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 0.6rem 1.5rem;
+        }
+
+        /* تنسيق الفلاتر */
+        .filter-row .form-select, .filter-row input {
+            min-width: 180px;
+            border-radius: 12px;
+            padding: 0.7rem 1rem;
+        }
+
+        /* تنسيق Badge الإشعارات */
+        .chat-notification-badge {
+            background-color: #dc3545;
+            box-shadow: 0 0 0 2px #f8faff;
+        }
+
+        /* تنسيق Legend */
+        .legend-item {
+            font-weight: 500;
+        }
     </style>
 </head>
 
 <body class="p-3 p-md-4">
 
 <div class="container">
-
     <h2 class="mb-2 text-center">لوحة الممرضة</h2>
-    <h6 class="text-muted text-center mb-4">
-    </h6>
+    <h6 class="text-muted text-center mb-4">📅 تاريخ اليوم: <span th:text="${today}"></span></h6>
     <div class="text-start mb-3">
         <div class="chat-btn-container">
             <a href="/chat" class="btn btn-success rounded-pill px-4">
@@ -55,50 +165,52 @@
             <span class="chat-notification-badge" id="chatBadge">0</span>
         </div>
     </div>
-    <!-- إحصائيات -->
+
+    <div id="alertStrip" class="alert alert-info d-none alert-dismissible fade show" role="alert">
+        <i class="bi bi-bell-fill me-2"></i>
+        <span id="alertMessage">لا توجد تنبيهات.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
     <div class="card mb-4">
         <div class="card-body p-3">
-            <h6 class="mb-3 text-muted">إحصائيات اليوم:</h6>
+            <h6 class="mb-3 text-muted fw-bold">إحصائيات اليوم:</h6>
             <div class="row text-center">
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background:#fff8d1;">
-                        <span id="counter-waiting" class="d-block fw-bold">0</span>
+                    <div class="p-2 border rounded" style="background-color: var(--waiting-color);">
+                        <span class="d-block fw-bold" id="counter-waiting">0</span>
                         <small class="text-muted">في الانتظار</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background:#d9ebff;">
-                        <span id="counter-progress" class="d-block fw-bold">0</span>
+                    <div class="p-2 border rounded" style="background-color: var(--progress-color);">
+                        <span class="d-block fw-bold" id="counter-progress">0</span>
                         <small class="text-muted">جاري الكشف</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background:#d4f8d4;">
-                        <span id="counter-done" class="d-block fw-bold">0</span>
+                    <div class="p-2 border rounded" style="background-color: var(--done-color);">
+                        <span class="d-block fw-bold" id="counter-done">0</span>
                         <small class="text-muted">تم الكشف</small>
                     </div>
                 </div>
                 <div class="col-6 col-md-3 mb-2">
-                    <div class="p-2 border rounded" style="background:#eeeeee;">
-                        <span id="counter-cancelled" class="d-block fw-bold">0</span>
-                        <small class="text-muted">ملغاة</small>
+                    <div class="p-2 border rounded" style="background-color: var(--cancelled-color);">
+                        <span class="d-block fw-bold" id="counter-cancelled">0</span>
+                        <small class="text-muted">   ملغاة </small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- الحجوزات -->
     <div class="card mb-4">
         <div class="card-header bg-success text-white">
             <i class="bi bi-calendar-check me-2"></i> حجوزات اليوم
         </div>
 
         <div class="card-body">
-
-            <!-- ======= البحث + الفلاتر ========= -->
             <div class="d-flex flex-wrap gap-3 mb-3 filter-row">
-
                 <input id="searchBox" type="text" class="form-control"
                        placeholder="🔎 بحث بالاسم أو الكود" style="min-width:220px;">
 
@@ -106,7 +218,6 @@
                     <option value="">فلتر حسب الدكتور (الكل)</option>
                     <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.fullName}"></option>
                 </select>
-
                 <select id="statusFilter" class="form-select">
                     <option value="">فلتر حسب الحالة (الكل)</option>
                     <option value="في الانتظار">في الانتظار</option>
@@ -116,94 +227,81 @@
                 </select>
             </div>
 
-            <!-- Legend -->
             <div class="mb-3">
-                <small class="text-muted d-block mb-1">دليل الألوان:</small>
+                <small class="text-muted d-block mb-1 fw-bold">دليل الألوان:</small>
                 <div class="d-flex flex-wrap">
-                    <div class="legend-item"><span class="legend-color-box" style="background:#fff8d1"></span>في الانتظار</div>
-                    <div class="legend-item"><span class="legend-color-box" style="background:#d9ebff"></span>جاري الكشف</div>
-                    <div class="legend-item"><span class="legend-color-box" style="background:#d4f8d4"></span>تم الكشف</div>
-                    <div class="legend-item"><span class="legend-color-box" style="background:#eeeeee"></span>ملغاة</div>
+                    <div class="legend-item"><span class="legend-color-box" style="background:var(--waiting-color)"></span>في الانتظار</div>
+                    <div class="legend-item"><span class="legend-color-box" style="background:var(--progress-color)"></span>جاري الكشف</div>
+                    <div class="legend-item"><span class="legend-color-box" style="background:var(--done-color)"></span>تم الكشف</div>
+                    <div class="legend-item"><span class="legend-color-box" style="background:var(--cancelled-color)"></span>ملغاة</div>
                 </div>
             </div>
 
             <div class="table-responsive">
-                <table id="visitsTable" class="table table-hover align-middle">
+                <table class="table table-hover align-middle" id="visitsTable">
                     <thead class="table-success">
                     <tr>
                         <th>الكود</th>
                         <th>اسم المريض</th>
                         <th>نوع الزيارة</th>
                         <th>الدكتور</th>
-                        <th id="timeHeader" style="cursor:pointer;">
-                            الوقت <i id="sortIcon" class="bi bi-sort-down-alt"></i>
-                        </th>
+                        <th id="timeHeader" style="cursor: pointer;">الوقت <i id="sortIcon" class="bi bi-sort-down-alt"></i></th>
                         <th>الحالة</th>
                         <th>الإجراءات</th>
                     </tr>
                     </thead>
-
                     <tbody>
+
                     <tr th:each="v : ${todayVisits}"
                         th:attr="data-doctor-id=${v.doctor != null ? v.doctor.id : ''},
                                  data-status=${v.status},
                                  data-time=${#temporals.format(v.visitDate, 'yyyy-MM-dd HH:mm')},
                                  data-search=${v.patient.user.fullName + ' ' + v.patient.patientCode}"
-                        th:classappend="${
-                             v.status == 'في الانتظار' ? 'status-waiting animated-row' :
-                             v.status == 'جاري الكشف' ? 'status-progress animated-row' :
-                             v.status == 'تم الكشف' ? 'status-done animated-row' :
-                             'status-cancelled animated-row'}">
+                        th:classappend="${v.status == 'في الانتظار' ? 'status-waiting animated-row' :
+                                         v.status == 'جاري الكشف' ? 'status-progress animated-row' :
+                                         v.status == 'تم الكشف' ? 'status-done animated-row' :
+                                         'status-cancelled animated-row'}">
 
                         <td th:text="${v.patient.patientCode}"></td>
                         <td th:text="${v.patient.user.fullName}"></td>
                         <td th:text="${v.visitType}"></td>
                         <td th:text="${v.doctor != null ? v.doctor.fullName : '---'}"></td>
-                        <td th:text="${#temporals.format(v.visitDate,'HH:mm')}"></td>
+                        <td class="visit-time" th:text="${#temporals.format(v.visitDate, 'HH:mm')}"></td>
                         <td th:text="${v.status}"></td>
-
                         <td>
                             <div th:if="${v.status != 'تم الكشف' and v.status != 'ملغاة'}">
-                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/status'}"
-                                      method="post" class="d-inline">
-                                    <select name="status" class="form-select form-select-sm d-inline w-auto"
-                                            onchange="this.form.submit()">
-                                        <option value="في الانتظار" th:selected="${v.status=='في الانتظار'}">في الانتظار</option>
-                                        <option value="جاري الكشف" th:selected="${v.status=='جاري الكشف'}">جاري الكشف</option>
-                                        <option value="تم الكشف" th:selected="${v.status=='تم الكشف'}">تم الكشف</option>
+                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/status'}" method="post" class="d-inline">
+                                    <select name="status" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                                        <option value="في الانتظار" th:selected="${v.status == 'في الانتظار'}">في الانتظار</option>
+                                        <option value="جاري الكشف" th:selected="${v.status == 'جاري الكشف'}">جاري الكشف</option>
+                                        <option value="تم الكشف" th:selected="${v.status == 'تم الكشف'}">تم الكشف</option>
                                     </select>
                                 </form>
-
-                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}"
-                                      method="post" class="d-inline ms-1"
-                                      onsubmit="return confirm('إلغاء؟');">
+                                <form th:action="@{'/nurse/visit/' + ${v.id} + '/cancel'}" method="post" class="d-inline ms-1" onsubmit="return confirm('إلغاء؟');">
                                     <button class="btn btn-danger btn-sm">إلغاء</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
-
-                    <tr id="noVisitsRow" style="display:none;">
-                        <td colspan="7" class="text-center text-muted">لا توجد نتائج</td>
-                    </tr>
+                    <tr id="noVisitsRow" style="display:none;"><td colspan="7" class="text-center text-muted">لا توجد نتائج</td></tr>
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 
+    <div class="text-center mb-4 d-flex justify-content-center gap-2">
+        <a href="/patients/search" class="btn btn-primary">🔍 حجز جديد</a>
+        <a href="/logout" class="btn btn-danger">خروج</a>
+    </div>
 </div>
 
-<!-- ======================= JavaScript ======================== -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-
         const doctorFilter = document.getElementById("doctorFilter");
         const statusFilter = document.getElementById("statusFilter");
-        const searchBox = document.getElementById("searchBox");
+        const searchBox = document.getElementById("searchBox"); // تم تعريف خانة البحث الآن
         const visitsTableBody = document.querySelector("#visitsTable tbody");
-
         let visitRows = Array.from(document.querySelectorAll("#visitsTable tbody tr[data-doctor-id]"));
         const noVisitsRow = document.getElementById("noVisitsRow");
 
@@ -213,18 +311,20 @@
         const counterDone = document.getElementById("counter-done");
         const counterCancelled = document.getElementById("counter-cancelled");
 
-        // Sorting
+        // Sort
         const timeHeader = document.getElementById("timeHeader");
         const sortIcon = document.getElementById("sortIcon");
-        let sortDirection = "asc";
+        let sortDirection = 'asc';
 
         function updateCounters(rows) {
-            let waiting=0, progress=0, done=0, cancelled=0;
+            let waiting = 0, progress = 0, done = 0, cancelled = 0;
 
+            // نحسب الصفوف المرئية فقط (حسب الفلترة)
             rows.forEach(row => {
-                if (row.style.display === "none") return; // مهم جداً
+                if (row.style.display === "none") return;
 
                 const status = row.getAttribute("data-status");
+
                 if (status === "في الانتظار") waiting++;
                 else if (status === "جاري الكشف") progress++;
                 else if (status === "تم الكشف") done++;
@@ -237,59 +337,102 @@
             counterCancelled.textContent = cancelled;
         }
 
+
         function sortTable() {
             visitRows.sort((a, b) => {
-                const A = new Date(a.getAttribute("data-time"));
-                const B = new Date(b.getAttribute("data-time"));
-                return sortDirection === "asc" ? A - B : B - A;
+                const timeA = new Date(a.getAttribute('data-time'));
+                const timeB = new Date(b.getAttribute('data-time'));
+                return sortDirection === 'asc' ? timeA - timeB : timeB - timeA;
             });
-
-            visitsTableBody.innerHTML = "";
-            visitRows.forEach(r => visitsTableBody.appendChild(r));
+            visitsTableBody.innerHTML = '';
+            visitRows.forEach(row => visitsTableBody.appendChild(row));
             applyFilters();
         }
 
-        timeHeader.addEventListener("click", () => {
-            sortDirection = sortDirection === "asc" ? "desc" : "asc";
-            sortIcon.className = sortDirection === "asc" ? "bi bi-sort-down-alt" : "bi bi-sort-up";
+        timeHeader.addEventListener('click', () => {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+            sortIcon.className = sortDirection === 'asc' ? 'bi bi-sort-down-alt' : 'bi bi-sort-up';
             sortTable();
         });
+        function loadUnreadCount() {
+            // متغيرات غير معرفة (مثل currentUserId)
+            // ملاحظة: هذه الدالة تعتمد على متغيرات غير معرفة (currentUserId, updateBadge, saveUnreadCount, playNotificationSound)
+            // يجب تعريف هذه المتغيرات في الكود الخاص بالعيادة ليعمل الشات.
+            const stored = localStorage.getItem('chatUnreadCount_' + currentUserId);
+            const count = stored ? parseInt(stored) : 0;
+            updateBadge(count);
+        }
 
+        function connectWebSocket() {
+            // متغيرات غير معرفة (مثل SockJS, StompClient, currentUserId)
+            // ملاحظة: هذه الدالة تعتمد على مكتبات غير مستوردة (SockJS, Stomp)
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null;
+
+            stompClient.connect({}, function() {
+                console.log('✅ متصل بالشات');
+
+                // الاشتراك في الرسائل الجديدة
+                stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
+                    try {
+                        const msg = JSON.parse(message.body);
+                        if (msg.senderId !== currentUserId) {
+                            unreadCount++;
+                            updateBadge(unreadCount);
+                            saveUnreadCount(unreadCount);
+                            playNotificationSound();
+                        }
+                    } catch (e) {
+                        console.error('خطأ في معالجة الرسالة:', e);
+                    }
+                });
+
+                loadUnreadCount();
+            }, function(error) {
+                console.error('خطأ في الاتصال:', error);
+                setTimeout(connectWebSocket, 5000);
+            });
+        }
         function applyFilters() {
-            const doctor = doctorFilter.value;
+            const doctorId = doctorFilter.value;
             const status = statusFilter.value;
-            const search = searchBox.value.trim().toLowerCase();
-            let visible = 0;
+            const search = searchBox.value.trim().toLowerCase(); // استخدام searchBox الآن
+            let visibleCount = 0;
 
             visitRows.forEach(row => {
                 const rowDoctor = row.getAttribute("data-doctor-id");
                 const rowStatus = row.getAttribute("data-status");
                 const rowSearch = row.getAttribute("data-search").toLowerCase();
 
-                const okDoctor = doctor === "" || rowDoctor === doctor;
-                const okStatus = status === "" || rowStatus === status;
-                const okSearch = rowSearch.includes(search);
+                const matchesDoctor = doctorId === "" || rowDoctor === doctorId;
+                const matchesStatus = status === "" || rowStatus === status;
+                const matchesSearch = rowSearch.includes(search); // استخدام متغير البحث
 
-                if (okDoctor && okStatus && okSearch) {
+                if (matchesDoctor && matchesStatus && matchesSearch) {
                     row.style.display = "";
-                    visible++;
+                    visibleCount++;
                 } else {
                     row.style.display = "none";
                 }
             });
+            noVisitsRow.style.display = (visibleCount === 0) ? "" : "none";
 
-            noVisitsRow.style.display = visible === 0 ? "" : "none";
-
+            // تحديث العدادات بناءً على الصفوف المرئية بعد الفلترة
             updateCounters(visitRows);
+
         }
 
         doctorFilter.addEventListener("change", applyFilters);
         statusFilter.addEventListener("change", applyFilters);
-        searchBox.addEventListener("keyup", applyFilters);
+        searchBox.addEventListener("keyup", applyFilters); // ربط حدث الكتابة بـ applyFilters
 
         sortTable();
     });
+    window.addEventListener('load', connectWebSocket);
+
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

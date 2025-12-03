@@ -1,12 +1,9 @@
 package com.clincmangment.service
 
 import com.clincmangment.repository.VisitRepository
-import com.clincmangment.repository.model.Patient
-import com.clincmangment.repository.model.User
 import com.clincmangment.repository.model.Visit
 import com.clincmangment.utils.VisitType
 import jakarta.transaction.Transactional
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -89,12 +86,12 @@ class VisitService(
     fun getVisitsByPatient(patientId: Long, clinicId: Long): List<Visit> =
         visitRepository.findAllByPatient_IdAndClinic_IdOrderByVisitDateDesc(patientId, clinicId)
 
-    fun getVisitsByDoctor(doctorId: Long, clinicId: Long): List<Visit> {
+    fun getVisitsByDoctor(doctorId: Long, clinicId: Long?): List<Visit> {
         val startOfDay = LocalDate.now().atStartOfDay()
         val endOfDay = startOfDay.plusDays(1).minusNanos(1)
          val list=visitRepository.findAllByDoctor_IdAndClinic_IdAndVisitDateBetweenOrderByVisitDateDesc(
             doctorId,
-            clinicId,
+            clinicId!!,
             startOfDay,
             endOfDay
         )

@@ -100,9 +100,7 @@ class ChatController(
         return "chat/chat"
     }
 
-    /**
-     * API endpoint لجلب المحادثة بين مستخدمين
-     */
+
     @GetMapping("/api/chat/conversation/{userId}")
     @ResponseBody
     fun getConversation(

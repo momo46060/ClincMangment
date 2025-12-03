@@ -5,77 +5,147 @@
     <title>لوحة تحكم الطبيب</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap RTL -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
     <style>
+
+        :root {
+            --primary-color: #007BFF; /* أزرق موثوق للتركيز */
+            --primary-dark: #0056b3;  /* للتفاعل والعمق */
+            --primary-light: #E6F3FF; /* لون فاتح جداً للخلفيات المساعدة */
+            --text-color-dark: #212529;
+        }
+
         .page-wrapper {
             margin-right: 260px;
             padding: 20px;
         }
         body {
-            background: #f4f6f9;
+            /* خلفية بيضاء مزرقة نظيفة */
+            background: #f8faff;
             font-family: 'Tajawal', sans-serif;
+            color: var(--text-color-dark);
         }
 
         h2 {
-            font-weight: bold;
-            color: #2e7d32;
+            font-weight: 800;
+            /* عنوان رئيسي بالأزرق الداكن */
+            color: var(--primary-dark);
+            font-size: 2rem;
         }
 
         .card {
             border: none;
-            border-radius: 14px;
-            transition: all 0.25s ease;
+            border-radius: 18px; /* حواف أكثر دائرية */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
         .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px); /* تأثير رفع أكبر */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
         }
 
         /* Statistic Cards */
         .stat-card {
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             color: #fff;
-            border-radius: 14px;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            font-weight: 700;
         }
 
-        .bg-done { background: linear-gradient(135deg, #43a047, #66bb6a); }
+        /* Done: أزرق أساسي */
+        .bg-done { background: linear-gradient(135deg, var(--primary-color), #00BFFF); }
+        /* Current: برتقالي/ذهبي كما هو للتنبيه */
         .bg-current { background: linear-gradient(135deg, #f9a825, #fbc02d); }
-        .bg-pending { background: linear-gradient(135deg, #757575, #9e9e9e); }
+        /* Pending: رمادي داكن موثوق */
+        .bg-pending { background: linear-gradient(135deg, #495057, #6c757d); }
+        /* Canceled: أحمر كما هو للتنبيه */
         .bg-canceled { background: linear-gradient(135deg, #e53935, #ef5350); }
 
-        .card-header {
-            border-top-left-radius: 14px;
-            border-top-right-radius: 14px;
-            background: linear-gradient(135deg, #2e7d32, #43a047);
+        .stat-card h6 {
+            font-size: 1rem;
+        }
+        .stat-card h3 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-top: 5px;
         }
 
-        table thead {
-            background: #2e7d32;
+
+        .card-header {
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            /* رأس الكارد باللون الأزرق الموحد */
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: #fff;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+        }
+
+        /* جدول الكشوفات الجارية */
+        table thead {
+            /* رأس الجدول بالأزرق الداكن */
+            background: var(--primary-dark);
+            color: #fff;
+            font-weight: 700;
         }
 
         .btn-primary, .btn-success {
-            border-radius: 10px;
-            font-weight: 600;
-        }
-        .btn-primary {
-            background-color: #2e7d32;
-            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            padding: 8px 15px;
+            transition: all 0.3s ease;
         }
 
+        /* زر عرض الكشف (الرئيسي) */
+        .btn-success {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .btn-success:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+
+        /* زر إظهار الإيرادات */
+        .btn-outline-success {
+            color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            font-weight: 700;
+            border-radius: 10px;
+        }
+        .btn-outline-success:hover {
+            background-color: var(--primary-dark);
+            color: white;
+        }
+
+        /* شريط الإيرادات */
         .alert-info {
-            background-color: #e8f5e9;
-            border: none;
-            color: #2e7d32;
+            /* خلفية زرقاء فاتحة جداً */
+            background-color: var(--primary-light);
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            color: var(--primary-dark);
             font-weight: 600;
+            border-radius: 15px;
+            padding: 1.2rem;
+        }
+
+        /* شريط إجمالي الحجوزات */
+        .alert-primary {
+            background-color: var(--primary-dark);
+            color: white;
+            border-radius: 15px;
+            font-weight: 700;
         }
 
         /* ============================
-           CHAT BADGE STYLING
+           CHAT BADGE STYLING (حافظنا على اللون الأحمر للتنبيه)
            ============================ */
         .chat-btn-container {
             position: relative;
@@ -86,6 +156,7 @@
             position: absolute;
             top: -8px;
             left: -8px;
+            /* تمييز Badge بلون أحمر قوي */
             background: linear-gradient(135deg, #e53935, #ef5350);
             color: white;
             min-width: 24px;
@@ -122,12 +193,20 @@
             75% { transform: translateX(5px); }
         }
 
+        /* Modal */
+        .modal-content {
+            border-radius: 20px;
+        }
+
         /* ============================
            RESPONSIVE IMPROVEMENTS
            ============================ */
         @media (max-width: 768px) {
             .stat-card {
-                padding: 15px;
+                padding: 20px 10px;
+            }
+            .stat-card h3 {
+                font-size: 2rem;
             }
 
             .btn-group-responsive {
@@ -142,11 +221,13 @@
             }
 
             h2 {
-                font-size: 1.4rem;
+                font-size: 1.6rem;
                 text-align: center;
             }
-
-            .container { padding: 0 !important; }
+            .page-wrapper {
+                margin-right: 0;
+                padding: 10px;
+            }
         }
 
         @media (max-width: 576px) {
@@ -161,7 +242,6 @@
 
 <body class="p-2">
 
-<!-- Subscription Modal -->
 <div th:if="${subscriptionExpired}" class="modal fade show" style="display:block;">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center">
@@ -174,28 +254,24 @@
         </div>
     </div>
 </div>
-<!-- Sidebar -->
 <div th:replace="fragments/sidebar :: doctorSidebar()"></div>
 <div th:replace="fragments/chat-popup :: chatPopupFragment"></div>
 
 <div class="page-wrapper">
 
-    <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <h2 class="mb-2">مرحبًا دكتور <span th:text="${doctor.fullName}"></span> 👋</h2>
     </div>
 
-    <!-- Revenue -->
-    <div class="alert alert-info text-center d-flex justify-content-center align-items-center gap-2 flex-wrap">
-        💰 إجمالي إيرادات اليوم:
-        <strong id="revenue" th:text="'**********'"></strong>
+<!--    <div class="alert alert-info text-center d-flex justify-content-center align-items-center gap-2 flex-wrap">-->
+<!--        💰 إجمالي إيرادات اليوم:-->
+<!--        <strong id="revenue" th:text="'**********'"></strong>-->
 
-        <button type="button" class="btn btn-outline-success btn-sm" id="toggleRevenue">
-            <i class="bi bi-eye"></i>
-        </button>
-    </div>
+<!--        <button type="button" class="btn btn-outline-success btn-sm" id="toggleRevenue">-->
+<!--            <i class="bi bi-eye"></i>-->
+<!--        </button>-->
+<!--    </div>-->
 
-    <!-- Statistics -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
             <div class="stat-card bg-done shadow-sm">
@@ -230,7 +306,6 @@
         إجمالي الحجوزات: <span th:text="${totalCount}"></span>
     </div>
 
-    <!-- Current Visits -->
     <div class="card shadow mb-4">
         <div class="card-header">
             <strong><i class="bi bi-clipboard2-pulse"></i> الكشوفات الجارية</strong>
@@ -273,13 +348,47 @@
 
 </div>
 
-<!-- WebSocket Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
 <script th:inline="javascript">
+    /* =================================================================================
+     * REVENUE TOGGLE SCRIPT
+     * ================================================================================= */
+    const revenueElement = document.getElementById('revenue');
+    const toggleButton = document.getElementById('toggleRevenue');
+    const actualRevenue = revenueElement.getAttribute('th:text'); // القيمة الفعلية من ثايم ليف
+    let isHidden = true;
+
+    toggleButton.addEventListener('click', function() {
+        if (isHidden) {
+            revenueElement.textContent = actualRevenue;
+            toggleButton.innerHTML = '<i class="bi bi-eye-slash"></i>';
+            isHidden = false;
+        } else {
+            revenueElement.textContent = '**********';
+            toggleButton.innerHTML = '<i class="bi bi-eye"></i>';
+            isHidden = true;
+        }
+    });
+
+    // إظهار الإيرادات افتراضياً بعد التحميل (يمكن إخفاؤها تلقائياً لاحقاً)
+    document.addEventListener('DOMContentLoaded', function() {
+        // نستخدم القيمة المخزنة في ثايم ليف مباشرة بعد التحميل
+        const initialValue = revenueElement.textContent;
+        revenueElement.setAttribute('data-actual-revenue', initialValue); // تخزين القيمة الأصلية
+        revenueElement.textContent = '**********'; // إخفاء القيمة
+        // تحديث القيمة الفعلية في المتغير لضمان عمل التبديل
+        this.actualRevenue = initialValue;
+    });
+
+
+    /* =================================================================================
+     * CHAT WEB SOCKET SCRIPT
+     * ================================================================================= */
     const currentUserId = /*[[${doctor.id}]]*/ 0;
-    const chatBadge = document.getElementById('chatBadge');
+    // يجب أن يكون الـ chatBadge موجوداً في fragments/chat-popup :: chatPopupFragment
+    const chatBadge = document.querySelector('.chat-notification-badge');
     let stompClient = null;
     let unreadCount = 0;
 
@@ -334,6 +443,7 @@
     }
 
     function playNotificationSound() {
+        // الصوت يعمل
         const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBzKF0fPTgjMGHm7A7+OZUQ0PVqzn77BdGAg+ltryxnYpBSuBzvLZiTYIGWa77+ifTRAMT6Ti8LZjHAY3kdnyzXksBSV3yPDdkEAKFF+16+usVRQLRp/h8r1sIAcyhdHz04IzBh9uwPDjmVAND1as5++wXRgIPpbb8sV2KQUrgdDy2Yk2CBlmvO/pn00QDE6k4/C2YxwGOJHa8s15LAUmeMnw3ZBADRRGU=');
         audio.volume = 0.3;
         audio.play().catch(e => console.log('تعذر تشغيل الصوت'));

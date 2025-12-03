@@ -5,67 +5,159 @@
     <title>لوحة تحكم العيادة</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap RTL -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
 
-    <!-- Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue & Sleek Dashboard)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF; /* أزرق موثوق للتركيز */
+            --primary-dark: #0056b3;  /* للتفاعل والعمق */
+            --background-light: #f5f7f9; /* خلفية ناعمة */
+            --box-shadow-subtle: 0 4px 15px rgba(0,0,0,0.08); /* ظل ناعم للبطاقات */
+            --box-shadow-hover: 0 10px 25px rgba(0,0,0,0.15); /* ظل عند التفاعل */
+            --text-color-dark: #212529;
+        }
+
         .page-wrapper {
             margin-right: 260px;
             padding: 20px;
         }
         body {
-            background: #f5f7f9;
+            background: var(--background-light);
             font-family: 'Tajawal', sans-serif;
+            color: var(--text-color-dark);
         }
 
-        /* Dashboard Title */
+        /* Dashboard Header - التمييز الأزرق القوي */
         .dashboard-header {
-            padding: 1rem;
-            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
-            border-radius: 15px;
+            padding: 1.5rem; /* تباعد أكبر */
+            /* تدرج أزرق قوي واحترافي */
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            border-radius: 20px; /* حواف أكثر دائرية */
             color: #fff;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin-bottom: 2rem; /* تباعد أكبر عن المحتوى */
+            /* ظل أكثر وضوحاً */
+            box-shadow: 0 10px 25px rgba(0, 123, 255, 0.4);
+            font-weight: 700;
         }
 
-        /* Cards */
+        .dashboard-header h3 {
+            font-weight: 800; /* خط أثقل للعناوين */
+        }
+
+        /* Badge - تمييز نوع الاشتراك */
+        .badge-advanced {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Cards - بطاقات الأداء الرئيسية (KPIs) */
         .stat-card {
-            border-radius: 15px;
-            padding: 1.3rem;
+            border-radius: 18px; /* حواف عصرية */
+            padding: 1.5rem;
             background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            box-shadow: var(--box-shadow-subtle);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05); /* إطار خفيف لزيادة التحديد */
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+            /* تأثير الرفع الثلاثي الأبعاد */
+            transform: translateY(-5px);
+            box-shadow: var(--box-shadow-hover);
         }
 
-        /* Section */
+        .stat-card h3 {
+            font-size: 2.5rem; /* حجم كبير للبيانات الرئيسية */
+            font-weight: 800;
+            color: var(--primary-dark); /* تلوين البيانات الرئيسية بالأزرق الداكن */
+        }
+        .stat-card h6 {
+            font-weight: 600;
+            color: var(--text-color-dark);
+        }
+        .stat-card small {
+            color: #6c757d;
+        }
+
+
+        /* Section Cards - بطاقات الرسوم البيانية والقوائم */
         .section-card {
-            border-radius: 15px;
-            padding: 1.5rem;
-            background: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-radius: 18px;
+            padding: 1.8rem;
+            background: #ffffff;
+            box-shadow: var(--box-shadow-subtle);
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .section-card h5, .section-card h6 {
+            font-weight: 700;
             margin-bottom: 1.2rem;
+            color: var(--primary-dark); /* عناوين الأقسام باللون الأزرق */
+        }
+
+        /* تصميم القوائم (Top Patients) */
+        .section-card ol {
+            padding-right: 20px;
+            margin-bottom: 0;
+        }
+
+        .section-card ol li {
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(0,0,0,0.05);
+            font-size: 0.95rem;
+            color: var(--text-color-dark);
+            font-weight: 500;
+        }
+
+        .section-card ol li:last-child {
+            border-bottom: none;
+        }
+
+        /* التنبيهات */
+        .alert-warning {
+            background-color: #fff3cd; /* لون تنبيه بووتستراب */
+            border-color: #ffecb5;
+            color: #664d03;
+        }
+        .alert ul {
+            margin-bottom: 0;
         }
 
         canvas {
             max-width: 100% !important;
+            /* التأكد من أن الرسوم البيانية تبدو حادة وواضحة */
+            background: #fff;
+            border-radius: 10px;
+        }
+
+        /* تلوين الأيقونات في العناوين */
+        .section-card h5 i {
+            color: var(--primary-color);
+            margin-left: 8px;
         }
 
         /* Mobile optimization */
         @media (max-width: 576px) {
-            h3 { font-size: 1.4rem; }
-            .stat-card h3 { font-size: 1.6rem; }
+            h3 { font-size: 1.8rem; }
+            .page-wrapper { margin-right: 0; padding: 10px; }
+            .dashboard-header { border-radius: 15px; margin-bottom: 1.5rem; }
+            .stat-card h3 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -77,13 +169,11 @@
 
 <div class="page-wrapper">
 
-    <!-- Dashboard Header -->
     <div class="dashboard-header d-flex flex-wrap justify-content-between align-items-center">
         <h3 class="mb-2" th:text="${clinic.name} + ' - لوحة التحكم'">لوحة التحكم</h3>
         <span class="badge-advanced mt-2" th:text="${clinic.subscriptionType}">ADVANCED</span>
     </div>
 
-    <!-- KPI Cards -->
     <div class="row g-3">
         <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
             <div class="stat-card">
@@ -108,7 +198,6 @@
         </div>
     </div>
 
-    <!-- Alerts -->
     <div class="mt-4" th:if="${dashboard.alerts.size() > 0}">
         <div class="alert alert-warning shadow-sm">
             <ul>
@@ -117,10 +206,8 @@
         </div>
     </div>
 
-    <!-- Charts + Lists -->
     <div class="row mt-3">
 
-        <!-- Charts -->
         <div class="col-12 col-lg-8">
 
             <div class="section-card">
@@ -140,7 +227,6 @@
 
         </div>
 
-        <!-- Top Patients -->
         <div class="col-12 col-lg-4">
             <div class="section-card">
                 <h6><i class="bi bi-people-fill"></i> أكثر المرضى زيارة</h6>
@@ -155,7 +241,6 @@
     </div>
 </div>
 
-<!-- Inject JS Data -->
 <script th:inline="javascript">
     const visitsPerDoctor = [[${dashboard.visitsPerDoctor}]];
     const weeklyRevenue   = [[${dashboard.weeklyRevenue}]];
@@ -170,22 +255,82 @@
     const weekLabels = [...Array(7)].map((_, i) => {
         const d = new Date();
         d.setDate(d.getDate() - (6 - i));
-        return d.toLocaleDateString();
+        return d.toLocaleDateString('ar-EG', { weekday: 'short' }); // تحسين عرض الأيام بالعربية
     });
 
+    // ======================================
+    // تخصيص Chart.js ليتناسب مع الأزرق الطبي
+    // ======================================
+
+    const primaryColor = '#007BFF';
+    const primaryDark  = '#0056b3';
+    const chartAccentColors = ['#007BFF', '#28A745', '#FFC107', '#DC3545', '#17A2B8']; // لوحة ألوان للـ Pie Chart
+
+    // Chart Defaults (لضمان إظهار الخطوط والنصوص بشكل جيد مع الخلفية)
+    Chart.defaults.font.family = 'Tajawal';
+    Chart.defaults.color = '#495057';
+
+    // Bar Chart: Visits Per Doctor
     new Chart(document.getElementById('visitsPerDoctorChart'), {
         type: 'bar',
-        data: { labels: doctorLabels, datasets: [{ data: doctorData }] }
+        data: {
+            labels: doctorLabels,
+            datasets: [{
+                data: doctorData,
+                backgroundColor: primaryColor,
+                borderColor: primaryDark,
+                borderWidth: 1,
+                borderRadius: 4, // حواف دائرية للأعمدة
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } }, // إخفاء العنوان التلقائي
+            scales: { y: { beginAtZero: true } }
+        }
     });
 
+    // Line Chart: Weekly Revenue
     new Chart(document.getElementById('weeklyRevenueChart'), {
         type: 'line',
-        data: { labels: weekLabels, datasets: [{ data: weeklyRevenue }] }
+        data: {
+            labels: weekLabels,
+            datasets: [{
+                data: weeklyRevenue,
+                label: 'الإيرادات',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                borderColor: primaryColor,
+                borderWidth: 3,
+                tension: 0.4, // لجعل الخط منحني (مظهر عصري)
+                fill: true,
+                pointRadius: 5,
+                pointBackgroundColor: primaryDark
+            }]
+        },
+        options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
     });
 
+    // Pie Chart: Visit Type Breakdown
     new Chart(document.getElementById('visitTypeChart'), {
         type: 'pie',
-        data: { labels: visitTypeLabels, datasets: [{ data: visitTypeData }] }
+        data: {
+            labels: visitTypeLabels,
+            datasets: [{
+                data: visitTypeData,
+                backgroundColor: chartAccentColors,
+                hoverOffset: 10 // تباعد عند التفاعل
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right', // عرض البيانات على اليمين
+                }
+            }
+        }
     });
 </script>
 

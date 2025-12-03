@@ -4,87 +4,158 @@
     <meta charset="UTF-8">
     <title>الكشف الحالي</title>
 
-    <!-- Bootstrap RTL -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
     <style>
+        /*
+         * ======================================
+         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Visit Page)
+         * ======================================
+         */
+        :root {
+            --primary-color: #007BFF; /* أزرق موثوق للتركيز */
+            --primary-dark: #0056b3;  /* للتفاعل والعمق */
+            --primary-light: #E6F3FF; /* لون فاتح جداً للخلفيات */
+            --text-color-dark: #212529;
+        }
+
         .page-wrapper {
             margin-right: 260px;
             padding: 20px;
         }
 
         body {
-            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
-            font-family: "Tajawal", sans-serif;
-            color: #2e2e2e;
+            /* خلفية بيضاء مزرقة نظيفة */
+            background: #f8faff;
+            font-family: 'Tajawal', sans-serif;
+            color: var(--text-color-dark);
             min-height: 100vh;
             padding-bottom: 80px;
         }
 
         h2 {
-            color: #2e7d32;
-            font-weight: 700;
-            font-size: 1.8rem;
+            /* لون العنوان الرئيسي بالأزرق الداكن */
+            color: var(--primary-dark);
+            font-weight: 800;
+            font-size: 2rem;
         }
 
-        /* الكارد */
+        /* تلوين أيقونة العنوان الرئيسي بالأزرق */
+        h2 .bi-heart-pulse-fill {
+            color: var(--primary-color) !important;
+        }
+
+        /* الكارد - مظهر عائم وأنيق */
         .card {
             border: none;
-            border-radius: 14px;
+            border-radius: 18px; /* حواف أكثر دائرية */
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            /* ظل ناعم وواضح */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-2px);
+            transform: translateY(-4px); /* تأثير رفع أكبر */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
+        /* عناوين الكارد - خلفية ثابتة للأزرق */
         .card-header {
-            font-weight: bold;
-            font-size: 1.1rem;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: white;
+            /* استخدام فئة بووتستراب لتمثيل اللون الأزرق الرئيسي */
+            background-color: var(--primary-color) !important;
+            padding: 1rem 1.5rem;
+        }
+
+        .card-header.bg-secondary {
+            background-color: var(--primary-dark) !important; /* لون أغمق لسجل الزيارات */
         }
 
         .form-control, textarea {
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1px solid #ced4da;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             font-size: 1rem;
+            padding: 0.75rem;
         }
 
         .form-control:focus, textarea:focus {
-            border-color: #43a047;
-            box-shadow: 0 0 0 0.15rem rgba(67, 160, 71, 0.25);
+            /* إطار تركيز أزرق */
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
         }
 
         .btn {
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 12px;
+            font-weight: 700;
+            transition: all 0.3s ease;
         }
 
+        /* زر الحفظ (الأساسي) */
         .btn-success {
-            background-color: #43a047;
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
         }
 
+        .btn-success:hover {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+        }
+
+        /* زر الطباعة (Secondary/Outline) */
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: transparent;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* زر العودة (Secondary) */
+        .btn-secondary {
+            background-color: #e9ecef !important;
+            color: var(--text-color-dark) !important;
+            border-color: #e9ecef !important;
+        }
+        .btn-secondary:hover {
+            background-color: #dee2e6 !important;
+            border-color: #dee2e6 !important;
+        }
+
+
+        /* جدول الزيارات السابقة */
         .table th {
-            background: #388e3c !important;
+            /* خلفية رأس الجدول باللون الأزرق الداكن */
+            background: var(--primary-dark) !important;
             color: #fff;
             text-align: center;
+            font-weight: 700;
         }
 
         .table td {
             background: #fff;
             font-size: 0.95rem;
+            border-color: rgba(0, 0, 0, 0.08); /* حدود فاتحة */
         }
 
-        /* Multi-line text */
+        /* Multi-line text for previous visits */
         .multiline-text {
             white-space: pre-wrap;
             line-height: 1.8;
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 8px;
+            background: var(--primary-light); /* خلفية فاتحة من الأزرق */
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(0, 123, 255, 0.1);
         }
 
         textarea {
@@ -94,16 +165,19 @@
         /* Responsive adjustments */
         @media (max-width: 768px) {
             h2 {
-                font-size: 1.4rem;
+                font-size: 1.6rem;
             }
 
             .card-header {
                 font-size: 1rem;
             }
+            .page-wrapper {
+                margin-right: 0;
+            }
 
             .btn {
-                padding: 6px 12px;
-                font-size: 0.9rem;
+                padding: 8px 15px;
+                font-size: 0.95rem;
             }
 
             .form-control, textarea {
@@ -138,9 +212,8 @@
         <i class="bi bi-heart-pulse-fill text-success"></i> الكشف الجاري
     </h2>
 
-    <!-- بيانات المريض -->
     <div class="card mb-4">
-        <div class="card-header bg-success text-white"><i class="bi bi-person-lines-fill"></i> بيانات المريض</div>
+        <div class="card-header bg-primary text-white"><i class="bi bi-person-lines-fill"></i> بيانات المريض</div>
         <div class="card-body">
             <p><strong>الاسم:</strong> <span id="patientName" th:text="${patient.user.fullName}"></span></p>
             <p><strong>الكود:</strong> <span id="patientCode" th:text="${patient.patientCode}"></span></p>
@@ -148,7 +221,6 @@
         </div>
     </div>
 
-    <!-- تفاصيل الزيارة -->
     <form th:action="@{/doctor/visit/update}" method="post">
         <input type="hidden" name="visitId" th:value="${visit.id}"/>
 
@@ -198,7 +270,6 @@
         </div>
     </form>
 
-    <!-- سجل الزيارات السابقة -->
     <div class="card mb-5">
         <div class="card-header bg-secondary text-white"><i class="bi bi-clock-history"></i> الزيارات السابقة</div>
         <div class="card-body">
@@ -241,7 +312,6 @@
 
 </div>
 
-<!-- سكربت الطباعة والإرسال -->
 <script>
     function printPrescription() {
         const patientName = document.getElementById('patientName').innerText.trim();
@@ -271,8 +341,9 @@
             <title>وصفة طبية</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <style>
-                body { font-family: 'Arial', sans-serif; padding: 40px; line-height: 2; }
-                .content { white-space: pre-wrap; background:#f8f9fa; padding: 20px; border-radius: 6px; }
+                body { font-family: 'Tajawal', sans-serif; padding: 40px; line-height: 2; }
+                .content { white-space: pre-wrap; background:#E6F3FF; padding: 20px; border-radius: 10px; border: 1px solid #007BFF; }
+                h2, h5 { color: #0056b3; font-weight: 700; }
             </style>
         </head>
         <body>
@@ -291,7 +362,7 @@
             <h5 class="mt-3">الاستشارة القادمة:</h5>
             <div class="content">${formattedDate}</div>` : ''}
 
-            <p class="text-center mt-4">نتمنى لكم الشفاء العاجل 🌿</p>
+            <p class="text-center mt-4" style="color:#007BFF; font-weight:600">نتمنى لكم الشفاء العاجل 🌿</p>
         </body>
         </html>
         `);

@@ -4,8 +4,8 @@
 <body>
 
 <!-- ===== SIDEBAR FRAGMENT ===== -->
-<div   th:fragment="doctorSidebar()" style="width:260px; min-height:100vh;
-background:#1b5e20; color:#fff; position:fixed; right:0; top:0; padding:20px;">
+<div th:fragment="doctorSidebar()" style="width:260px; min-height:100vh;
+background:#0056b3; color:#fff; position:fixed; right:0; top:0; padding:20px;">
 
     <!-- Doctor Info -->
 
@@ -17,6 +17,11 @@ background:#1b5e20; color:#fff; position:fixed; right:0; top:0; padding:20px;">
         <li class="mb-3">
             <a href="/doctor/dashboard" class="btn w-100 btn-light text-start">
                 <i class="bi bi-house"></i> الصفحة الرئيسية
+            </a>
+        </li>
+        <li class="mb-3">
+            <a href="/visits/list" class="btn w-100 btn-light text-start">
+                <i class="bi bi-house"></i>زيارات اليوم
             </a>
         </li>
 
@@ -33,7 +38,7 @@ background:#1b5e20; color:#fff; position:fixed; right:0; top:0; padding:20px;">
         </li>
 
         <!-- Advanced Subscription Menu -->
-        <div >
+        <div>
             <li class="mb-3">
                 <a href="/clinc/dashboard" class="btn w-100 btn-light text-start">
                     <i class="bi bi-menu-button"></i> Dashboard
@@ -65,13 +70,10 @@ background:#1b5e20; color:#fff; position:fixed; right:0; top:0; padding:20px;">
                 <i class="bi bi-chat-dots"></i> الشات
                 <span id="chatBadge"
                       class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
-                    0
+
                 </span>
             </a>
         </li>
-
-
-
         <li class="mt-4">
             <a href="/logout" class="btn w-100 btn-danger text-start">
                 <i class="bi bi-box-arrow-right"></i> تسجيل الخروج
@@ -102,8 +104,8 @@ background:#1b5e20; color:#fff; position:fixed; right:0; top:0; padding:20px;">
         stompClient = Stomp.over(socket);
         stompClient.debug = null;
 
-        stompClient.connect({}, function() {
-            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
+        stompClient.connect({}, function () {
+            stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function (message) {
                 const msg = JSON.parse(message.body);
                 if (msg.senderId !== currentUserId) {
                     unreadCount++;
