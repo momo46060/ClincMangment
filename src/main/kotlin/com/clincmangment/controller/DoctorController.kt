@@ -1,6 +1,7 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.NurseForm
+import com.clincmangment.repository.dto.UpdateVisitRequest
 import com.clincmangment.repository.model.User
 import com.clincmangment.service.ClinicService
 import com.clincmangment.service.UserServiceImpl
@@ -8,8 +9,11 @@ import com.clincmangment.service.VisitService
 import com.clincmangment.utils.Role
 import com.clincmangment.utils.SubscriptionType
 import com.clincmangment.utils.VisitType
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
@@ -24,6 +28,7 @@ class DoctorController(
     private val userService: UserServiceImpl,
     private val httpSession: HttpSession,
     private val clinicService: ClinicService,
+    private val objectMapper: ObjectMapper
 
 
     ) {
@@ -119,7 +124,7 @@ class DoctorController(
     fun updateVisit(
         @RequestParam visitId: Long,
         @RequestParam diagnosis: String,
-        @RequestParam prescription: String,
+        @RequestParam prescription: String, // هذا سيحتوي على JSON الآن
         @RequestParam(required = false) scheduledConsultation: String?,
         model: Model
     ): String {
@@ -134,9 +139,20 @@ class DoctorController(
                 throw IllegalArgumentException("Visit does not belong to your clinic")
             }
 
+            // التحقق من أن الروشتة هي JSON صالح
+            val isJsonPrescription = prescription.trim().startsWith("[") || prescription.trim().startsWith("{")
+
+            if (isJsonPrescription) {
+                // حفظ الروشتة كـ JSON
+                visit.prescription = prescription
+            } else {
+                // للحفاظ على التوافق مع الإصدار القديم
+                visit.prescription = prescription
+            }
+
             visit.diagnosis = diagnosis
-            visit.prescription = prescription
             visit.status = "تم الكشف"
+
             if (!scheduledConsultation.isNullOrBlank()) {
                 visit.scheduledConsultation = LocalDateTime.parse(scheduledConsultation)
             }
@@ -150,7 +166,7 @@ class DoctorController(
         }
     }
 
-    // إضافة ممرضة جديدة بنفس العيادة
+  // إضافة ممرضة جديدة بنفس العيادة
     @GetMapping("/add-nurse")
     fun showAddNurseForm(model: Model): String {
         model.addAttribute("nurseForm", NurseForm())

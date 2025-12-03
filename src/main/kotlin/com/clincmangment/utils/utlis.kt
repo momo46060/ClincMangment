@@ -1,6 +1,8 @@
 package com.clincmangment.utils
 
 import com.clincmangment.repository.model.User
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpSession
 
 enum class Role { DOCTOR, NURSE, PATIENT }
@@ -24,4 +26,51 @@ fun getCurrentUser(httpSession: HttpSession): Any {
     val currentUser = httpSession.getAttribute("loggedUser") as? User
         ?: return "redirect:/login"
     return currentUser
+}
+
+
+// في service أو utility class
+fun formatPrescriptionForDisplay(prescriptionJson: String): String {
+    return try {
+        if (prescriptionJson.isBlank() || prescriptionJson == "null") {
+            return "لا توجد أدوية"
+        }
+
+        val objectMapper = ObjectMapper()
+        val items: List<Map<String, String>> = objectMapper.readValue(prescriptionJson,
+            object : TypeReference<List<Map<String, String>>>() {})
+
+        if (items.isEmpty()) {
+            return "لا توجد أدوية"
+        }
+
+        val formatted = StringBuilder()
+        items.forEachIndexed { index, item ->
+            val name = item["name"] ?: "دواء بدون اسم"
+            val dose = item["dose"]
+            val times = item["times"]
+            val duration = item["duration"]
+            val notes = item["notes"]
+
+            formatted.append("${index + 1}. $name\n")
+            if (!dose.isNullOrBlank()) {
+                formatted.append("   الجرعة: $dose\n")
+            }
+            if (!times.isNullOrBlank()) {
+                formatted.append("   عدد المرات: $times مرات/يوم\n")
+            }
+            if (!duration.isNullOrBlank()) {
+                formatted.append("   المدة: $duration يوم\n")
+            }
+            if (!notes.isNullOrBlank()) {
+                formatted.append("   ملاحظات: $notes\n")
+            }
+            formatted.append("\n")
+        }
+
+        formatted.toString()
+    } catch (e: Exception) {
+        // إذا لم يكن JSON، اعرض النص كما هو
+        prescriptionJson
+    }
 }

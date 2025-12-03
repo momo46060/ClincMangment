@@ -261,6 +261,7 @@
 
     <form th:action="@{/doctor/visit/update}" method="post">
         <input type="hidden" name="visitId" th:value="${visit.id}"/>
+        <input type="hidden" name="prescription" id="prescriptionJson" value=""/>
 
         <div class="card mb-4">
             <div class="card-header bg-primary text-white"><i class="bi bi-file-medical"></i> تفاصيل الزيارة الحالية</div>
@@ -310,12 +311,15 @@
                 <div class="mt-3">
                     <label class="form-label fw-bold">موعد الاستشارة القادمة</label>
                     <input type="datetime-local" class="form-control" name="scheduledConsultation"
-                           th:value="${visit.scheduledConsultation != null ? #temporals.format(visit.scheduledConsultation, 'yyyy-MM-dd''T''HH:mm') : ''}"/>
+                           th:value="${visit.scheduledConsultation != null ?
+                            #temporals.format(visit.scheduledConsultation, 'yyyy-MM-dd''T''HH:mm') : ''}"/>
                 </div>
 
                 <div class="mt-4 text-center d-flex flex-wrap justify-content-center gap-2">
-
-                    <button type="submit" class="btn btn-success px-4"><i class="bi bi-save"></i> حفظ</button>
+                    <button type="submit" class="btn btn-success px-4" onclick="preparePrescriptionData()">
+                        <i class="bi bi-save"></i> حفظ
+                    </button>
+<!--                    <button type="submit" class="btn btn-success px-4"><i class="bi bi-save"></i> حفظ</button>-->
                     <button type="button" class="btn btn-outline-primary px-4" onclick="printPrescription()"><i
                             class="bi bi-printer"></i> طباعة
                     </button>
@@ -328,8 +332,6 @@
             </div>
         </div>
     </form>
-
-
 
     <div class="card mb-5">
         <div class="card-header bg-secondary text-white"><i class="bi bi-clock-history"></i> الزيارات السابقة</div>
@@ -355,8 +357,9 @@
                                  th:utext="${#strings.replace(v.diagnosis, '\n', '<br/>')}"></div>
                         </td>
                         <td>
-                            <div class="multiline-text"
-                                 th:utext="${#strings.replace(v.prescription, '\n', '<br/>')}"></div>
+                            <div class="multiline-text prescription-display" th:data-prescription="${v.prescription}">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </div>
                         </td>
                     </tr>
 
@@ -904,6 +907,62 @@
         }
     }
 
+
+    function processStoredPrescriptions() {
+        const prescriptionElements = document.querySelectorAll('.prescription-display');
+
+        prescriptionElements.forEach(element => {
+            const prescriptionJson = element.getAttribute('data-prescription');
+            if (prescriptionJson) {
+                const formattedText = formatPrescriptionForDisplay(prescriptionJson);
+                element.innerHTML = formattedText.replace(/\n/g, '<br>');
+            }
+        });
+    }
+
+    // تشغيل الدالة عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        // ... الكود الحالي ...
+
+        // معالجة وعرض الرواشط المخزنة
+        processStoredPrescriptions();
+    });
+    function formatPrescriptionForDisplay(prescriptionJson) {
+        if (!prescriptionJson || prescriptionJson.trim() === '' || prescriptionJson === 'null') {
+            return 'لا توجد روشتة';
+        }
+
+        try {
+            const items = JSON.parse(prescriptionJson);
+            if (!Array.isArray(items) || items.length === 0) {
+                return 'لا توجد أدوية مضافة';
+            }
+
+            let formattedText = '';
+            items.forEach((item, index) => {
+                if (item.name || item.dose || item.times || item.duration) {
+                    formattedText += `${index + 1}. ${item.name || 'دواء'}\n`;
+
+                    const details = [];
+                    if (item.dose) details.push(`الجرعة: ${item.dose}`);
+                    if (item.times) details.push(`عدد المرات: ${item.times} مرات يومياً`);
+                    if (item.duration) details.push(`المدة: ${item.duration} يوم`);
+                    if (item.notes) details.push(`ملاحظات: ${item.notes}`);
+
+                    if (details.length > 0) {
+                        formattedText += '   ' + details.join('، ') + '\n';
+                    }
+                    formattedText += '\n';
+                }
+            });
+
+            return formattedText.trim();
+        } catch (e) {
+            console.error('Error parsing prescription:', e);
+            // إذا لم يكن JSON، عرض النص كما هو (للتوافق مع الإصدار القديم)
+            return prescriptionJson;
+        }
+    }
 </script>
 
 </body>
