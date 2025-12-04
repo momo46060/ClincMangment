@@ -2,7 +2,7 @@ package com.clincmangment.controller
 
 import com.clincmangment.repository.ExpenseRepository
 import com.clincmangment.repository.ClincRepository
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.utils.getCurrentUser
 import jakarta.servlet.http.HttpSession
 import org.springframework.stereotype.Controller

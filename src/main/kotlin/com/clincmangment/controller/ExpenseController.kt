@@ -3,8 +3,8 @@ package com.clincmangment.controller
 import com.clincmangment.repository.ClincRepository
 import com.clincmangment.repository.ExpenseRepository
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.Expense
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.Expense
+import com.clincmangment.model.User
 import jakarta.servlet.http.HttpSession
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping

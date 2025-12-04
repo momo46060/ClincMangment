@@ -3,10 +3,10 @@ package com.clincmangment.service
 import com.clincmangment.repository.PrescriptionRepository
 import com.clincmangment.repository.PrescriptionTemplateRepository
 import com.clincmangment.repository.VisitRepository
-import com.clincmangment.repository.model.Prescription
-import com.clincmangment.repository.model.PrescriptionTemplate
-import com.clincmangment.repository.model.User
-import com.clincmangment.repository.model.Visit
+import com.clincmangment.model.Prescription
+import com.clincmangment.model.PrescriptionTemplate
+import com.clincmangment.model.User
+import com.clincmangment.model.Visit
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 

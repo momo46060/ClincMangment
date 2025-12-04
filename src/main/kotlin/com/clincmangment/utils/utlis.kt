@@ -1,6 +1,6 @@
 package com.clincmangment.utils
 
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpSession

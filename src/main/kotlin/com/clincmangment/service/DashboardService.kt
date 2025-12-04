@@ -1,20 +1,12 @@
 package com.clincmangment.service
 
 
-// DashboardService.kt
 
-import com.clincmangment.repository.ClincRepository
 import com.clincmangment.repository.PatientRepository
 import com.clincmangment.repository.PrescriptionRepository
 import com.clincmangment.repository.VisitRepository
-import com.clincmangment.repository.dto.AppointmentShortDTO
-import com.clincmangment.repository.dto.DashboardDTO
-import com.clincmangment.repository.dto.NameCountDTO
-import com.clincmangment.repository.dto.PatientVisitsDTO
-import com.clincmangment.repository.dto.SeriesItemDTO
-import com.clincmangment.repository.model.Visit
-import com.clincmangment.repository.model.Prescription
-import com.clincmangment.utils.VisitType
+import com.clincmangment.repository.dto.*
+import com.clincmangment.model.Prescription
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,7 +18,6 @@ class DashboardService(
     private val visitRepository: VisitRepository,
     private val patientRepository: PatientRepository,
     private val prescriptionRepository: PrescriptionRepository,
-    private val clinicRepository: ClincRepository
 ) {
 
     fun getDashboard(clinicId: Long): DashboardDTO {
@@ -43,27 +34,8 @@ class DashboardService(
 
         // Revenue today: sum by visitType and clinic prices
         val visitsForRevenue = visitRepository.findVisitsForRevenue(clinicId, startOfDay, endOfDay)
-        val clinic = clinicRepository.findById(clinicId).orElseThrow()
-        println("**************************")
-        println("${visitsForRevenue}")
-        println("**************************")
-        val revenueToday = visitsForRevenue.sumOf { v ->
-            when (v.visitType) {
-                VisitType.CHECKUP -> {
-                    println("**************************")
-                    println("${clinic.checkUpPrice}")
-                    println("**************************")
-                    clinic.checkUpPrice
 
-                }
-                else -> {
-                    println("**************************")
-                    println("${clinic.followUpPrice}")
-                    println("**************************")
-                    clinic.followUpPrice
-                }
-            }
-        }
+        val revenueToday = visitsForRevenue.sumOf { v -> v.visitPrice }
 
         // Next appointments (take next 10)
         val nextAppointmentsRaw = visitRepository.findNextAppointments(clinicId, LocalDateTime.now()).take(10)
@@ -81,7 +53,7 @@ class DashboardService(
         // Visits per doctor today
         val perDoctorRaw = visitRepository.countVisitsPerDoctor(clinicId, startOfDay, endOfDay)
         val visitsPerDoctor = perDoctorRaw.map { arr ->
-            val name = arr[1]?.toString() ?: "غير محدد"
+            val name = arr[1].toString()
             val count = (arr[2] as Number).toLong()
             SeriesItemDTO(name, count)
         }
@@ -93,12 +65,7 @@ class DashboardService(
             val s = day.atStartOfDay()
             val e = s.plusDays(1)
             val vs = visitRepository.findVisitsForRevenue(clinicId, s, e)
-            val sum = vs.sumOf { v ->
-                when (v.visitType) {
-                    VisitType.CONSULTATION -> clinic.checkUpPrice
-                    else -> clinic.followUpPrice
-                }
-            }
+            val sum = vs.sumOf { v -> v.visitPrice }
             weeklyRevenue.add(round(sum * 100) / 100.0)
         }
 
@@ -163,13 +130,13 @@ class DashboardService(
 
     // heuristic parser for medicine names from prescription.content
     private fun extractMedicineNames(p: Prescription): List<String> {
-        val content = p.content ?: return emptyList()
+        val content = p.content
         // try to parse simple comma / newline separated names or keys like "Medicine: name"
         val tokens = content.split("\n", ",", ";").map { it.trim() }.filter { it.isNotEmpty() }
         val meds = mutableListOf<String>()
         for (t in tokens) {
             // remove dosage numbers, keep words (simple heuristic)
-            val cleaned = t.replace(Regex("\\d+mg|\\d+ mg|\\d+ ml|\\(.*?\\)|\\d+\\/\\d+"), "").trim()
+            val cleaned = t.replace(Regex("\\d+mg|\\d+ mg|\\d+ ml|\\(.*?\\)|\\d+/\\d+"), "").trim()
             // take first 4 words max
             val words = cleaned.split(Regex("\\s+")).take(4).joinToString(" ")
             if (words.isNotBlank()) meds.add(words)

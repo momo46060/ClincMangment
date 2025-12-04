@@ -1,6 +1,6 @@
 package com.clincmangment.config
 
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component

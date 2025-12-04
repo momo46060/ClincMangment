@@ -2,12 +2,10 @@ package com.clincmangment.service
 
 import com.clincmangment.repository.UserRepository
 import com.clincmangment.repository.ClincRepository
-import com.clincmangment.repository.model.Clinic
-import com.clincmangment.utils.SubscriptionExpiredException
+import com.clincmangment.model.Clinic
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 import java.time.LocalDate
-import java.util.Optional
 
 @Service
 class ClinicService(

@@ -1,4 +1,4 @@
-package com.clincmangment.repository.model
+package com.clincmangment.model
 import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDate

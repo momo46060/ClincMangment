@@ -1,8 +1,7 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.PatientForm
-import com.clincmangment.repository.model.Clinic
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.service.PatientService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.utils.Role

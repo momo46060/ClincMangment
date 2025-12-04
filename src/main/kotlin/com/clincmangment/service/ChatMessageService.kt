@@ -2,7 +2,7 @@ package com.clincmangment.service
 
 import com.clincmangment.repository.ChatMessageRepository
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.utils.Role
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service

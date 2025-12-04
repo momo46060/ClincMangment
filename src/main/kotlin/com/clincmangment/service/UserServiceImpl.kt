@@ -1,12 +1,9 @@
 package com.clincmangment.service
 
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.Clinic
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.Clinic
+import com.clincmangment.model.User
 import com.clincmangment.utils.Role
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.query.Param
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*

@@ -1,15 +1,11 @@
 package com.clincmangment.repository
 
-import com.clincmangment.repository.model.Visit
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
+import com.clincmangment.model.Visit
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
-import java.time.LocalDate
 import java.time.LocalDateTime
-import java.util.*
 
 @Repository
 interface VisitRepository : JpaRepository<Visit, Long> {

@@ -2,9 +2,9 @@ package com.clincmangment.service
 
 import com.clincmangment.repository.ChatMessageRepository
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.ChatMessage
-import com.clincmangment.repository.model.ChatMessageDto
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.ChatMessage
+import com.clincmangment.model.ChatMessageDto
+import com.clincmangment.model.User
 import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

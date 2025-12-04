@@ -4,15 +4,14 @@ import com.clincmangment.service.FinancialService
 import com.clincmangment.repository.ClincRepository
 import com.clincmangment.repository.ExpenseRepository
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.Expense
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.Expense
+import com.clincmangment.model.User
 import com.clincmangment.utils.getCurrentUser
 import jakarta.servlet.http.HttpSession
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 @Controller
 @RequestMapping("/clinics")

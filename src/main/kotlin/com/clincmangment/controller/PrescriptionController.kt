@@ -1,11 +1,10 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.service.PrescriptionService
 import jakarta.servlet.http.HttpSession
 import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 
 @Controller

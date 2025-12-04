@@ -1,7 +1,7 @@
 package com.clincmangment.repository
 
-import com.clincmangment.repository.model.Clinic
-import com.clincmangment.repository.model.Patient
+import com.clincmangment.model.Clinic
+import com.clincmangment.model.Patient
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

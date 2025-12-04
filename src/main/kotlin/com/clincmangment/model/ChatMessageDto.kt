@@ -1,4 +1,4 @@
-package com.clincmangment.repository.model
+package com.clincmangment.model
 
 data class ChatMessageDto(
     val id: Long? = null,

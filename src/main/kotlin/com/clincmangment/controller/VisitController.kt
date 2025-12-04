@@ -1,8 +1,7 @@
 package com.clincmangment.controller
 
-import com.clincmangment.repository.dto.VisitEditForm
 import com.clincmangment.repository.dto.VisitForm
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.service.PatientService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService

@@ -1,9 +1,9 @@
 package com.clincmangment.repository
 
-import com.clincmangment.repository.model.PrescriptionTemplate
+import com.clincmangment.model.PrescriptionTemplate
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 
 
 @Repository

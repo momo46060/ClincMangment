@@ -1,10 +1,9 @@
 package com.clincmangment.service
 
 import com.clincmangment.repository.PatientRepository
-import com.clincmangment.repository.model.Clinic
-import com.clincmangment.repository.model.Patient
-import com.clincmangment.repository.model.User
-import org.springframework.data.domain.Page
+import com.clincmangment.model.Clinic
+import com.clincmangment.model.Patient
+import com.clincmangment.model.User
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import java.util.*

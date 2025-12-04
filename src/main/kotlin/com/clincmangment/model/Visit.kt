@@ -1,4 +1,4 @@
-package com.clincmangment.repository.model
+package com.clincmangment.model
 
 import com.clincmangment.utils.VisitType
 import jakarta.persistence.*
@@ -64,6 +64,9 @@ data class Visit(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clinic_id", nullable = false)
-    var clinic: Clinic? = null
+    var clinic: Clinic? = null,
+    @Column(nullable = false)
+    var visitPrice: Double = 0.0
+
 // الحالة الافتراضية
 )

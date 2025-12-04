@@ -1,7 +1,7 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.ClincRepository
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.service.DashboardService
 import com.clincmangment.utils.SubscriptionType
 import jakarta.servlet.http.HttpSession

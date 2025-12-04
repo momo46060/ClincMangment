@@ -1,8 +1,7 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.NurseForm
-import com.clincmangment.repository.dto.UpdateVisitRequest
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.service.ClinicService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
@@ -12,8 +11,6 @@ import com.clincmangment.utils.VisitType
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
-import org.springframework.http.HttpStatus
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*

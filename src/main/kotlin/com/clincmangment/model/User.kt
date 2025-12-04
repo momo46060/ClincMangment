@@ -1,4 +1,4 @@
-package com.clincmangment.repository.model
+package com.clincmangment.model
 
 import com.clincmangment.utils.Role
 import jakarta.persistence.*

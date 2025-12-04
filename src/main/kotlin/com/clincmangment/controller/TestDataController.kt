@@ -1,8 +1,8 @@
 package com.clincmangment.controller
 
 import com.clincmangment.repository.ClincRepository
-import com.clincmangment.repository.model.Clinic
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.Clinic
+import com.clincmangment.model.User
 import com.clincmangment.service.ChatMessageService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.utils.Role
@@ -23,6 +23,7 @@ class TestDataController(
     fun getUnreadCounts(): MutableMap<Long?, Int?> {
         return chatMessageService.getAllUnreadCounts()
     }
+
     // إنشاء عيادة جديدة
     @GetMapping("/create-clinic")
     fun createClinic(): String {
@@ -35,7 +36,7 @@ class TestDataController(
             followUpPrice = 100.0,
 
 
-        )
+            )
         // تخزينها مؤقتًا في القائمة
         clinics.save(clinic)
         return "Clinic created successfully with ID: ${clinic.id ?: "not persisted yet"}"
@@ -84,4 +85,7 @@ class TestDataController(
         }
     }
 }
+
+
+
 

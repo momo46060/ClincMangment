@@ -1,6 +1,6 @@
 package com.clincmangment.repository
 
-import com.clincmangment.repository.model.ChatMessage
+import com.clincmangment.model.ChatMessage
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query

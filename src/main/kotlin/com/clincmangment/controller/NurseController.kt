@@ -1,18 +1,15 @@
 package com.clincmangment.controller
 
-import com.clincmangment.repository.model.User
+import com.clincmangment.model.User
 import com.clincmangment.service.ClinicService
-import com.clincmangment.service.PatientService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
 import com.clincmangment.utils.Role
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
 
 @Controller
 @RequestMapping("/nurse")

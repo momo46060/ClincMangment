@@ -2,7 +2,7 @@ package com.clincmangment.controller
 
 import com.clincmangment.repository.ChatMessageRepository
 import com.clincmangment.repository.UserRepository
-import com.clincmangment.repository.model.ChatMessageDto
+import com.clincmangment.model.ChatMessageDto
 import com.clincmangment.service.ChatMessageService
 import com.clincmangment.service.ChatService
 import com.clincmangment.utils.Role

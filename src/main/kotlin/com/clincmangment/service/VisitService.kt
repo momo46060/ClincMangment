@@ -1,7 +1,7 @@
 package com.clincmangment.service
 
 import com.clincmangment.repository.VisitRepository
-import com.clincmangment.repository.model.Visit
+import com.clincmangment.model.Visit
 import com.clincmangment.utils.VisitType
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
@@ -50,7 +50,6 @@ class VisitService(
             .orElseThrow { IllegalArgumentException("Patient not found") }
 
         val doctor =userService.findByPhone(doctorUsername!!)
-        val previousVisits = visitRepository.countByPatientId(patientId = patient.id!!)
 
         val lastVisit = visitRepository.findTopByPatientIdOrderByVisitDateDesc(patient.id!!)
 
@@ -72,7 +71,9 @@ class VisitService(
             nurseName = nurseName,
             visitDate = LocalDateTime.now(),
             status = status,
-            clinic = patient.clinic // ربط الزيارة بالعيادة
+            clinic = patient.clinic ,
+            visitPrice = if (visitType == VisitType.CHECKUP.name)
+                patient.clinic.checkUpPrice else patient.clinic.followUpPrice
         )
 
         visitRepository.save(visit)

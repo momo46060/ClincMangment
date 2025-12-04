@@ -1,6 +1,6 @@
 package com.clincmangment.repository
 
-import com.clincmangment.repository.model.Prescription
+import com.clincmangment.model.Prescription
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime

@@ -10,41 +10,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-        /*
-         * ======================================
-         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Nurse Dashboard)
-         * ======================================
-         */
+        /* نفس الستايل الخاص بك تماماً */
         :root {
             --primary-color: #007BFF;
             --primary-dark: #0056b3;
-            --waiting-color: #fff3e0;       /* انتظار - برتقالي فاتح */
-            --progress-color: #E6F3FF;      /* جاري الكشف - أزرق نظامي فاتح */
-            --done-color: #d4f8d4;          /* تم الكشف - أخضر فاتح (لإشارة النجاح) */
-            --cancelled-color: #f1f1f1;     /* ملغاة - رمادي فاتح */
+            --waiting-color: #fff3e0;
+            --progress-color: #E6F3FF;
+            --done-color: #d4f8d4;
+            --cancelled-color: #f1f1f1;
         }
 
         body {
-            /* خلفية بيضاء مزرقة نظيفة */
             background: #f8faff;
             font-family: 'Tajawal', sans-serif;
             color: #212529;
         }
 
-        h2 {
-            font-weight: 900;
-            /* لون أزرق داكن موحد */
-            color: var(--primary-dark);
-        }
+        h2 { font-weight: 900; color: var(--primary-dark); }
 
-        /* البطاقات */
         .card {
             border-radius: 20px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
             border: none;
         }
 
-        /* رأس البطاقة - أزرق موحد */
         .card-header {
             font-size: 1.2rem;
             font-weight: 700;
@@ -54,43 +43,18 @@
             border-bottom: none;
         }
 
-        /* رأس الجدول - أزرق داكن */
         .table-success, .table-success th {
             background-color: var(--primary-dark) !important;
             color: white;
         }
 
-        /* >>>>>>> الوان الصفوف الموحدة (CSS Fix) <<<<<<<<< */
+        tr.status-waiting, tr.status-waiting > td { background-color: var(--waiting-color) !important; --bs-table-bg: var(--waiting-color) !important; }
+        tr.status-progress, tr.status-progress > td { background-color: var(--progress-color) !important; --bs-table-bg: var(--progress-color) !important; }
+        tr.status-done, tr.status-done > td { background-color: var(--done-color) !important; --bs-table-bg: var(--done-color) !important; }
+        tr.status-cancelled, tr.status-cancelled > td { background-color: var(--cancelled-color) !important; --bs-table-bg: var(--cancelled-color) !important; }
 
-        /* 1. حالة الانتظار (برتقالي فاتح) */
-        tr.status-waiting, tr.status-waiting > td {
-            background-color: var(--waiting-color) !important;
-            --bs-table-bg: var(--waiting-color) !important;
-        }
-
-        /* 2. حالة جاري الكشف (أزرق فاتح) */
-        tr.status-progress, tr.status-progress > td {
-            background-color: var(--progress-color) !important;
-            --bs-table-bg: var(--progress-color) !important;
-        }
-
-        /* 3. حالة تم الكشف (أخضر فاتح) */
-        tr.status-done, tr.status-done > td {
-            background-color: var(--done-color) !important;
-            --bs-table-bg: var(--done-color) !important;
-        }
-
-        /* 4. حالة ملغاة (رمادي) */
-        tr.status-cancelled, tr.status-cancelled > td {
-            background-color: var(--cancelled-color) !important;
-            --bs-table-bg: var(--cancelled-color) !important;
-        }
-
-        /* تعديل Hover */
         .table-hover > tbody > tr:hover > * { filter: brightness(0.95); }
 
-
-        /* تنسيق العدادات */
         .card-body .p-2 {
             border-radius: 12px !important;
             font-weight: 700;
@@ -102,67 +66,50 @@
             font-weight: 900;
         }
 
-        /* الأزرار الرئيسية */
-        .btn-success { /* زر الشات - أزرق موحد */
-            background-color: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-            font-weight: 700;
-            padding: 0.5rem 1.5rem;
-        }
-        .btn-success:hover {
-            background-color: var(--primary-dark) !important;
-            border-color: var(--primary-dark) !important;
-        }
+        .btn-success { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; font-weight: 700; padding: 0.5rem 1.5rem; }
+        .btn-success:hover { background-color: var(--primary-dark) !important; border-color: var(--primary-dark) !important; }
+        .btn-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; font-weight: 700; border-radius: 12px; padding: 0.6rem 1.5rem; }
+        .btn-primary:hover { background-color: var(--primary-dark) !important; border-color: var(--primary-dark) !important; }
+        .btn-danger { border-radius: 12px; font-weight: 700; padding: 0.6rem 1.5rem; }
 
-        .btn-primary { /* حجز جديد - أزرق موحد */
-            background-color: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-            font-weight: 700;
-            border-radius: 12px;
-            padding: 0.6rem 1.5rem;
-        }
-        .btn-primary:hover {
-            background-color: var(--primary-dark) !important;
-            border-color: var(--primary-dark) !important;
-        }
-
-        .btn-danger { /* خروج/إلغاء - أحمر */
-            border-radius: 12px;
-            font-weight: 700;
-            padding: 0.6rem 1.5rem;
-        }
-
-        /* تنسيق الفلاتر */
         .filter-row .form-select, .filter-row input {
             min-width: 180px;
             border-radius: 12px;
             padding: 0.7rem 1rem;
         }
 
-        /* تنسيق Badge الإشعارات */
-        .chat-notification-badge {
-            background-color: #dc3545;
-            box-shadow: 0 0 0 2px #f8faff;
-        }
+        .legend-item { font-weight: 500; margin-right: 15px; }
+        .legend-color-box { display: inline-block; width: 15px; height: 15px; margin-left: 5px; border-radius: 3px; border: 1px solid #ccc;}
 
-        /* تنسيق Legend */
-        .legend-item {
-            font-weight: 500;
+        /* أنيميشن للبادج */
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
         }
     </style>
 </head>
 
 <body class="p-3 p-md-4">
+<div th:replace="fragments/chat-popup :: chatPopupFragment"></div>
 
 <div class="container">
     <h2 class="mb-2 text-center">لوحة الممرضة</h2>
     <h6 class="text-muted text-center mb-4">📅 تاريخ اليوم: <span th:text="${today}"></span></h6>
+
     <div class="text-start mb-3">
-        <div class="chat-btn-container">
-            <a href="/chat" class="btn btn-success rounded-pill px-4">
-                <i class="bi bi-chat-dots"></i> فتح الشات
+        <div class="chat-btn-container d-inline-block" style="width: 200px;">
+            <a href="javascript:void(0)" onclick="openChatPopup()"
+               class="btn w-100 btn-light text-start position-relative shadow-sm border">
+                <i class="bi bi-chat-dots text-primary"></i> الشات
+
+                <span id="chatBadge"
+                      class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger"
+                      style="display: none; border: 2px solid white;">
+                    0
+                    <span class="visually-hidden">unread messages</span>
+                </span>
             </a>
-            <span class="chat-notification-badge" id="chatBadge">0</span>
         </div>
     </div>
 
@@ -197,7 +144,7 @@
                 <div class="col-6 col-md-3 mb-2">
                     <div class="p-2 border rounded" style="background-color: var(--cancelled-color);">
                         <span class="d-block fw-bold" id="counter-cancelled">0</span>
-                        <small class="text-muted">   ملغاة </small>
+                        <small class="text-muted">ملغاة</small>
                     </div>
                 </div>
             </div>
@@ -296,11 +243,16 @@
     </div>
 </div>
 
-<script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script th:inline="javascript">
     document.addEventListener("DOMContentLoaded", function () {
+        // --- 1. إعداد المتغيرات والفلاتر (كودك الأصلي) ---
         const doctorFilter = document.getElementById("doctorFilter");
         const statusFilter = document.getElementById("statusFilter");
-        const searchBox = document.getElementById("searchBox"); // تم تعريف خانة البحث الآن
+        const searchBox = document.getElementById("searchBox");
         const visitsTableBody = document.querySelector("#visitsTable tbody");
         let visitRows = Array.from(document.querySelectorAll("#visitsTable tbody tr[data-doctor-id]"));
         const noVisitsRow = document.getElementById("noVisitsRow");
@@ -318,25 +270,19 @@
 
         function updateCounters(rows) {
             let waiting = 0, progress = 0, done = 0, cancelled = 0;
-
-            // نحسب الصفوف المرئية فقط (حسب الفلترة)
             rows.forEach(row => {
                 if (row.style.display === "none") return;
-
                 const status = row.getAttribute("data-status");
-
                 if (status === "في الانتظار") waiting++;
                 else if (status === "جاري الكشف") progress++;
                 else if (status === "تم الكشف") done++;
                 else if (status === "ملغاة") cancelled++;
             });
-
             counterWaiting.textContent = waiting;
             counterProgress.textContent = progress;
             counterDone.textContent = done;
             counterCancelled.textContent = cancelled;
         }
-
 
         function sortTable() {
             visitRows.sort((a, b) => {
@@ -354,50 +300,11 @@
             sortIcon.className = sortDirection === 'asc' ? 'bi bi-sort-down-alt' : 'bi bi-sort-up';
             sortTable();
         });
-        function loadUnreadCount() {
-            // متغيرات غير معرفة (مثل currentUserId)
-            // ملاحظة: هذه الدالة تعتمد على متغيرات غير معرفة (currentUserId, updateBadge, saveUnreadCount, playNotificationSound)
-            // يجب تعريف هذه المتغيرات في الكود الخاص بالعيادة ليعمل الشات.
-            const stored = localStorage.getItem('chatUnreadCount_' + currentUserId);
-            const count = stored ? parseInt(stored) : 0;
-            updateBadge(count);
-        }
 
-        function connectWebSocket() {
-            // متغيرات غير معرفة (مثل SockJS, StompClient, currentUserId)
-            // ملاحظة: هذه الدالة تعتمد على مكتبات غير مستوردة (SockJS, Stomp)
-            const socket = new SockJS('/ws');
-            stompClient = Stomp.over(socket);
-            stompClient.debug = null;
-
-            stompClient.connect({}, function() {
-                console.log('✅ متصل بالشات');
-
-                // الاشتراك في الرسائل الجديدة
-                stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
-                    try {
-                        const msg = JSON.parse(message.body);
-                        if (msg.senderId !== currentUserId) {
-                            unreadCount++;
-                            updateBadge(unreadCount);
-                            saveUnreadCount(unreadCount);
-                            playNotificationSound();
-                        }
-                    } catch (e) {
-                        console.error('خطأ في معالجة الرسالة:', e);
-                    }
-                });
-
-                loadUnreadCount();
-            }, function(error) {
-                console.error('خطأ في الاتصال:', error);
-                setTimeout(connectWebSocket, 5000);
-            });
-        }
         function applyFilters() {
             const doctorId = doctorFilter.value;
             const status = statusFilter.value;
-            const search = searchBox.value.trim().toLowerCase(); // استخدام searchBox الآن
+            const search = searchBox.value.trim().toLowerCase();
             let visibleCount = 0;
 
             visitRows.forEach(row => {
@@ -407,7 +314,7 @@
 
                 const matchesDoctor = doctorId === "" || rowDoctor === doctorId;
                 const matchesStatus = status === "" || rowStatus === status;
-                const matchesSearch = rowSearch.includes(search); // استخدام متغير البحث
+                const matchesSearch = rowSearch.includes(search);
 
                 if (matchesDoctor && matchesStatus && matchesSearch) {
                     row.style.display = "";
@@ -417,22 +324,107 @@
                 }
             });
             noVisitsRow.style.display = (visibleCount === 0) ? "" : "none";
-
-            // تحديث العدادات بناءً على الصفوف المرئية بعد الفلترة
             updateCounters(visitRows);
-
         }
 
         doctorFilter.addEventListener("change", applyFilters);
         statusFilter.addEventListener("change", applyFilters);
-        searchBox.addEventListener("keyup", applyFilters); // ربط حدث الكتابة بـ applyFilters
+        searchBox.addEventListener("keyup", applyFilters);
 
+        // تشغيل الفلاتر والترتيب مبدئياً
         sortTable();
-    });
-    window.addEventListener('load', connectWebSocket);
 
+        // ==============================================
+        // ✅ 2. كود الشات والبادج (مدمج ومصحح)
+        // ==============================================
+
+        // جلب معرف الممرضة من Thymeleaf (تأكد أن الـ Controller يرسل كائن nurse)
+        const currentUserId = /*[[${nurse != null ? nurse.id : 0}]]*/ 0;
+        console.log('👤 Nurse ID:', currentUserId);
+
+        const chatBadge = document.getElementById("chatBadge");
+        let unreadCount = 0;
+        let stompClient = null;
+
+        // دالة تحديث شكل البادج
+        function updateBadge(count) {
+            unreadCount = count;
+            chatBadge.textContent = count > 99 ? '99+' : count;
+
+            if (count > 0) {
+                chatBadge.style.display = "inline-block";
+                chatBadge.style.animation = "pulse 2s infinite";
+            } else {
+                chatBadge.style.display = "none";
+                chatBadge.style.animation = "none";
+            }
+
+            // حفظ العدد في localStorage عشان لو عملت ريفريش
+            localStorage.setItem('chatUnreadCount_' + currentUserId, count);
+        }
+
+        // تشغيل صوت الإشعار
+        function playNotificationSound() {
+            try {
+                const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBzKF0fPTgjMGHm7A7+OZUQ0PVqzn77BdGAg+ltryxnYpBSuBzvLZiTYIGWa77+ifTRAMT6Ti8LZjHAY3kdnyzXksBSV3yPDdkEAKFF+16+usVRQLRp/h8r1sIAcyhdHz04IzBh9uwPDjmVAND1as5++wXRgIPpbb8sV2KQUrgdDy2Yk2CBlmvO/pn00QDE6k4/C2YxwGOJHa8s15LAUmeMnw3ZBADRRGU=');
+                audio.volume = 0.3;
+                audio.play().catch(e => {});
+            } catch (e) {}
+        }
+
+        // الاتصال بـ WebSocket
+        function connectWebSocket() {
+            if (currentUserId === 0) {
+                console.warn('⚠️ لم يتم العثور على معرف الممرضة، الشات لن يعمل.');
+                return;
+            }
+
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null; // إخفاء اللوج المزعج
+
+            stompClient.connect({}, function() {
+                console.log('✅ تم الاتصال بالشات بنجاح');
+
+                // الاشتراك في قناة الرسائل الخاصة بالممرضة
+                stompClient.subscribe('/user/' + currentUserId + '/queue/messages', function(message) {
+                    try {
+                        const msg = JSON.parse(message.body);
+                        // إذا الرسالة مش مني، زود العداد
+                        if (msg.senderId !== currentUserId) {
+                            unreadCount++;
+                            updateBadge(unreadCount);
+                            playNotificationSound();
+                        }
+                    } catch (e) {
+                        console.error('❌ خطأ في استقبال الرسالة:', e);
+                    }
+                });
+
+                // تحميل العدد القديم لو موجود
+                const stored = localStorage.getItem('chatUnreadCount_' + currentUserId);
+                if (stored) updateBadge(parseInt(stored));
+
+                // (اختياري) ممكن تطلب العدد الحقيقي من السيرفر هنا لو عندك endpoint
+                fetch('/chat/unread-count').then(r=>r.json()).then(c=>updateBadge(c)).catch(e=>{});
+
+            }, function(error) {
+                console.error('❌ خطأ في اتصال الشات:', error);
+                setTimeout(connectWebSocket, 5000); // إعادة المحاولة بعد 5 ثواني
+            });
+        }
+
+        // الاستماع لتغييرات localStorage (لو فاتحة في تبويب تاني)
+        window.addEventListener('storage', function(event) {
+            if (event.key === 'chatUnreadCount_' + currentUserId) {
+                updateBadge(parseInt(event.newValue) || 0);
+            }
+        });
+
+        // بدء الاتصال
+        connectWebSocket();
+    });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

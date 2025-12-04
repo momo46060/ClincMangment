@@ -21,16 +21,10 @@ class FinancialService(
     private val prescriptionRepository: PrescriptionRepository
 ) {
 
-    // احسب مجموع إيرادات فترة محددة (sum using clinic prices)
     private fun sumRevenueForPeriod(clinicId: Long, start: LocalDateTime, end: LocalDateTime): Double {
         val clinic = clinicRepository.findById(clinicId).orElseThrow()
         val visits = visitRepository.findVisitsForRevenue(clinicId, start, end)
-        val sum = visits.sumOf { v ->
-            when (v.visitType) {
-                VisitType.CHECKUP -> clinic.checkUpPrice
-                else -> clinic.followUpPrice
-            }
-        }
+        val sum = visits.sumOf { v -> v.visitPrice}
         return round(sum * 100) / 100.0
     }
 
@@ -91,7 +85,6 @@ class FinancialService(
         )
     }
 
-    // convenience: get dashboard small financial numbers for KPi
     fun getDashboardFinancials(clinicId: Long): Map<String, Any> {
         val today = LocalDate.now().atStartOfDay()
         val tomorrow = today.plusDays(1)
