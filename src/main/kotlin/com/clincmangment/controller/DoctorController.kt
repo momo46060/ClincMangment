@@ -183,7 +183,7 @@ class DoctorController(
             val doctor = session.getAttribute("loggedUser") as? User
                 ?: throw IllegalArgumentException("User not logged in")
 
-            val nurse = userService.createUser(
+             userService.createUser(
                 username = nurseForm.fullName,
                 rawPassword = nurseForm.password ?: "1234",
                 role = Role.NURSE,
@@ -195,6 +195,7 @@ class DoctorController(
             redirectAttributes.addFlashAttribute("success", "تمت إضافة الممرضة بنجاح")
             return "redirect:/doctor/add-nurse"
         }catch (e:Exception){
+            e.printStackTrace()
             redirectAttributes.addFlashAttribute("error", "رقم الهاتف موجود مسيقا")
             return "redirect:/doctor/add-nurse"
         }

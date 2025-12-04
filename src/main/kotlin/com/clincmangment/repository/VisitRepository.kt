@@ -14,6 +14,8 @@ import java.util.*
 @Repository
 interface VisitRepository : JpaRepository<Visit, Long> {
     fun countByClinicIdAndVisitDateBetween(clinicId: Long, start: LocalDateTime, end: LocalDateTime): Long
+    fun countByPatientId(patientId: Long): Long
+    fun findTopByPatientIdOrderByVisitDateDesc(patientId: Long): Visit?
 
 
     @Query(

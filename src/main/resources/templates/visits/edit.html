@@ -5,140 +5,843 @@
     <title>تعديل الزيارة - نظام العيادة</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /*
-         * ======================================
-         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Visit Edit Form)
-         * ======================================
-         */
         :root {
             --primary-color: #007BFF;
             --primary-dark: #0056b3;
+            --primary-light: #E6F3FF;
         }
 
         body {
-            /* خلفية بيضاء مزرقة نظيفة */
             background-color: #f8faff;
             font-family: 'Tajawal', sans-serif;
+            padding: 20px;
         }
 
-        .edit-card {
-            background: #fff;
-            /* حواف دائرية أكبر */
-            border-radius: 20px;
-            padding: 2.5rem;
-            /* ظل أعمق وأفخم */
-            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-            margin-top: 50px;
-            border: none;
+        .page-wrapper {
+            margin-right: 260px;
+            padding: 20px;
         }
 
-        .edit-card h2 {
-            margin-bottom: 2rem;
-            /* تمييز العنوان باللون الأزرق الداكن */
-            font-weight: 800;
+        h2 {
             color: var(--primary-dark);
-            text-align: center;
+            font-weight: 800;
+            font-size: 2rem;
         }
 
-        .form-label {
-            font-weight: 600;
-            color: #343a40;
+        .card {
+            border: none;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
         }
 
-        .form-label i {
-            margin-left: 8px;
-            /* أيقونات الحقول باللون الأزرق الموحد */
-            color: var(--primary-color);
-            font-size: 1.1rem;
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
         }
 
-        .form-control, .form-select {
+        .card-header {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: white;
+            background-color: var(--primary-color) !important;
+            padding: 1rem 1.5rem;
+        }
+
+        .card-header.bg-secondary {
+            background-color: var(--primary-dark) !important;
+        }
+
+        .form-control, textarea {
             border-radius: 12px;
-            padding: 0.8rem 1rem;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
             font-size: 1rem;
-            transition: border-color 0.3s;
+            padding: 0.75rem;
         }
 
-        .btn-primary, .btn-secondary {
+        .form-control:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+
+        .btn {
             border-radius: 12px;
-            padding: 0.8rem 1.5rem;
-            font-size: 1.05rem;
             font-weight: 700;
             transition: all 0.3s ease;
         }
 
-        /* زر الحفظ (الأزرق الموحد) */
-        .btn-primary {
+        .btn-success {
             background-color: var(--primary-color) !important;
             border-color: var(--primary-color) !important;
         }
-        .btn-primary:hover {
-            background: var(--primary-dark) !important;
+
+        .btn-success:hover {
+            background-color: var(--primary-dark) !important;
             border-color: var(--primary-dark) !important;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
         }
 
-        /* زر الرجوع (الرمادي العصري) */
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            background-color: transparent;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
         .btn-secondary {
-            background-color: #6c757d !important;
-            border-color: #6c757d !important;
+            background-color: #e9ecef !important;
+            color: var(--text-color-dark) !important;
+            border-color: #e9ecef !important;
         }
         .btn-secondary:hover {
-            background-color: #5a6268 !important;
-            border-color: #5a6268 !important;
+            background-color: #dee2e6 !important;
+            border-color: #dee2e6 !important;
         }
 
-        .alert {
-            border-radius: 12px;
-            font-weight: 600;
+        /* كارد الروشتة */
+        .prescription-card {
+            background: linear-gradient(135deg, #f8faff 0%, #e6f3ff 100%);
+            border: 2px solid #007BFF;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .prescription-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #007BFF;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .prescription-item h6 {
+            color: #0056b3;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .prescription-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .prescription-detail {
+            background: #f0f8ff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .page-wrapper {
+                margin-right: 0;
+            }
+            .prescription-details {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container d-flex justify-content-center">
-    <div class="col-12 col-md-8 col-lg-7 edit-card">
-        <h2>تعديل الزيارة</h2>
+<div th:replace="fragments/sidebar :: doctorSidebar()"></div>
+<div th:replace="fragments/chat-popup :: chatPopupFragment"></div>
 
-        <form th:action="@{/doctor/visit/update}" th:object="${visitForm}" method="post">
-            <div class="mb-4">
-                <label class="form-label"><i class="bi bi-person-badge"></i> الدكتور:</label>
-                <label th:text="${doctorUsername}" class="form-label"><i class="bi bi-person-badge"></i></label>
+<div class="page-wrapper">
+    <h2 class="mb-4 text-center">
+        <i class="bi bi-pencil-square text-primary"></i> تعديل الزيارة
+    </h2>
 
+    <!-- بيانات المريض -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-person-lines-fill"></i> بيانات المريض
+        </div>
+        <div class="card-body">
+            <p><strong>الاسم:</strong> <span id="patientName" th:text="${patientName}"></span></p>
+            <p><strong>الكود:</strong> <span th:text="${patientCode}"></span></p>
+            <p><strong>تاريخ الزيارة:</strong> <span th:text="${visitDate}"></span></p>
+        </div>
+    </div>
+
+    <form th:action="@{/doctor/visit/update}" method="post">
+        <input type="hidden" name="visitId" th:value="${visitForm.visitId}"/>
+        <input type="hidden" name="prescription" id="prescriptionJson" th:value="${visitForm.prescription}"/>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-file-medical"></i> تفاصيل الزيارة
             </div>
 
-            <input type="hidden" th:field="*{visitId}" />
-            <input type="hidden" th:field="*{patientCode}" />
+            <div class="card-body">
+                <div class="mb-4">
+                    <label class="form-label fw-bold"><i class="bi bi-file-medical"></i> التشخيص</label>
+                    <textarea id="diagnosisField" class="form-control" name="diagnosis" rows="4"
+                              th:value="${visitForm.diagnosis}" placeholder="ادخل تفاصيل التشخيص هنا"></textarea>
+                </div>
 
-            <div class="mb-4">
-                <label class="form-label"><i class="bi bi-file-medical"></i> التشخيص:</label>
-                <textarea class="form-control" th:field="*{diagnosis}" rows="3" placeholder="ادخل تفاصيل التشخيص هنا" required></textarea>
+                <!-- كارد الروشتة الإلكترونية -->
+                <div class="card mb-4" id="prescriptionCard">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-prescription2"></i> الروشتة الإلكترونية
+                            <span class="badge bg-light text-primary" id="prescriptionCount">0 دواء</span>
+                        </div>
+                        <button type="button" class="btn btn-light text-primary" id="openPrescriptionBtn">
+                            <i class="bi bi-file-medical"></i> إدارة الروشتة
+                        </button>
+                    </div>
+
+                    <div class="card-body">
+                        <div id="prescriptionDisplay">
+                            <!-- سيتم ملؤها بالأدوية من الجدول -->
+                            <div class="text-center text-muted py-3">
+                                <i class="bi bi-inbox fs-1"></i>
+                                <p class="mt-2">لا توجد أدوية مضافة حتى الآن</p>
+                                <button type="button" class="btn btn-outline-primary mt-2" onclick="openPrescriptionPopup()">
+                                    <i class="bi bi-plus-circle"></i> إضافة أدوية
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold"><i class="bi bi-calendar-check"></i> موعد الاستشارة القادمة</label>
+                    <input type="datetime-local" class="form-control" name="scheduledConsultation"
+                           th:value="${visitForm.scheduledConsultation}" />
+                    <small class="form-text text-muted">اترك الحقل فارغاً إذا لم يكن هناك موعد استشارة محدد.</small>
+                </div>
+
+                <div class="mt-4 text-center d-flex flex-wrap justify-content-center gap-2">
+                    <button type="submit" class="btn btn-success px-4" onclick="preparePrescriptionData()">
+                        <i class="bi bi-save"></i> حفظ التعديلات
+                    </button>
+                    <button type="button" class="btn btn-outline-primary px-4" onclick="printPrescription()"><i
+                            class="bi bi-printer"></i> طباعة
+                    </button>
+                    <a href="/doctor/dashboard" class="btn btn-secondary px-4">
+                        <i class="bi bi-arrow-right"></i> رجوع للوحة التحكم
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Prescription Popup -->
+<div id="prescriptionPopup" class="modal" style="display:none; position:fixed;top:0;left:0;width:100%;height:100%;background: rgba(0,0,0,0.6); z-index:1050;">
+    <div class="modal-dialog modal-lg" style="margin:5% auto; max-width:900px;">
+        <div class="modal-content" style="border-radius: 18px; overflow: hidden;">
+            <div class="modal-header bg-primary text-white" style="padding: 1rem 1.5rem;">
+                <h5 class="modal-title" style="font-weight: 700;">
+                    <i class="bi bi-file-medical-fill"></i> إدارة الروشتة الإلكترونية
+                </h5>
+                <button type="button" class="btn-close btn-close-white" onclick="closePrescriptionPopup()" style="box-shadow: none;"></button>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label"><i class="bi bi-capsule"></i> الوصفة الطبية:</label>
-                <textarea class="form-control" th:field="*{prescription}" rows="3" placeholder="ادخل قائمة الأدوية أو العلاج"></textarea>
+            <div class="modal-body" style="padding: 1.5rem;">
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered align-middle text-center" id="prescriptionTable">
+                        <thead class="table-primary" style="background-color: #007BFF !important; color: white;">
+                        <tr>
+                            <th style="font-weight: 700;">الدواء</th>
+                            <th style="font-weight: 700;">الجرعة</th>
+                            <th style="font-weight: 700;">عدد المرات</th>
+                            <th style="font-weight: 700;">المدة</th>
+                            <th style="font-weight: 700;">ملاحظات</th>
+                            <th style="font-weight: 700;">حذف</th>
+                        </tr>
+                        </thead>
+                        <tbody id="prescriptionItemsBody">
+                        <!-- Dynamic rows will be added here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="text-center mb-4">
+                    <button type="button" class="btn btn-success" onclick="addPrescriptionItem()" style="border-radius: 12px; font-weight: 700; padding: 0.5rem 1.5rem;">
+                        <i class="bi bi-plus-circle"></i> إضافة دواء جديد
+                    </button>
+                </div>
+
+                <!-- Templates Section -->
+                <div class="card mb-4" style="border-radius: 12px; border: 1px solid #e0e0e0;">
+                    <div class="card-header bg-light" style="font-weight: 600; color: #0056b3;">
+                        <i class="bi bi-file-earmark-text"></i> القوالب الجاهزة
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <select id="templateSelect" class="form-select" style="border-radius: 8px;">
+                                    <option value="">اختر قالبًا جاهزًا...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary flex-fill" onclick="loadTemplate()" style="border-radius: 8px;">
+                                        <i class="bi bi-download"></i> تحميل
+                                    </button>
+                                    <button class="btn btn-outline-success flex-fill" onclick="saveTemplate()" style="border-radius: 8px;">
+                                        <i class="bi bi-save"></i> حفظ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label"><i class="bi bi-calendar-check"></i> موعد الاستشارة:</label>
-                <input type="datetime-local" class="form-control" th:field="*{scheduledConsultation}" />
-                <small class="form-text text-muted">اترك الحقل فارغاً إذا لم يكن هناك موعد استشارة محدد.</small>
+            <div class="modal-footer" style="padding: 1rem 1.5rem; border-top: 1px solid #dee2e6;">
+                <button type="button" class="btn btn-secondary" onclick="closePrescriptionPopup()" style="border-radius: 12px; font-weight: 700; padding: 0.5rem 1.5rem;">
+                    <i class="bi bi-x-circle"></i> إلغاء
+                </button>
+                <button type="button" class="btn btn-success" onclick="savePrescription()" style="border-radius: 12px; font-weight: 700; padding: 0.5rem 1.5rem;">
+                    <i class="bi bi-check-circle"></i> حفظ الروشتة
+                </button>
             </div>
-
-            <div class="d-flex justify-content-between mt-5">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> حفظ التعديلات</button>
-                <a href="/doctor/dashboard" class="btn btn-secondary">رجوع للوحة التحكم</a>
-            </div>
-        </form>
-
-        <div th:if="${success}" class="alert alert-success mt-4 text-center" th:text="${success}"></div>
+        </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    let prescriptionItems = [];
+
+    // تحميل البيانات عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        // محاولة تحميل الروشتة الحالية إذا كانت موجودة
+        const currentPrescription = /*[[${visitForm.prescription}]]*/ null;
+        if (currentPrescription && currentPrescription !== 'null' && currentPrescription.trim() !== '') {
+            try {
+                prescriptionItems = JSON.parse(currentPrescription);
+                updatePrescriptionDisplay();
+            } catch (e) {
+                console.error('Error parsing prescription:', e);
+                // إذا لم يكن JSON، قم بتحويله من النص القديم
+                if (currentPrescription && currentPrescription.includes('\n')) {
+                    // يمكنك إضافة منطق لتحويل النص القديم إلى JSON إذا أردت
+                    console.log('Prescription is in old text format');
+                }
+            }
+        }
+    });
+
+    document.getElementById('openPrescriptionBtn').addEventListener('click', () => {
+        openPrescriptionPopup();
+    });
+
+
+
+
+
+
+    // تحديث عرض الروشتة في الكارد
+
+    async function loadTemplates() {
+        try {
+            const res = await fetch('/doctor/visit/templates');
+            const data = await res.json();
+            const select = document.getElementById('templateSelect');
+            select.innerHTML = `<option value="">اختر قالبًا جاهزًا...</option>`;
+            data.forEach(t => {
+                select.innerHTML += `<option value='${encodeURIComponent(JSON.stringify(t))}'>${t.name}</option>`;
+            });
+        } catch (error) {
+            console.error('Error loading templates:', error);
+        }
+    }
+
+    function loadTemplate() {
+        const select = document.getElementById('templateSelect');
+        const value = select.value;
+        if (!value) {
+            alert('الرجاء اختيار قالب أولاً');
+            return;
+        }
+
+        try {
+            const t = JSON.parse(decodeURIComponent(value));
+            prescriptionItems = JSON.parse(t.content);
+            renderPrescriptionItems();
+            updatePrescriptionDisplay();
+            alert('تم تحميل القالب بنجاح');
+        } catch (error) {
+            alert('حدث خطأ أثناء تحميل القالب');
+            console.error('Error loading template:', error);
+        }
+    }
+
+    async function saveTemplate() {
+        const name = prompt("ادخل اسم القالب:");
+        if (!name) return;
+
+        if (prescriptionItems.length === 0 || prescriptionItems.every(item =>
+            !item.name && !item.dose && !item.times && !item.duration
+        )) {
+            alert('لا يمكن حفظ قالب فارغ');
+            return;
+        }
+
+        try {
+            const content = JSON.stringify(prescriptionItems);
+            await fetch('/doctor/visit/template/save?name=' + encodeURIComponent(name) + '&content=' + encodeURIComponent(content), {
+                method: 'POST'
+            });
+            alert("تم حفظ القالب بنجاح");
+            loadTemplates();
+        } catch (error) {
+            alert('حدث خطأ أثناء حفظ القالب');
+            console.error('Error saving template:', error);
+        }
+    }
+
+
+    // دالة لتحضير بيانات الروشتة قبل الإرسال
+    function preparePrescriptionData() {
+        // تحديث الحقل المخفي ببيانات الروشتة
+        document.getElementById('prescriptionJson').value = JSON.stringify(prescriptionItems);
+        return true; // للسماح بإرسال الفورم
+    }
+
+
+
+
+
+    function printPrescription() {
+        const patientName = document.getElementById('patientName').innerText.trim();
+        const diagnosis = document.getElementById('diagnosisField').value.trim();
+        const consultationDateInput = document.querySelector('input[name="scheduledConsultation"]').value;
+
+        let formattedDate = '';
+        if (consultationDateInput) {
+            const dateObj = new Date(consultationDateInput);
+            formattedDate = dateObj.toLocaleString('ar-EG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // بناء جدول الأدوية للطباعة
+        let prescriptionHtml = '';
+        if (prescriptionItems.length > 0) {
+            prescriptionHtml = `
+                <table class="table table-bordered mt-3" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #007BFF; color: white;">
+                            <th style="padding: 10px; border: 1px solid #ddd;">الدواء</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">الجرعة</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">عدد المرات</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">المدة</th>
+                            <th style="padding: 10px; border: 1px solid #ddd;">ملاحظات</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            prescriptionItems.forEach((item, index) => {
+                if (item.name || item.dose || item.times || item.duration) {
+                    prescriptionHtml += `
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${item.name || ''}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${item.dose || ''}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${item.times || ''}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${item.duration || ''}</td>
+                            <td style="padding: 8px; border: 1px solid #ddd;">${item.notes || ''}</td>
+                        </tr>`;
+                }
+            });
+
+            prescriptionHtml += `</tbody></table>`;
+        } else {
+            prescriptionHtml = '<div class="alert alert-info text-center mt-3">لا توجد أدوية مضافة</div>';
+        }
+
+        const printWindow = window.open('', '_blank', 'width=800,height=600');
+
+        printWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="ar" dir="rtl">
+        <head>
+            <meta charset="UTF-8">
+            <title>وصفة طبية</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body {
+                    font-family: 'Tajawal', sans-serif;
+                    padding: 40px;
+                    line-height: 1.8;
+                    background: #f8faff;
+                }
+                .content {
+                    white-space: pre-wrap;
+                    background:#E6F3FF;
+                    padding: 20px;
+                    border-radius: 10px;
+                    border: 1px solid #007BFF;
+                    margin-bottom: 20px;
+                }
+                h2, h5 {
+                    color: #0056b3;
+                    font-weight: 700;
+                }
+                .header {
+                    text-align: center;
+                    margin-bottom: 30px;
+                    border-bottom: 2px solid #007BFF;
+                    padding-bottom: 20px;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 40px;
+                    padding-top: 20px;
+                    border-top: 1px solid #007BFF;
+                    color: #007BFF;
+                    font-weight: 600;
+                }
+                table {
+                    width: 100%;
+                    margin-top: 20px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                }
+                th {
+                    background-color: #007BFF !important;
+                    color: white !important;
+                    font-weight: 700 !important;
+                }
+                @media print {
+                    body { padding: 20px; }
+                    .no-print { display: none; }
+                    .content { page-break-inside: avoid; }
+                    table { page-break-inside: auto; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h2 class="mb-3"><i class="bi bi-file-medical"></i> وصفة طبية</h2>
+                <h5>العيادة الطبية</h5>
+            </div>
+
+            <div class="patient-info">
+                <h5><i class="bi bi-person"></i> اسم المريض:</h5>
+                <div class="content">${patientName}</div>
+
+                <h5 class="mt-4"><i class="bi bi-clipboard-check"></i> التشخيص:</h5>
+                <div class="content">${diagnosis.replace(/\n/g, '<br>')}</div>
+
+                <h5 class="mt-4"><i class="bi bi-capsule"></i> العلاج الموصوف:</h5>
+                <div class="content">
+                    ${prescriptionHtml}
+                </div>
+
+                ${formattedDate ? `
+                <h5 class="mt-4"><i class="bi bi-calendar-check"></i> الاستشارة القادمة:</h5>
+                <div class="content">${formattedDate}</div>` : ''}
+            </div>
+
+            <div class="footer">
+                <p>نتمنى لكم الشفاء العاجل 🌿</p>
+                <p>تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</p>
+                <button class="btn btn-primary no-print mt-3" onclick="window.print()">
+                    <i class="bi bi-printer"></i> طباعة
+                </button>
+            </div>
+        </body>
+        </html>
+        `);
+
+        printWindow.document.close();
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+    }
+
+    /////////////////////////////////////////
+
+    // تحميل البيانات عند فتح الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Page loaded, loading prescription...');
+
+        // 1. تحميل الروشتة من حقل الـ input المخفي
+        const prescriptionJsonInput = document.getElementById('prescriptionJson');
+        const currentPrescription = prescriptionJsonInput ? prescriptionJsonInput.value : null;
+
+        console.log('Prescription from input:', currentPrescription);
+
+        // 2. محاولة تحميل الروشتة الحالية إذا كانت موجودة
+        if (currentPrescription && currentPrescription !== 'null' && currentPrescription.trim() !== '' && currentPrescription !== 'undefined') {
+            try {
+                // تنظيف النص قبل التحويل
+                let cleanPrescription = currentPrescription.trim();
+
+                // إزالة أي مسافات زائدة أو مشاكل في التنسيق
+                if (cleanPrescription.startsWith('"') && cleanPrescription.endsWith('"')) {
+                    cleanPrescription = cleanPrescription.substring(1, cleanPrescription.length - 1);
+                    // استبدال الـ escaped quotes
+                    cleanPrescription = cleanPrescription.replace(/\\"/g, '"');
+                }
+
+                // محاولة التحليل كـ JSON
+                prescriptionItems = JSON.parse(cleanPrescription);
+                console.log('Successfully parsed prescription items:', prescriptionItems);
+
+                // 3. تحديث عرض الروشتة
+                updatePrescriptionDisplay();
+
+                // 4. أيضا تحديث الحقل المخفي بالقيمة النظيفة
+                prescriptionJsonInput.value = JSON.stringify(prescriptionItems);
+
+            } catch (e) {
+                console.error('Error parsing prescription JSON:', e);
+                console.error('Raw prescription text:', currentPrescription);
+
+                // إذا لم يكن JSON، تحقق إذا كان نص عادي
+                if (currentPrescription && typeof currentPrescription === 'string') {
+                    // يمكنك إضافة منطق لتحويل النص القديم إلى JSON هنا
+                    console.log('Prescription is in old text format, converting...');
+                    prescriptionItems = convertOldPrescriptionToJSON(currentPrescription);
+                    if (prescriptionItems.length > 0) {
+                        updatePrescriptionDisplay();
+                        prescriptionJsonInput.value = JSON.stringify(prescriptionItems);
+                    }
+                }
+            }
+        } else {
+            console.log('No prescription found or prescription is empty');
+        }
+    });
+
+    // دالة لتحويل الوصفة القديمة (نص عادي) إلى JSON
+    function convertOldPrescriptionToJSON(oldPrescription) {
+        const items = [];
+
+        // تقسيم النص إلى أسطر
+        const lines = oldPrescription.split('\n').filter(line => line.trim() !== '');
+
+        lines.forEach(line => {
+            if (line.trim()) {
+                items.push({
+                    name: line.trim(),
+                    dose: '',
+                    times: '',
+                    duration: '',
+                    notes: ''
+                });
+            }
+        });
+
+        return items;
+    }
+
+    document.getElementById('openPrescriptionBtn').addEventListener('click', () => {
+        openPrescriptionPopup();
+    });
+
+    function openPrescriptionPopup() {
+        document.getElementById('prescriptionPopup').style.display = 'block';
+        loadTemplates();
+        renderPrescriptionItems();
+    }
+
+    function closePrescriptionPopup() {
+        document.getElementById('prescriptionPopup').style.display = 'none';
+    }
+
+    function addPrescriptionItem(item = {name:'', dose:'', times:'', duration:'', notes:''}) {
+        prescriptionItems.push(item);
+        renderPrescriptionItems();
+    }
+
+    function renderPrescriptionItems() {
+        const tbody = document.getElementById('prescriptionItemsBody');
+        tbody.innerHTML = '';
+
+        if (prescriptionItems.length === 0) {
+            addPrescriptionItem();
+        } else {
+            prescriptionItems.forEach((item, idx) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <input type="text" class="form-control" placeholder="اسم الدواء"
+                               value="${item.name || ''}"
+                               onchange="prescriptionItems[${idx}].name = this.value"
+                               style="border-radius: 8px;">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" placeholder="مثال: 500mg"
+                               value="${item.dose || ''}"
+                               onchange="prescriptionItems[${idx}].dose = this.value"
+                               style="border-radius: 8px;">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" placeholder="3"
+                               value="${item.times || ''}"
+                               onchange="prescriptionItems[${idx}].times = this.value"
+                               style="border-radius: 8px;">
+                    </td>
+                    <td>
+                        <input type="number" class="form-control" placeholder="5"
+                               value="${item.duration || ''}"
+                               onchange="prescriptionItems[${idx}].duration = this.value"
+                               style="border-radius: 8px;">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" placeholder="ملاحظات"
+                               value="${item.notes || ''}"
+                               onchange="prescriptionItems[${idx}].notes = this.value"
+                               style="border-radius: 8px;">
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="removePrescriptionItem(${idx})" style="border-radius: 8px;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+    }
+
+    function removePrescriptionItem(idx) {
+        prescriptionItems.splice(idx, 1);
+        renderPrescriptionItems();
+        updatePrescriptionDisplay();
+    }
+
+    // تحديث عرض الروشتة في الكارد
+    function updatePrescriptionDisplay() {
+        const container = document.getElementById('prescriptionDisplay');
+        const countElement = document.getElementById('prescriptionCount');
+
+        if (prescriptionItems.length === 0 || prescriptionItems.every(item =>
+            !item.name && !item.dose && !item.times && !item.duration
+        )) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-3">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <p class="mt-2">لا توجد أدوية مضافة حتى الآن</p>
+                    <button type="button" class="btn btn-outline-primary mt-2" onclick="openPrescriptionPopup()">
+                        <i class="bi bi-plus-circle"></i> إضافة أدوية
+                    </button>
+                </div>
+            `;
+            countElement.textContent = '0 دواء';
+            return;
+        }
+
+        let html = '';
+        const validItems = prescriptionItems.filter(item =>
+            item.name || item.dose || item.times || item.duration
+        );
+
+        if (validItems.length === 0) {
+            container.innerHTML = `
+                <div class="text-center text-muted py-3">
+                    <i class="bi bi-inbox fs-1"></i>
+                    <p class="mt-2">لا توجد أدوية مضافة حتى الآن</p>
+                    <button type="button" class="btn btn-outline-primary mt-2" onclick="openPrescriptionPopup()">
+                        <i class="bi bi-plus-circle"></i> إضافة أدوية
+                    </button>
+                </div>
+            `;
+            countElement.textContent = '0 دواء';
+            return;
+        }
+
+        validItems.forEach((item, index) => {
+            html += `
+                <div class="prescription-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h6 class="mb-0">
+                            <i class="bi bi-capsule"></i> ${item.name || 'دواء بدون اسم'}
+                        </h6>
+                        <span class="badge bg-primary">${index + 1}</span>
+                    </div>
+
+                    <div class="prescription-details">
+                        ${item.dose ? `<div class="prescription-detail">
+                            <strong>الجرعة:</strong> ${item.dose}
+                        </div>` : ''}
+
+                        ${item.times ? `<div class="prescription-detail">
+                            <strong>عدد المرات:</strong> ${item.times} مرات يومياً
+                        </div>` : ''}
+
+                        ${item.duration ? `<div class="prescription-detail">
+                            <strong>المدة:</strong> ${item.duration} يوم
+                        </div>` : ''}
+
+                        ${item.notes ? `<div class="prescription-detail">
+                            <strong>ملاحظات:</strong> ${item.notes}
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        countElement.textContent = `${validItems.length} دواء`;
+    }
+
+    // ... بقية الدوال كما هي (loadTemplates, loadTemplate, saveTemplate, savePrescription, preparePrescriptionData, printPrescription)
+
+    // دالة مساعدة للتحقق مما إذا كان النص JSON صالح
+    function isValidJSON(str) {
+        try {
+            JSON.parse(str);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    // عند حفظ الروشتة، تأكد من تحديث الحقل المخفي
+    async function savePrescription() {
+        // التحقق من وجود أدوية
+        const validItems = prescriptionItems.filter(item =>
+            item.name || item.dose || item.times || item.duration
+        );
+
+        if (validItems.length === 0) {
+            if (!confirm('الروشتة فارغة، هل تريد حفظها على أي حال؟')) {
+                return;
+            }
+        }
+
+        try {
+            // تحديث عرض الروشتة
+            updatePrescriptionDisplay();
+
+            // تحديث الحقل المخفي
+            document.getElementById('prescriptionJson').value = JSON.stringify(prescriptionItems);
+
+            alert("تم حفظ الروشتة بنجاح");
+            closePrescriptionPopup();
+
+        } catch (error) {
+            alert('حدث خطأ أثناء حفظ الروشتة');
+            console.error('Error saving prescription:', error);
+        }
+    }
+</script>
 </body>
 </html>

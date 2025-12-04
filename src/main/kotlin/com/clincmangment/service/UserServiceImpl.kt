@@ -7,12 +7,15 @@ import com.clincmangment.utils.Role
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.query.Param
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository,
+    private val passwordEncoder: PasswordEncoder
+
 ) {
     fun findByIdWithClinic(id: Long): Optional<User> = userRepository.findById(id)
     // تسجيل الدخول
@@ -28,14 +31,15 @@ class UserServiceImpl(
         if (userRepository.existsByPhone(username)) {
             throw IllegalArgumentException("Username already exists")
         }
+        val encryptedPassword = passwordEncoder.encode(rawPassword)
 
         val user = User(
-            password = rawPassword,
+            password = encryptedPassword,
             role = role,
             fullName = fullName,
             phone = phone,
             email = email,
-            clinic = clinic // ربط المستخدم بالعيادة
+            clinic = clinic
         )
 
         return userRepository.save(user)

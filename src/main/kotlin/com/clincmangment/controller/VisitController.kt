@@ -6,6 +6,7 @@ import com.clincmangment.repository.model.User
 import com.clincmangment.service.PatientService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
+import com.clincmangment.utils.EditVisitForm
 import com.clincmangment.utils.Role
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.time.format.DateTimeFormatter
 
 @Controller
 @RequestMapping("/visits")
@@ -45,39 +47,26 @@ class VisitController(
     }
 
     @GetMapping("/edit/{visitId}")
-    fun editVisitForm(
-        @PathVariable visitId: Long,
-        model: Model,
-        session: HttpSession,
-        redirectAttributes: RedirectAttributes
-    ): String {
-        return try {
-            val loggedUser = session.getAttribute("loggedUser") as? User
-                ?: return "redirect:/login"
-            val doctors = userService.getUsersByRoleAndClinic(
-                Role.DOCTOR,
-                clinic = loggedUser.clinic
-            )
-            model.addAttribute("doctors", doctors)
-            val visit = visitService.getVisitById(visitId)
-                .orElseThrow { IllegalArgumentException("Visit not found") }
+    fun showEditVisitForm(@PathVariable visitId: Long, model: Model): String {
+        val visit = visitService.getVisitById(visitId)
+            .orElseThrow { IllegalArgumentException("Visit not found") }
 
-            val form = VisitEditForm(
-                visitId = visit.id!!,
-                patientCode = visit.patient!!.patientCode,
-                diagnosis = visit.diagnosis,
-                prescription = visit.prescription,
-                scheduledConsultation = visit.scheduledConsultation
-            )
-            model.addAttribute("doctorUsername", loggedUser.fullName)
-            model.addAttribute("visitForm", form)
-            "visits/edit"
+        // نموذج التعديل
+        val visitForm = EditVisitForm(
+            visitId = visit.id!!,
+            patientCode = visit.patient?.patientCode ?: "",
+            diagnosis = visit.diagnosis ?: "",
+            prescription = visit.prescription ?: "", // هذا سيحتوي على JSON
+            scheduledConsultation = visit.scheduledConsultation?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) ?: ""
+        )
 
-        } catch (ex: Exception) {
-            logger.error("Error loading edit visit form: ${ex.message}", ex)
-            redirectAttributes.addFlashAttribute("error", "حدث خطأ أثناء تحميل صفحة تعديل الزيارة.")
-            ""
-        }
+        model.addAttribute("visitForm", visitForm)
+        model.addAttribute("patientName", visit.patient?.user?.fullName ?: "")
+        model.addAttribute("patientCode", visit.patient?.patientCode ?: "")
+        model.addAttribute("visitDate", visit.visitDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+        model.addAttribute("doctorUsername", visit.doctor?.fullName?: "")
+
+        return "visits/edit"
     }
 
     @GetMapping("/new/{patientCode}")
@@ -139,10 +128,13 @@ class VisitController(
             redirectAttributes.addFlashAttribute("success", "✅ تم إضافة الكشف بنجاح.")
             "redirect:/nurse/dashboard"
 
+        }catch (e:IllegalArgumentException){
+            redirectAttributes.addFlashAttribute("error", "${e.message}")
+            "redirect:new/${visitForm.patientCode}"
         } catch (ex: Exception) {
             logger.error("Error saving visit: ${ex.message}", ex)
             redirectAttributes.addFlashAttribute("error", "⚠️ حدث خطأ أثناء حفظ بيانات الكشف.")
-            "redirect:/nurse/dashboard"
+            "redirect:new/${visitForm.patientCode}"
         }
     }
 

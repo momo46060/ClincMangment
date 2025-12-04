@@ -115,6 +115,10 @@
 
 <div class="container col-12 col-md-10 col-lg-8">
     <h2 class="text-center">إضافة كشف جديد للمريض: <span th:text="${visitForm.patientCode}"></span></h2>
+    <div th:if="${error}" class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill ms-2"></i>
+        <div th:text="${error}"></div>
+    </div>
 
     <div class="card shadow">
         <div class="card-header">بيانات الكشف</div>

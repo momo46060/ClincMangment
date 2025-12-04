@@ -11,18 +11,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <style>
-        /*
-         * ======================================
-         * تخصيص الستايل للأزرق الطبي الفاخر (Medical Blue Patient Visits)
-         * ======================================
-         */
+
         :root {
             --primary-color: #007BFF;
             --primary-dark: #0056b3;
             --table-header-bg: #0069d9;
             --table-header-color: #fff;
         }
-
+        .page-wrapper {
+            margin-right: 260px;
+            padding: 20px;
+        }
         body {
             /* خلفية بيضاء مزرقة نظيفة */
             background: #f8faff;
@@ -105,10 +104,88 @@
             padding: 0.4rem 0.8rem;
             font-size: 0.9rem;
         }
+
+        /* تنسيق عرض الروشتة */
+        .prescription-container {
+            max-width: 300px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .prescription-item {
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #ced4da;
+        }
+
+        .prescription-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .prescription-name {
+            font-weight: 700;
+            color: #0056b3;
+            margin-bottom: 3px;
+        }
+
+        .prescription-details {
+            font-size: 0.85rem;
+            color: #495057;
+            padding-right: 15px;
+        }
+
+        .prescription-detail {
+            display: inline-block;
+            margin-left: 8px;
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* تلميح عند المرور */
+        .prescription-tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+        }
+
+        .prescription-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 400px;
+            background-color: #fff;
+            color: #333;
+            text-align: right;
+            border-radius: 6px;
+            padding: 15px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            right: 50%;
+            margin-right: -200px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            border: 1px solid #dee2e6;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .prescription-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
-<div class="container">
+<div th:replace="fragments/sidebar :: doctorSidebar()"></div>
+
+<div class="page-wrapper">
     <div class="header-section">
         <h2>سجل زيارات الدكتور: <span th:text="${doctor.fullName}"></span></h2>
     </div>
@@ -136,8 +213,14 @@
                         <td th:text="${visit.patient.user.fullname}"></td>
                         <td th:text="${visit.visitType}"></td>
                         <td th:text="${visit.complaint}"></td>
-                        <td th:text="${visit.diagnosis}"></td>
-                        <td th:text="${visit.prescription}"></td>
+                        <td>
+                            <div style="max-width: 200px;" th:utext="${#strings.replace(visit.diagnosis, '\n', '<br>')}"></div>
+                        </td>
+                        <td>
+                            <div class="prescription-container" th:attr="data-prescription=${visit.prescription}">
+                                <!-- سيتم ملؤها بواسطة JavaScript -->
+                            </div>
+                        </td>
                         <td th:text="${visit.doctor != null ? visit.doctor.fullName : 'لم يتم التعيين'}"></td>
                         <td th:text="${#temporals.format(visit.visitDate, 'yyyy-MM-dd HH:mm')}"></td>
                         <td>
@@ -147,7 +230,7 @@
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(visits)}">
-                        <td colspan="8" class="text-center text-muted py-3">لا توجد زيارات حتى الآن</td>
+                        <td colspan="9" class="text-center text-muted py-3">لا توجد زيارات حتى الآن</td>
                     </tr>
                     </tbody>
                 </table>
@@ -157,5 +240,62 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // دالة لتحويل الروشتة من JSON إلى نص مقروء
+    function formatPrescriptionForDisplay(prescriptionJson) {
+        if (!prescriptionJson || prescriptionJson.trim() === '' || prescriptionJson === 'null') {
+            return '<div class="text-muted text-center py-2">لا توجد روشتة</div>';
+        }
+
+        try {
+            const items = JSON.parse(prescriptionJson);
+            if (!Array.isArray(items) || items.length === 0) {
+                return '<div class="text-muted text-center py-2">لا توجد أدوية مضافة</div>';
+            }
+
+            let html = '';
+            items.forEach((item, index) => {
+                if (item.name || item.dose || item.times || item.duration) {
+                    html += `
+                        <div class="prescription-item">
+                            <div class="prescription-name">
+                                <i class="bi bi-capsule"></i> ${item.name || 'دواء بدون اسم'}
+                            </div>
+                            <div class="prescription-details">`;
+
+                    if (item.dose) html += `<span class="prescription-detail">${item.dose}</span>`;
+                    if (item.times) html += `<span class="prescription-detail">${item.times} مرات/يوم</span>`;
+                    if (item.duration) html += `<span class="prescription-detail">${item.duration} يوم</span>`;
+                    if (item.notes) html += `<span class="prescription-detail">${item.notes}</span>`;
+
+                    html += `</div></div>`;
+                }
+            });
+
+            return html;
+        } catch (e) {
+            console.error('Error parsing prescription:', e);
+            // إذا لم يكن JSON، عرض النص كما هو
+            return `<div class="text-wrap">${prescriptionJson.replace(/\n/g, '<br>')}</div>`;
+        }
+    }
+
+    // دالة لعرض جميع الرواشط في الجدول
+    function displayAllPrescriptions() {
+        document.querySelectorAll('.prescription-container').forEach(container => {
+            const prescriptionJson = container.getAttribute('data-prescription');
+            if (prescriptionJson) {
+                const formattedHtml = formatPrescriptionForDisplay(prescriptionJson);
+                container.innerHTML = formattedHtml;
+            }
+        });
+    }
+
+    // تشغيل عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        displayAllPrescriptions();
+    });
+</script>
 </body>
 </html>

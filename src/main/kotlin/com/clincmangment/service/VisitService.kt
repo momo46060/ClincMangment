@@ -50,6 +50,19 @@ class VisitService(
             .orElseThrow { IllegalArgumentException("Patient not found") }
 
         val doctor =userService.findByPhone(doctorUsername!!)
+        val previousVisits = visitRepository.countByPatientId(patientId = patient.id!!)
+
+        val lastVisit = visitRepository.findTopByPatientIdOrderByVisitDateDesc(patient.id!!)
+
+        lastVisit?.let {
+            if ( it.scheduledConsultation == null && visitType == VisitType.CONSULTATION.name) {
+                throw IllegalArgumentException("لا يوجد استشارة للمريض")
+            }
+        }?:run{
+            if (visitType == VisitType.CONSULTATION.name){
+                throw IllegalArgumentException("لا يمكن حجز استشارة لمريض بدون كشف ")
+            }
+        }
 
         val visit = Visit(
             patient = patient,
@@ -99,5 +112,6 @@ class VisitService(
 
         return list
     }
+
     fun getVisitById(id: Long): Optional<Visit> = visitRepository.findById(id)
 }

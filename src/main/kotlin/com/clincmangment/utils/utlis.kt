@@ -28,7 +28,13 @@ fun getCurrentUser(httpSession: HttpSession): Any {
     return currentUser
 }
 
-
+data class EditVisitForm(
+    val visitId: Long = 0,
+    val patientCode: String = "",
+    val diagnosis: String = "",
+    val prescription: String = "",
+    val scheduledConsultation: String = ""
+)
 // في service أو utility class
 fun formatPrescriptionForDisplay(prescriptionJson: String): String {
     return try {
