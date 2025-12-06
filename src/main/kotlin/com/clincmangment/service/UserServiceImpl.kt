@@ -21,10 +21,9 @@ class UserServiceImpl(
         return if (user != null && user.password == password) user else null
     }
 
-    // إنشاء مستخدم جديد وربطه بالعيادة
     fun createUser(username: String, rawPassword: String, role: Role,
-                   fullName: String, clinic: Clinic, phone: String? = null, email: String? = null): User {
-
+                   fullName: String, clinic: Clinic,
+                   phone: String? = null, email: String? = null): User {
         if (userRepository.existsByPhone(username)) {
             throw IllegalArgumentException("Username already exists")
         }
@@ -43,6 +42,8 @@ class UserServiceImpl(
     }
 
     fun findByPhone(phone: String): User? = userRepository.findByPhone(phone)
+
+    fun findAllByDoctors(role: Role): List<User>? = userRepository.findAllByRole(role)
 
     fun findByFullName(fullName: String): User? = userRepository.findByFullName(fullName)
 

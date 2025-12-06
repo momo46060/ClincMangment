@@ -85,7 +85,7 @@ class ChatController(
             }
             ?: throw RuntimeException("المستخدم غير موجود: $principalName")
 
-        val clinicId = me.clinic.id ?: throw RuntimeException("العيادة غير موجودة للمستخدم ${me.id}")
+        val clinicId = me.clinic!!.id ?: throw RuntimeException("العيادة غير موجودة للمستخدم ${me.id}")
 
         val users = userRepository.findAllByClinicIdAndIdNot(clinicId, me.id!!).filter { it.role != Role.PATIENT }
 

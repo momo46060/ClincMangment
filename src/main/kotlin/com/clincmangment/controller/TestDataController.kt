@@ -28,33 +28,40 @@ class TestDataController(
     @GetMapping("/create-clinic")
     fun createClinic(): String {
         val clinic = Clinic(
-            name = "عيادة المستقبل",
-            address = "شارع الجامعة، القاهرة",
+            name = "test",
+            address = "test",
             subscriptionEndDate = LocalDate.now(),
             subscriptionType = SubscriptionType.ADVANCED,
-            checkUpPrice = 400.0,
-            followUpPrice = 100.0,
-
-
-            )
+            checkUpPrice = 0.0,
+            followUpPrice = 0.0,
+            phone = "01000000000"
+  )
         // تخزينها مؤقتًا في القائمة
         clinics.save(clinic)
         return "Clinic created successfully with ID: ${clinic.id ?: "not persisted yet"}"
     }
 
     // إنشاء دكتور مرتبط بالعيادة الأخيرة
-    @GetMapping("/create-doctor")
+    @GetMapping("/create-admin")
     fun createDoctor(): String {
-        if (clinics.findAll().isEmpty()) return "No clinic available. Create a clinic first."
-
-        val clinic = clinics.findAll().last()
+        val clinic = Clinic(
+            name = "test",
+            address = "test",
+            subscriptionEndDate = LocalDate.now(),
+            subscriptionType = SubscriptionType.ADVANCED,
+            checkUpPrice = 0.0,
+            followUpPrice = 0.0,
+            phone = "01000000000"
+        )
+        // تخزينها مؤقتًا في القائمة
+        clinics.save(clinic)
         val doctor = userService.createUser(
-            username = "dr1",
+            username = "ADMIN",
             rawPassword = "1234",
-            role = Role.DOCTOR,
-            fullName = "Dr.Ahmed",
+            role = Role.ADMIN,
+            fullName = "ADMIN",
             phone = "01000000001",
-            email = "dr.ahmed@example.com",
+            email = "ADMIN",
             clinic = clinic
         )
         return "Doctor ${doctor.fullName} created successfully for clinic ${clinic.name}"

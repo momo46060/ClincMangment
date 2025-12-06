@@ -32,6 +32,7 @@ class CustomAuthenticationSuccessHandler(
             val targetUrl = when (user.role) {
                 Role.DOCTOR -> "/doctor/dashboard"
                 Role.NURSE -> "/nurse/dashboard"
+                Role.ADMIN -> "/admin/manage"
                 Role.PATIENT -> "/patients/view/${user.phone}"
             }
 

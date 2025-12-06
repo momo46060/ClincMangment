@@ -22,8 +22,10 @@ data class Clinic(
 
     var subscriptionEndDate: LocalDate ,
 
+    var phone:String,
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    var subscriptionType: SubscriptionType = SubscriptionType.BASIC
+    var subscriptionType: SubscriptionType = SubscriptionType.ADVANCED
 
 )

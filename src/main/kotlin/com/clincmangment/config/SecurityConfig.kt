@@ -33,8 +33,10 @@ class SecurityConfig(
         http
             .authorizeHttpRequests { auth ->
                 auth
-                    .requestMatchers("/login", "/h2-console/**", "/css/**", "/js/**", "/images/**").permitAll()
+                    .requestMatchers("/login", "/h2-console/**", "/css/**", "/js/**",
+                        "/images/**", ).permitAll()
                     .requestMatchers("/doctor/**").hasRole("DOCTOR")
+                    .requestMatchers("/admin/**").hasRole("ADMIN")
                     .requestMatchers("/nurse/**").hasRole("NURSE")
                     .requestMatchers("/patients/**").hasAnyRole("DOCTOR", "NURSE", "PATIENT")
                     .requestMatchers("/visits/**").hasAnyRole("DOCTOR", "NURSE", "PATIENT")

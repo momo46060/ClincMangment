@@ -25,7 +25,6 @@ class DoctorController(
     private val userService: UserServiceImpl,
     private val httpSession: HttpSession,
     private val clinicService: ClinicService,
-    private val objectMapper: ObjectMapper
 
 
     ) {
@@ -86,8 +85,6 @@ class DoctorController(
             "error/custom_error"
         }
     }
-
-//    }
 
     // عرض الكشف الجاري مع التاريخ السابق للزيارات لنفس العيادة فقط
     @GetMapping("/visit/{visitId}")
