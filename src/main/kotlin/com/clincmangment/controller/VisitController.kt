@@ -61,7 +61,8 @@ class VisitController(
             patientCode = visit.patient?.patientCode ?: "",
             diagnosis = visit.diagnosis ?: "",
             prescription = visit.prescription ?: "", // هذا سيحتوي على JSON
-            scheduledConsultation = visit.scheduledConsultation?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) ?: ""
+            scheduledConsultation = visit.scheduledConsultation?.
+            format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) ?: ""
         )
         val services = clinicVisitService.getDoctorServices(visit.doctor!!.id!!)
         val visitServices = serviceVisitService.findByVisitId(visit.id!!)

@@ -129,12 +129,15 @@ class DoctorController(
         return try {
             val visit = visitService.getVisitById(visitId)
                 .orElseThrow { IllegalArgumentException("Visit not found") }
-
             val doctor = httpSession.getAttribute("loggedUser") as? User
                 ?: throw IllegalArgumentException("User not logged in")
-
             if (visit.clinic!!.id != doctor.clinic.id) {
                 throw IllegalArgumentException("Visit does not belong to your clinic")
+            }
+            when(visit.visitType){
+                VisitType.CHECKUP -> visit.visitPrice = doctor.clinic.checkUpPrice+servicesTotal
+                VisitType.CONSULTATION -> visit.visitPrice += doctor.clinic.followUpPrice+servicesTotal
+                else -> {}
             }
             visit.visitPrice += servicesTotal
             // التحقق من أن الروشتة هي JSON صالح
