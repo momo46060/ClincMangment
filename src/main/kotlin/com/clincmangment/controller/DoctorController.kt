@@ -1,22 +1,26 @@
 package com.clincmangment.controller
 
-import com.clincmangment.repository.dto.NurseForm
 import com.clincmangment.model.User
+import com.clincmangment.repository.dto.NurseForm
 import com.clincmangment.service.ClinicService
+import com.clincmangment.service.ClinicServiceService
+import com.clincmangment.service.ServiceVisitService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
 import com.clincmangment.utils.Role
 import com.clincmangment.utils.SubscriptionType
 import com.clincmangment.utils.VisitType
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.security.Principal
 import java.time.LocalDate
 import java.time.LocalDateTime
+
 
 @Controller
 @RequestMapping("/doctor")
@@ -24,17 +28,17 @@ class DoctorController(
     private val visitService: VisitService,
     private val userService: UserServiceImpl,
     private val httpSession: HttpSession,
+    private val clinicServiceService: ClinicServiceService,
     private val clinicService: ClinicService,
-
-
-    ) {
+    private val serviceVisitSrevice: ServiceVisitService
+) {
 
     private val logger = LoggerFactory.getLogger(DoctorController::class.java)
 
     // لوحة التحكم - زيارات اليوم الجارية حسب العيادة
     @GetMapping("/dashboard")
     fun doctorDashboard(model: Model): String {
-        val user =  httpSession.getAttribute("loggedUser") as? User ?: return "redirect:/login"
+        val user = httpSession.getAttribute("loggedUser") as? User ?: return "redirect:/login"
         val isSubscriptionAdvanced = user.clinic.subscriptionType == SubscriptionType.ADVANCED
         model.addAttribute("isSubscriptionAdvanced", isSubscriptionAdvanced)
 
@@ -68,9 +72,7 @@ class DoctorController(
                     VisitType.CONSULTATION -> doctor.clinic.followUpPrice
                 }
             }
-
             model.addAttribute("totalRevenue", totalRevenue)
-
             model.addAttribute("doctor", doctor)
             model.addAttribute("currentVisits", currentVisits)
             model.addAttribute("totalCount", total)
@@ -91,20 +93,21 @@ class DoctorController(
     fun viewCurrentVisit(@PathVariable visitId: Long, model: Model): String {
         return try {
             val visit = visitService.getVisitById(visitId).orElseThrow { IllegalArgumentException("Visit not found") }
-            val clinicId = (httpSession.getAttribute("loggedUser") as User).clinic.id!!
+            val loggedUser = (httpSession.getAttribute("loggedUser") as User)
 
             // تحقق إن الزيارة تتبع نفس العيادة
-            if (visit.clinic!!.id != clinicId) {
+            if (visit.clinic!!.id != loggedUser.clinic.id) {
                 model.addAttribute("errorMessage", "ليس لديك صلاحية لرؤية هذه الزيارة")
                 return "error/custom_error"
             }
 
             val patient = visit.patient
-            val previousVisits = visitService.getVisitsByPatient(patient!!.id!!, clinicId)
-
+            val previousVisits = visitService.getVisitsByPatient(patient!!.id!!, loggedUser.clinic.id!!)
+            val services = clinicServiceService.getDoctorServices(loggedUser.id!!)
             model.addAttribute("visit", visit)
             model.addAttribute("patient", patient)
             model.addAttribute("previousVisits", previousVisits)
+            model.addAttribute("services", services)
             return "doctor/current_visit"
         } catch (ex: Exception) {
             logger.error("Error viewing visit: ${ex.message}")
@@ -120,6 +123,7 @@ class DoctorController(
         @RequestParam diagnosis: String,
         @RequestParam prescription: String, // هذا سيحتوي على JSON الآن
         @RequestParam(required = false) scheduledConsultation: String?,
+        @RequestParam(required = false, defaultValue = "0") servicesTotal: Double,
         model: Model
     ): String {
         return try {
@@ -132,7 +136,7 @@ class DoctorController(
             if (visit.clinic!!.id != doctor.clinic.id) {
                 throw IllegalArgumentException("Visit does not belong to your clinic")
             }
-
+            visit.visitPrice += servicesTotal
             // التحقق من أن الروشتة هي JSON صالح
             val isJsonPrescription = prescription.trim().startsWith("[") || prescription.trim().startsWith("{")
 
@@ -160,7 +164,7 @@ class DoctorController(
         }
     }
 
-  // إضافة ممرضة جديدة بنفس العيادة
+    // إضافة ممرضة جديدة بنفس العيادة
     @GetMapping("/add-nurse")
     fun showAddNurseForm(model: Model): String {
         model.addAttribute("nurseForm", NurseForm())
@@ -173,11 +177,11 @@ class DoctorController(
         redirectAttributes: RedirectAttributes,
         session: HttpSession
     ): String {
-        try{
+        try {
             val doctor = session.getAttribute("loggedUser") as? User
                 ?: throw IllegalArgumentException("User not logged in")
 
-             userService.createUser(
+            userService.createUser(
                 username = nurseForm.fullName,
                 rawPassword = nurseForm.password ?: "1234",
                 role = Role.NURSE,
@@ -188,7 +192,7 @@ class DoctorController(
 
             redirectAttributes.addFlashAttribute("success", "تمت إضافة الممرضة بنجاح")
             return "redirect:/doctor/add-nurse"
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             redirectAttributes.addFlashAttribute("error", "رقم الهاتف موجود مسيقا")
             return "redirect:/doctor/add-nurse"
@@ -197,12 +201,19 @@ class DoctorController(
 
     // DoctorController.kt
     @GetMapping("/settings")
-    fun showClinicSettings(model: Model, session: HttpSession): String {
+    fun showClinicSettings(
+        model: Model, session: HttpSession,
+        principal: Principal
+    ): String {
         val loggedUser = session.getAttribute("loggedUser") as User
+        model.addAttribute(
+            "services",
+            clinicServiceService.getDoctorServices(loggedUser.id!!)
+        )
 
         val clinic = clinicService.findClinicById(loggedUser.clinic.id!!)
         model.addAttribute("clinic", clinic)
-        return "doctor/clinic_settings"
+        return "doctor/services-list"
     }
 
     @PostMapping("/settings")
@@ -219,5 +230,59 @@ class DoctorController(
         session.setAttribute("loggedUser", doctor)
         redirectAttributes.addFlashAttribute("success", "تم تحديث الأسعار بنجاح")
         return "redirect:/doctor/dashboard"
+    }
+
+
+    // مثال في DoctorVisitController
+    @PostMapping("/visit/service/delete")
+    @ResponseBody
+    fun deleteVisitService(@RequestParam visitServiceId: Long?): ResponseEntity<*> {
+
+        try{
+            serviceVisitSrevice.deleteById(visitServiceId)
+            println("***************************************")
+            println("$visitServiceId")
+            println("***************************************")
+        }  catch (e: Exception){
+            e.printStackTrace()
+        }
+        return ResponseEntity.ok().build<Any?>()
+
+    }
+
+    @GetMapping("/visit/services")
+    @ResponseBody
+    fun list(): List<com.clincmangment.model.ClinicService> {
+        val loggedUser = httpSession.getAttribute("loggedUser") as User
+        return clinicServiceService.getDoctorServices(loggedUser.id!!)
+    }
+
+    @PostMapping("/visit/service/add")
+    fun visitAdd(
+        @RequestParam visitId: Long, @RequestParam serviceId: Long,
+        @RequestParam price: Double,
+        redirectAttributes: RedirectAttributes
+    ): String {
+        val loggedUser = httpSession.getAttribute("loggedUser") as User
+        serviceVisitSrevice.save(
+            com.clincmangment.model.VisitService(
+                visit = visitService.getVisitById(visitId).get(),
+                service = clinicServiceService.getClinicServiceById(serviceId),
+                price = price
+            )
+        )
+        redirectAttributes.addFlashAttribute("success", "تم إضافة الخدمة بنجاح")
+        return "redirect:/doctor/visit/${visitId}"
+    }
+
+    @GetMapping("/visit/service/list")
+    @ResponseBody
+    fun getVisitServices(@RequestParam visitId: Long): ResponseEntity<List<com.clincmangment.model.VisitService>> {
+
+        // 1. جلب الخدمات من قاعدة البيانات بناءً على معرف الزيارة
+        val visitServices = serviceVisitSrevice.findByVisitId(visitId) // افترضنا وجود هذه الدالة في الخدمة
+
+        // 2. إرجاع القائمة مع حالة HTTP 200 (OK)
+        return ResponseEntity.ok(visitServices)
     }
 }

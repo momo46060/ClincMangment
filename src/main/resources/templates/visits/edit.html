@@ -217,7 +217,59 @@
                         </div>
                     </div>
                 </div>
+                <!-- ⭐ الخدمات الطبية -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <i class="bi bi-bag-plus"></i> الخدمات الإضافية
+                    </div>
+                    <div class="card-body">
 
+                        <div class="row g-2 mb-3">
+                            <div class="col-md-6">
+                                <select id="serviceSelect" class="form-select">
+                                    <!--                                    <option th:each="c : ${services}"-->
+                                    <!--                                            th:value="${c.id}"-->
+                                    <!--                                            th:data-price="${c.price}"-->
+                                    <!--                                            th:text="${c.name}">-->
+                                    <!--                                    </option>-->
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-3">
+                                <input type="number" id="servicePrice" class="form-control" placeholder="السعر" min="0" readonly>
+                            </div>
+
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary" onclick="addServiceToVisit()">
+                                    <i class="bi bi-plus-circle"></i> إضافة الخدمة
+                                </button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="totalServicesInput" name="servicesTotal">
+
+                        <table class="table table-bordered text-center" id="visitServiceTable">
+                            <thead>
+                            <tr>
+                                <th>الخدمة</th>
+                                <th>السعر</th>
+                                <th>حذف</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+
+                            <tfoot>
+                            <tr class="table-primary">
+                                <th>الإجمالي</th>
+                                <th id="totalServicePrice">0</th>
+                                <th></th>
+                            </tr>
+                            </tfoot>
+                        </table>
+
+
+                    </div>
+                </div>
                 <div class="mb-4">
                     <label class="form-label fw-bold"><i class="bi bi-calendar-check"></i> موعد الاستشارة القادمة</label>
                     <input type="datetime-local" class="form-control" name="scheduledConsultation"
@@ -320,7 +372,9 @@
 
 <script>
     let prescriptionItems = [];
-
+    let visitServices = []; // مصفوفة الخدمات المضافة للزيارة
+    const visitId = [[${visit.id}]] ; // معرف الزيارة الحالي
+    const currentUserId = [[${doctor != null ? doctor.id : 0}]];
     // تحميل البيانات عند فتح الصفحة
     document.addEventListener('DOMContentLoaded', function() {
         // محاولة تحميل الروشتة الحالية إذا كانت موجودة
@@ -338,19 +392,147 @@
                 }
             }
         }
+        loadDoctorServicesDropdown();
+        loadVisitServices();
     });
+    // =======================================================
+    // 🏥 دوال الخدمات الإضافية (Services) - الموحدة والمدعومة من الـ DB
+    // =======================================================
+
+    // دالة مساعدة لربط حدث التغيير (Change)
+    function handleServiceChange() {
+        const selected = this.options[this.selectedIndex];
+        // تأكد أن السعر يتم قراءته من الـ data-price الذي تم ملؤه من loadDoctorServicesDropdown
+        const price = selected.getAttribute("data-price");
+        // يجب أن يكون حقل السعر قابلاً للكتابة إذا لم يتم تحديد سعر (لإضافة سعر يدوي)
+        const priceInput = document.getElementById("servicePrice");
+        priceInput.value = price ? price : "";
+        priceInput.readOnly = !!price; // يجعله للقراءة فقط إذا كان هناك سعر محدد
+    }
+
+    // (A) - تحميل الخدمات المتاحة في القائمة المنسدلة
+    async function loadDoctorServicesDropdown() {
+        try {
+            // جلب البيانات من الـ Backend
+            const res = await fetch("/doctor/visit/services");
+            const data = await res.json();
+
+            const select = document.getElementById("serviceSelect");
+
+            // إزالة المستمعين القدامى قبل ربط المستمع الجديد
+            select.removeEventListener("change", handleServiceChange);
+            select.innerHTML = `<option value="">اختر الخدمة...</option>`;
+
+            // ملء القائمة بالبيانات المجلوبة
+            data.forEach(s => {
+                select.innerHTML += `<option value="${s.id}" data-price="${s.price}">${s.name}</option>`;
+            });
+
+            // ربط تحديد الخدمة بتعبئة حقل السعر
+            select.addEventListener("change", handleServiceChange);
+
+        } catch (error) {
+            console.error("Error loading doctor services dropdown:", error);
+        }
+    }
+
+    // (B) - إضافة خدمة (ترسل للـ Backend ثم تُعيد الجلب والعرض)
+    async function addServiceToVisit() {
+        const serviceSelect = document.getElementById("serviceSelect");
+        const priceInput = document.getElementById("servicePrice");
+
+        const serviceId = serviceSelect.value;
+        const price = priceInput.value;
+
+        if (!serviceId || !price || isNaN(parseFloat(price))) {
+            alert("يرجى اختيار خدمة وتحديد سعر صحيح!");
+            return;
+        }
+
+        try {
+            // 1. الحفظ في قاعدة البيانات عبر الاتصال بالخلفية
+            const response = await fetch(`/doctor/visit/service/add?visitId=${visitId}&serviceId=${serviceId}&price=${price}`, {
+                method: "POST"
+            });
+
+            if (response.ok) {
+                // 2. النجاح: إعادة جلب وعرض القائمة المحدثة من قاعدة البيانات
+                await loadVisitServices();
+                // مسح الحقول بعد الإضافة
+                serviceSelect.value = "";
+                priceInput.value = "";
+            } else {
+                alert("حدث خطأ أثناء إضافة الخدمة. يرجى مراجعة الخادم.");
+            }
+        } catch (error) {
+            console.error("Error adding service:", error);
+            alert("حدث خطأ في الاتصال بالخادم.");
+        }
+    }
+
+    // (C) - جلب وعرض الخدمات المضافة (يعرض البيانات من قاعدة البيانات)
+    async function loadVisitServices() {
+        try {
+            const res = await fetch(`/doctor/visit/service/list?visitId=${visitId}`);
+            visitServices = await res.json();
+
+            const tbody = document.querySelector("#visitServiceTable tbody");
+            tbody.innerHTML = "";
+
+            visitServices.forEach((vs) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${vs.service.name}</td>
+                    <td>${parseFloat(vs.price).toFixed(2)}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeServiceFromVisit(${vs.id})" style="border-radius: 8px;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            calculateTotal(); // تحديث الإجمالي
+        } catch (error) {
+            console.error("Error loading visit services:", error);
+            calculateTotal();
+        }
+    }
+
+    // (D) - حذف خدمة (يرسل للـ Backend ثم يُعيد الجلب والعرض)
+    async function removeServiceFromVisit(visitServiceId) {
+        if (!confirm("هل أنت متأكد من حذف هذه الخدمة؟")) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/doctor/visit/service/delete?visitServiceId=${visitServiceId}`, {
+                method: "POST"
+            });
+
+            if (response.ok) {
+                await loadVisitServices();
+            } else {
+                alert("حدث خطأ أثناء حذف الخدمة. يرجى مراجعة الخادم.");
+            }
+        } catch (error) {
+            console.error("Error removing service:", error);
+            alert("حدث خطأ في الاتصال بالخادم.");
+        }
+    }
+
+    // (E) - حساب الإجمالي
+    function calculateTotal() {
+        const total = visitServices.reduce((sum, s) => sum + parseFloat(s.price), 0);
+        document.getElementById("totalServicePrice").innerText = total.toFixed(2);
+        document.getElementById("totalServicesInput").value = total.toFixed(2);
+    }
 
     document.getElementById('openPrescriptionBtn').addEventListener('click', () => {
         openPrescriptionPopup();
     });
-
-
-
-
-
-
     // تحديث عرض الروشتة في الكارد
-
     async function loadTemplates() {
         try {
             const res = await fetch('/doctor/visit/templates');
@@ -364,7 +546,6 @@
             console.error('Error loading templates:', error);
         }
     }
-
     function loadTemplate() {
         const select = document.getElementById('templateSelect');
         const value = select.value;
@@ -384,7 +565,6 @@
             console.error('Error loading template:', error);
         }
     }
-
     async function saveTemplate() {
         const name = prompt("ادخل اسم القالب:");
         if (!name) return;
@@ -408,19 +588,12 @@
             console.error('Error saving template:', error);
         }
     }
-
-
     // دالة لتحضير بيانات الروشتة قبل الإرسال
     function preparePrescriptionData() {
         // تحديث الحقل المخفي ببيانات الروشتة
         document.getElementById('prescriptionJson').value = JSON.stringify(prescriptionItems);
         return true; // للسماح بإرسال الفورم
     }
-
-
-
-
-
     function printPrescription() {
         const patientName = document.getElementById('patientName').innerText.trim();
         const diagnosis = document.getElementById('diagnosisField').value.trim();
@@ -573,13 +746,10 @@
             printWindow.print();
         }, 500);
     }
-
     /////////////////////////////////////////
-
     // تحميل البيانات عند فتح الصفحة
     document.addEventListener('DOMContentLoaded', function() {
         console.log('Page loaded, loading prescription...');
-
         // 1. تحميل الروشتة من حقل الـ input المخفي
         const prescriptionJsonInput = document.getElementById('prescriptionJson');
         const currentPrescription = prescriptionJsonInput ? prescriptionJsonInput.value : null;
@@ -628,7 +798,6 @@
             console.log('No prescription found or prescription is empty');
         }
     });
-
     // دالة لتحويل الوصفة القديمة (نص عادي) إلى JSON
     function convertOldPrescriptionToJSON(oldPrescription) {
         const items = [];
@@ -650,26 +819,21 @@
 
         return items;
     }
-
     document.getElementById('openPrescriptionBtn').addEventListener('click', () => {
         openPrescriptionPopup();
     });
-
     function openPrescriptionPopup() {
         document.getElementById('prescriptionPopup').style.display = 'block';
         loadTemplates();
         renderPrescriptionItems();
     }
-
     function closePrescriptionPopup() {
         document.getElementById('prescriptionPopup').style.display = 'none';
     }
-
     function addPrescriptionItem(item = {name:'', dose:'', times:'', duration:'', notes:''}) {
         prescriptionItems.push(item);
         renderPrescriptionItems();
     }
-
     function renderPrescriptionItems() {
         const tbody = document.getElementById('prescriptionItemsBody');
         tbody.innerHTML = '';
@@ -720,13 +884,11 @@
             });
         }
     }
-
     function removePrescriptionItem(idx) {
         prescriptionItems.splice(idx, 1);
         renderPrescriptionItems();
         updatePrescriptionDisplay();
     }
-
     // تحديث عرض الروشتة في الكارد
     function updatePrescriptionDisplay() {
         const container = document.getElementById('prescriptionDisplay');
@@ -803,7 +965,6 @@
     }
 
     // ... بقية الدوال كما هي (loadTemplates, loadTemplate, saveTemplate, savePrescription, preparePrescriptionData, printPrescription)
-
     // دالة مساعدة للتحقق مما إذا كان النص JSON صالح
     function isValidJSON(str) {
         try {
@@ -813,7 +974,6 @@
             return false;
         }
     }
-
     // عند حفظ الروشتة، تأكد من تحديث الحقل المخفي
     async function savePrescription() {
         // التحقق من وجود أدوية

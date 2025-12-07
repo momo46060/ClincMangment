@@ -2,7 +2,9 @@ package com.clincmangment.controller
 
 import com.clincmangment.repository.dto.VisitForm
 import com.clincmangment.model.User
+import com.clincmangment.service.ClinicServiceService
 import com.clincmangment.service.PatientService
+import com.clincmangment.service.ServiceVisitService
 import com.clincmangment.service.UserServiceImpl
 import com.clincmangment.service.VisitService
 import com.clincmangment.utils.EditVisitForm
@@ -20,8 +22,12 @@ import java.time.format.DateTimeFormatter
 class VisitController(
     private val visitService: VisitService,
     private val patientService: PatientService,
-    private val userService: UserServiceImpl
-) {
+    private val userService: UserServiceImpl,
+    private val clinicVisitService: ClinicServiceService,
+
+    private val serviceVisitService: ServiceVisitService,
+
+    ) {
 
     private val logger = LoggerFactory.getLogger(VisitController::class.java)
 
@@ -49,7 +55,6 @@ class VisitController(
     fun showEditVisitForm(@PathVariable visitId: Long, model: Model): String {
         val visit = visitService.getVisitById(visitId)
             .orElseThrow { IllegalArgumentException("Visit not found") }
-
         // نموذج التعديل
         val visitForm = EditVisitForm(
             visitId = visit.id!!,
@@ -58,7 +63,11 @@ class VisitController(
             prescription = visit.prescription ?: "", // هذا سيحتوي على JSON
             scheduledConsultation = visit.scheduledConsultation?.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) ?: ""
         )
-
+        val services = clinicVisitService.getDoctorServices(visit.doctor!!.id!!)
+        val visitServices = serviceVisitService.findByVisitId(visit.id!!)
+        model.addAttribute("services",services)
+        model.addAttribute("visit",visit)
+        model.addAttribute("visitServices",visitServices)
         model.addAttribute("visitForm", visitForm)
         model.addAttribute("patientName", visit.patient?.user?.fullName ?: "")
         model.addAttribute("patientCode", visit.patient?.patientCode ?: "")

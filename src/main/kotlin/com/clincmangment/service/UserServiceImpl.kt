@@ -14,8 +14,10 @@ class UserServiceImpl(
     private val passwordEncoder: PasswordEncoder
 
 ) {
+    fun findById(id: Long): Optional<User> = userRepository.findById(id)
+
     fun findByIdWithClinic(id: Long): Optional<User> = userRepository.findById(id)
-    // تسجيل الدخول
+
     fun login(phone: String, password: String): User? {
         val user = userRepository.findByPhone(phone)
         return if (user != null && user.password == password) user else null
