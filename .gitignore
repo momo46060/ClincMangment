@@ -1,33 +1,87 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
+# Compiled class file
+.history
+# Misc
+**.db
+*.sublime-workspace
+.settings/
+*.launch
+.c9/
 .classpath
-.factorypath
 .project
-.settings
-.springBeans
-.sts4-cache
+# IDE
 
-### IntelliJ IDEA ###
-.idea
+.jacoco
+*.coverage
+# Testing
+
+.env.*.local
+.env.local
+.env
+# Environment
+
+yarn-error.log
+npm-debug.log
+node_modules/
+# Node (if you add frontend)
+
+build/
+.gradle/
+# Build
+
+data/clinicdb.lock.db
+data/clinicdb.trace.db
+data/clinicdb.mv.db
+# Database
+
+.gitkeep
+Thumbs.db
+.DS_Store
+# OS
+
+out/
+*.ipr
 *.iws
 *.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
+.DS_Store
+*~
+*.swo
+*.swp
 .vscode/
+.idea/
+# IDEs
+
+.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+buildNumber.properties
+dependency-reduced-pom.xml
+release.properties
+pom.xml.backup
+pom.xml.versionsBackup
+pom.xml.releaseBackup
+pom.xml.tag
+target/
+# Maven
+
+hs_err_pid*
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+
+*.rar
+*.tar.gz
+*.zip
+*.ear
+*.nar
+*.war
+*.jar
+# Package Files
+
+.mtj.tmp/
+# Mobile Tools for Java (J2ME)
+
+*.ctxt
+# BlueJ files
+
+*.log
+# Log file
+
+*.class
+
