@@ -85,3 +85,5 @@ hs_err_pid*
 
 *.class
 
+# Prevent cloning
+*
