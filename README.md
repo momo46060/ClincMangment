@@ -376,13 +376,13 @@ GET  /h2-console                    H2 Database console (dev only)
 ## 📸 Screenshots
 
 ### 1. Login Page
-![Login page](docs/screenshots/login.svg)
+![Login page](docs/screenshots/login.png)
 
 ### 2. Doctor Dashboard
-![Dashboard](docs/screenshots/dashboard.svg)
+![Dashboard](docs/screenshots/dashboard.png)
 
-### 3. Patients Management
-![Patients](docs/screenshots/patients.svg)
+### 3. Nurse Dashboard
+![Nurse](docs/screenshots/nurse.png)
 
 ---
 
