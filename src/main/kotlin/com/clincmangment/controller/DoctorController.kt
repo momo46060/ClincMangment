@@ -134,13 +134,15 @@ class DoctorController(
             if (visit.clinic!!.id != doctor.clinic.id) {
                 throw IllegalArgumentException("Visit does not belong to your clinic")
             }
-            when(visit.visitType){
-                VisitType.CHECKUP -> {
-                    visit.visitPrice = doctor.clinic.checkUpPrice + servicesTotal
-                }
-                VisitType.CONSULTATION -> visit.visitPrice += doctor.clinic.followUpPrice+servicesTotal
-                else -> {}
-            }
+            visit.addOnesPrice = servicesTotal
+
+//            when(visit.visitType){
+//                VisitType.CHECKUP -> {
+//                    visit.visitPrice = doctor.clinic.checkUpPrice + servicesTotal
+//                }
+//                VisitType.CONSULTATION -> visit.visitPrice += doctor.clinic.followUpPrice+servicesTotal
+//                else -> {}
+//            }
             // التحقق من أن الروشتة هي JSON صالح
             val isJsonPrescription = prescription.trim().startsWith("[") || prescription.trim().startsWith("{")
 

@@ -66,7 +66,11 @@ data class Visit(
     @JoinColumn(name = "clinic_id", nullable = false)
     var clinic: Clinic? = null,
     @Column(nullable = false)
-    var visitPrice: Double = 0.0
+    var basicPrice: Double = 0.0,
+    @Column(nullable = false)
+    var addOnesPrice: Double = 0.0,
+    @Column(nullable = false)
+    var visitPrice: Double = basicPrice+addOnesPrice,
 
 // الحالة الافتراضية
 )

@@ -72,7 +72,7 @@ class VisitService(
             visitDate = LocalDateTime.now(),
             status = status,
             clinic = patient.clinic ,
-            visitPrice = if (visitType == VisitType.CHECKUP.name)
+            basicPrice = if (visitType == VisitType.CHECKUP.name)
                 patient.clinic.checkUpPrice else patient.clinic.followUpPrice
         )
 
