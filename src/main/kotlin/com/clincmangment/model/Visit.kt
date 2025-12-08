@@ -70,7 +70,11 @@ data class Visit(
     @Column(nullable = false)
     var addOnesPrice: Double = 0.0,
     @Column(nullable = false)
-    var visitPrice: Double = basicPrice+addOnesPrice,
-
-// الحالة الافتراضية
-)
+    var visitPrice: Double = 0.0,
+){
+    @PrePersist
+    @PreUpdate
+    fun calculateVisitPrice() {
+        this.visitPrice = this.basicPrice + this.addOnesPrice
+ }
+}
