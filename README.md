@@ -470,7 +470,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 For questions, suggestions, or issues:
 
 - **GitHub Issues:** [Create an issue](https://github.com/yourusername/ClincMangment/issues)
-- **Email:** momo46060@gmail.com.com
+- **Email:** momo46060@gmail.com
 - **Documentation:** [Visit our wiki](https://github.com/yourusername/ClincMangment/wiki)
 
 ---
